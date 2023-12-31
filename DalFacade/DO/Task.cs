@@ -25,9 +25,5 @@ public record Task
 	string _remarks { get; set; }
 	int _engineerId { get; set; }
 
-	public Task()
-	{
-	}
 	
-
 }
