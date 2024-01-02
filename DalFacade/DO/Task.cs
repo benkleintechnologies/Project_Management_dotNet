@@ -25,5 +25,23 @@ public record Task
 	string _remarks { get; set; }
 	int _engineerId { get; set; }
 
+	//Constructor with all parameters
+	public Task(int id, string alias, string description, DateTime createdAtDate, TimeSpan requiredEffortTime, bool isMilestone, EngineerExperience complexity, DateTime startDate, DateTime scheduledDate, DateTime deadlineDate, DateTime completeDate, string deliverables, string remarks, int engineerId)
+	{
+		_id = id;
+		_alias = alias;
+		_description = description;
+		_createdAtDate = createdAtDate;
+		_requiredEffortTime = requiredEffortTime;
+		_isMilestone = isMilestone;
+		_complexity = complexity;
+		_startDate = startDate;
+		_scheduledDate = scheduledDate;
+		_deadlineDate = deadlineDate;
+		_completeDate = completeDate;
+		_deliverables = deliverables;
+		_remarks = remarks;
+		_engineerId = engineerId;
+	}
 	
 }

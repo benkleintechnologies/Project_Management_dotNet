@@ -11,7 +11,10 @@ public record Dependency
 	int _dependsOnTask { get; set; }
 
 
-	public Dependency()
+	public Dependency(int id, int dependentTask, int dependsOntask)
 	{
+		_id = id;
+		_dependentTask = dependentTask;
+		_dependsOnTask = dependsOntask;
 	}
 }
