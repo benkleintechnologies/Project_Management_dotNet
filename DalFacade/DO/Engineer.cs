@@ -5,14 +5,10 @@
 /// </summary>
 
 public record Engineer
-{
-	int _id { get; set; }
-	string _email { get; set; }	
-	double _cost { get; set; }
-	string _name { get; set; }	
-	EngineerExperience _level { get; set; }
-
-	public Engineer()
-	{
-	}
-}
+(
+	int id,
+    string name,
+    string? email = null,
+	double? cost = null,
+	EngineerExperience level = EngineerExperience.Beginner
+);

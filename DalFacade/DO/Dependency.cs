@@ -1,20 +1,19 @@
 ﻿namespace DO;
 
 /// <summary>
-/// Dependency entity
+/// Dependency record (PDS)
 /// </summary>
-
+/// <param name="id"></param>
+/// <param name="depenentTask"></param>
+/// <param name="dependsOnTask"></param>
 public record Dependency
-{
-	int _id { get; set; }
-	int _dependentTask { get; set; }
-	int _dependsOnTask { get; set; }
-
-
-	public Dependency(int id, int dependentTask, int dependsOntask)
-	{
-		_id = id;
-		_dependentTask = dependentTask;
-		_dependsOnTask = dependsOntask;
-	}
-}
+(
+	int id,
+	int dependentTask,
+	int dependsOnTask,
+	String? customerEmail = null,
+	String? shippingAddress = null,
+	DateTime? orderCreationDate = null,
+	DateTime? shippingDate = null,
+	DateTime? deliveryDate = null
+);
