@@ -10,7 +10,7 @@ internal class DependencyImplementation : IDependency
     public int Create(Dependency item)
     {
         int id = DataSource.Config.NextDependencyId;
-        Dependency dependency = new Dependency(id, item._dependentTask, item._dependsOnTask);
+        Dependency dependency = item with { id = id };
         DataSource.Dependencies.Add(dependency);
         return id;
     }
@@ -33,7 +33,7 @@ internal class DependencyImplementation : IDependency
     {
         foreach (Dependency item in DataSource.Dependencies)
         {
-            if (item._id.== id)
+            if (item.id == id)
             {
                 return item;
             }
@@ -48,7 +48,7 @@ internal class DependencyImplementation : IDependency
 
     public void Update(Dependency item)
     {
-        Dependency old = Read(item._id);
+        Dependency old = Read(item.id);
         if (old != null)
         {
             DataSource.Dependencies.Remove(old);
@@ -56,7 +56,7 @@ internal class DependencyImplementation : IDependency
         }
         else
         {
-            throw new Exception($"Object of type Dependency with identifier {item._id} does not exist");
+            throw new Exception($"Object of type Dependency with identifier {item.id} does not exist");
         }
     }
 }

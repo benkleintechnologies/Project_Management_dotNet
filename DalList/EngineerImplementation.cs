@@ -13,10 +13,10 @@ public class EngineerImplementation: IEngineer
     {
         if (DataSource.Engineers.Contains(item))
         {
-            throw new Exception($"An object of type Engineer with id {item._id} already exists");
+            throw new Exception($"An object of type Engineer with id {item.id} already exists");
         }
         DataSource.Engineers.Add(item);
-        return item._id;
+        return item.id;
     }
 
     public void Delete(int id)
@@ -37,7 +37,7 @@ public class EngineerImplementation: IEngineer
     {
         foreach (Engineer item in DataSource.Engineers)
         {
-            if (item._id.== id) {
+            if (item.id == id) {
                 return item;
             }
         }
@@ -51,7 +51,7 @@ public class EngineerImplementation: IEngineer
 
     public void Update(Engineer item)
     {
-        Engineer old = Read(item._id);
+        Engineer old = Read(item.id);
         if (old != null)
         {
             DataSource.Engineers.Remove(old);
@@ -59,7 +59,7 @@ public class EngineerImplementation: IEngineer
         }
         else
         {
-            throw new Exception($"Object of type Engineer with identifier {item._id} does not exist");
+            throw new Exception($"Object of type Engineer with identifier {item.id} does not exist");
         }
     }
 }

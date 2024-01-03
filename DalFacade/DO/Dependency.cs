@@ -1,11 +1,16 @@
 ﻿namespace DO;
 
 /// <summary>
-/// Dependency record (PDS)
+/// Dependency Entity (PDS)
 /// </summary>
 /// <param name="id"></param>
-/// <param name="depenentTask"></param>
+/// <param name="dependentTask"></param>
 /// <param name="dependsOnTask"></param>
+/// <param name="customerEmail"></param>
+/// <param name="shippingAddress"></param>
+/// <param name="orderCreationDate"></param>
+/// <param name="shippingDate"></param>
+/// <param name="deliveryDate"></param>
 public record Dependency
 (
 	int id,

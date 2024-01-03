@@ -9,7 +9,7 @@ internal class TaskImplementation : ITask
     public int Create(Task item)
     {
         int id = DataSource.Config.NextTaskId;
-        Task task = new Task(id, item._alias, item._description, item._createdAtDate, item._requiredEffortTime, item._isMilestone, item._complexity, item._startDate, item._scheduledDate, item._deadlineDate, item._completeDate, item._deliverables, item._remarks, item._engineerID);
+        Task task = item with { id = id };
         DataSource.Tasks.Add(task);
         return id;
     }
@@ -32,7 +32,7 @@ internal class TaskImplementation : ITask
     {
         foreach (Task item in DataSource.Tasks)
         {
-            if (item._id.== id)
+            if (item.id == id)
             {
                 return item;
             }
@@ -47,7 +47,7 @@ internal class TaskImplementation : ITask
 
     public void Update(Task item)
     {
-        Task old = Read(item._id);
+        Task old = Read(item.id);
         if (old != null)
         {
             DataSource.Tasks.Remove(old);
@@ -55,7 +55,7 @@ internal class TaskImplementation : ITask
         }
         else
         {
-            throw new Exception($"Object of type Task with identifier {item._id} does not exist");
+            throw new Exception($"Object of type Task with identifier {item.id} does not exist");
         }
     }
 }

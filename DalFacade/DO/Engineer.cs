@@ -1,14 +1,18 @@
 ﻿namespace DO;
 
 /// <summary>
-/// Engineer entity
+/// Engineer Entity (PDS)
 /// </summary>
-
+/// <param name="id"></param>
+/// <param name="name"></param>
+/// <param name="email"></param>
+/// <param name="cost"></param>
+/// <param name="level"></param>
 public record Engineer
 (
 	int id,
-    string name,
-    string? email = null,
+    String? name = null,
+    String? email = null,
 	double? cost = null,
 	EngineerExperience level = EngineerExperience.Beginner
 );
