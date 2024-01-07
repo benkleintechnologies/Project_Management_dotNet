@@ -30,7 +30,7 @@ public record Task
         DateTime? dateCreated = null,
         DateTime? projectedStartDate = null,
         DateTime? actualStartDate = null,
-        DateTime? duration = null,
+        TimeSpan? duration = null,
         DateTime? deadline = null,
         DateTime? actualEndDate = null
     );
