@@ -58,4 +58,9 @@ public class TaskImplementation : ITask
             throw new Exception($"Object of type Task with identifier {item.id} does not exist");
         }
     }
+
+    public void Reset()
+    {
+        DataSource.Tasks.Clear();
+    }
 }

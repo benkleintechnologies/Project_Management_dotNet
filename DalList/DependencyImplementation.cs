@@ -59,4 +59,9 @@ public class DependencyImplementation : IDependency
             throw new Exception($"Object of type Dependency with identifier {item.id} does not exist");
         }
     }
+
+    public void Reset()
+    {
+        DataSource.Dependencies.Clear();
+    }
 }
