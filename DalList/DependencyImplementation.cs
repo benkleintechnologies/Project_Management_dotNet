@@ -4,6 +4,7 @@ using DalApi;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Headers;
+using System.Threading.Tasks;
 
 public class DependencyImplementation : IDependency
 {
@@ -24,8 +25,9 @@ public class DependencyImplementation : IDependency
         }
         else
         {
-            //May need to check that Dependency is not read only (or something liek that)
             DataSource.Dependencies.Remove(dependency);
+            Dependency _newDependency = dependency with { active = false };
+            DataSource.Dependencies.Add(_newDependency);
         }
     }
 

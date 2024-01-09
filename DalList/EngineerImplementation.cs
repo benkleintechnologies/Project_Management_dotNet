@@ -28,8 +28,9 @@ public class EngineerImplementation: IEngineer
         } 
         else
         {
-            //May need to check that Engineer is not read only (or something liek that)
             DataSource.Engineers.Remove(engineer);
+            Engineer _newEngineer = engineer with { active = false };
+            DataSource.Engineers.Add(_newEngineer);
         }
     }
 

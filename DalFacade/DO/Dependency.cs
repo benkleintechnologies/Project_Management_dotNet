@@ -20,5 +20,6 @@ public record Dependency
 	String? shippingAddress = null,
 	DateTime? orderCreationDate = null,
 	DateTime? shippingDate = null,
-	DateTime? deliveryDate = null
+	DateTime? deliveryDate = null,
+    bool active = true
 );

@@ -14,5 +14,6 @@ public record Engineer
     String? name = null,
     String? email = null,
 	double? cost = null,
-	EngineerExperience level = EngineerExperience.Beginner
+	EngineerExperience level = EngineerExperience.Beginner,
+	bool active = true
 );

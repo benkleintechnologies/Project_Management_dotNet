@@ -32,5 +32,6 @@ public record Task
         DateTime? actualStartDate = null,
         TimeSpan? duration = null,
         DateTime? deadline = null,
-        DateTime? actualEndDate = null
+        DateTime? actualEndDate = null,
+        bool active = true
     );

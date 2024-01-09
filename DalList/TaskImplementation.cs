@@ -23,8 +23,9 @@ public class TaskImplementation : ITask
         }
         else
         {
-            //May need to check that Task is not read only (or something liek that)
             DataSource.Tasks.Remove(task);
+            Task _newTask = task with { active = false };
+            DataSource.Tasks.Add(_newTask);
         }
     }
 
