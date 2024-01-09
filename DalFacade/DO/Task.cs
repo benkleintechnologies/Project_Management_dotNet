@@ -20,9 +20,9 @@
 public record Task
 	(
 		int id,
-		int assignedEngineerId,
         bool isMilestone = false,
         EngineerExperience degreeOfDifficulty = EngineerExperience.Beginner,
+        int? assignedEngineerId = null,
         String? nickname = null,
         String? description = null,
         String? deliverables = null,

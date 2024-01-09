@@ -62,4 +62,9 @@ public class EngineerImplementation: IEngineer
             throw new Exception($"Object of type Engineer with identifier {item.id} does not exist");
         }
     }
+
+    public void Reset()
+    {
+        DataSource.Engineers.Clear();
+    }
 }
