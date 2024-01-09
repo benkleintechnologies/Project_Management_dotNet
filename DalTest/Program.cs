@@ -18,9 +18,10 @@ namespace DalTest
                 bool _exit = false;
                 while (!_exit)
                 {
-                    Console.WriteLine("0. Exit the main menu\n1. Test out Engineer\n2. Test out Task\n3. Test out Dependency");
+                    Console.WriteLine("0. Exit the main menu\n1. Test out Engineer\n2. Test out Task\n3. Test out Dependency\n");
                     string? _input = Console.ReadLine();
                     int.TryParse(_input, out int _inputNumber);
+                    Console.WriteLine();
                     string _userInput;
                     switch (_inputNumber)
                     {
@@ -30,19 +31,22 @@ namespace DalTest
                         case 1:
                             EngineerOptionsPrint();
                             _userInput = Console.ReadLine();
+                            Console.WriteLine();
                             EngineerOptionsSwitch(_userInput);
                             break;
                         case 2:
                             TaskOptionsPrint();
                             _userInput = Console.ReadLine();
+                            Console.WriteLine();
                             TaskOptionsSwitch(_userInput);
                             break;
                         case 3:
                             DependencyOptionsPrint();
                             _userInput = Console.ReadLine();
+                            Console.WriteLine();
                             DependencyOptionsSwitch(_userInput);
                             break;
-                        default: Console.WriteLine("Incorrect input, try again"); 
+                        default: Console.WriteLine("Incorrect input, try again\n"); 
                             break;
                     }
                 }
@@ -62,7 +66,7 @@ namespace DalTest
                                 "d) Display the engineer list\n" +
                                 "e) Update an engineer\n" +
                                 "f) Delete an engineer from the engineer list\n" +
-                                "g) Reset engineers");
+                                "g) Reset engineers\n");
         }
 
         static void TaskOptionsPrint()
@@ -74,7 +78,7 @@ namespace DalTest
                                 "d) Display the task list\n" +
                                 "e) Update a task\n" +
                                 "f) Delete a task from the task list\n" +
-                                "g) Reset tasks");
+                                "g) Reset tasks\n");
         }
 
         static void DependencyOptionsPrint()
@@ -86,50 +90,62 @@ namespace DalTest
                                 "d) Display the dependency list\n" +
                                 "e) Update a dependency\n" +
                                 "f) Delete a dependecy from the task list\n" +
-                                "g) Reset dependencies");
+                                "g) Reset dependencies\n");
         }
 
         static void EngineerOptionsSwitch(string _userInput)
         {
             int _id;
             Engineer _newEngineer;
-            switch (_userInput)
+            try
             {
-                case "a": //Go Back
-                    break;
-                case "b": //Add Engineer
-                    Console.WriteLine("Enter the id, name, email, cost, and experience level (on seperate lines):");
-                    _newEngineer = ParseEngineer();
-                    s_dalEngineer.Create(_newEngineer);
-                    break;
-                case "c": //Display Engineer
-                    Console.WriteLine("Enter the id of the engineer you would like to display:");
-                    int.TryParse(Console.ReadLine(), out _id);
-                    Engineer _engineerToPrint = s_dalEngineer.Read(_id);
-                    Console.WriteLine(_engineerToPrint);
-                    break;
-                case "d": //Display Engineer List
-                    List<Engineer> _engineerList = s_dalEngineer.ReadAll();
-                    foreach(Engineer _engineer in _engineerList )
-                    {
-                        Console.WriteLine(_engineer);
-                    }
-                    break;
-                case "e": //Update Engineer
-                    Console.WriteLine("Enter the updated information of the engineer, including - id, name, email, cost, and experience level (on seperate lines):");
-                    _newEngineer = ParseEngineer();
-                    s_dalEngineer.Update(_newEngineer);
-                    break;
-                case "f": //Delete Engineer
-                    Console.WriteLine("Enter the id of the engineer you would like to delete:");
-                    int.TryParse(Console.ReadLine(), out _id);
-                    s_dalEngineer.Delete(_id);
-                    break;
-                case "g": //Reset Engineers
-                    break;
-                default:
-                    Console.WriteLine("Not sure how you ended up here... Try again...");
-                    break;
+                switch (_userInput)
+                {
+                    case "a": //Go Back
+                        Console.WriteLine();
+                        break;
+                    case "b": //Add Engineer
+                        Console.WriteLine("Enter the id, name, email, cost, and experience level (on seperate lines):\n");
+                        _newEngineer = ParseEngineer();
+                        s_dalEngineer.Create(_newEngineer);
+                        break;
+                    case "c": //Display Engineer
+                        Console.WriteLine("Enter the id of the engineer you would like to display:\n");
+                        int.TryParse(Console.ReadLine(), out _id);
+                        Console.WriteLine();
+                        Engineer _engineerToPrint = s_dalEngineer.Read(_id);
+                        Console.WriteLine();
+                        Console.WriteLine(_engineerToPrint + "\n");
+                        break;
+                    case "d": //Display Engineer List
+                        List<Engineer> _engineerList = s_dalEngineer.ReadAll();
+                        foreach (Engineer _engineer in _engineerList)
+                        {
+                            Console.WriteLine(_engineer);
+                        }
+                        Console.WriteLine();
+                        break;
+                    case "e": //Update Engineer
+                        Console.WriteLine("Enter the updated information of the engineer, including - id, name, email, cost, and experience level (on seperate lines):\n");
+                        _newEngineer = ParseEngineer();
+                        s_dalEngineer.Update(_newEngineer);
+                        break;
+                    case "f": //Delete Engineer
+                        Console.WriteLine("Enter the id of the engineer you would like to delete:\n");
+                        int.TryParse(Console.ReadLine(), out _id);
+                        Console.WriteLine();
+                        s_dalEngineer.Delete(_id);
+                        break;
+                    case "g": //Reset Engineers
+                        break;
+                    default:
+                        Console.WriteLine("Not sure how you ended up here... Try again...\n");
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
             }
         }
 
@@ -137,43 +153,54 @@ namespace DalTest
         {
             int _id;
             Task _newTask;
-            switch (_userInput)
+            try
             {
-                case "a": //Go Back
-                    break;
-                case "b": //Add Task
-                    Console.WriteLine("Enter the id, isMilestone, degree of difficulty, assigned engineer id, nickname, description, deliverables, notes, date created, projected start date, actual start date, duration, deadline, and actual end date (on seperate lines):");
-                    _newTask = ParseTask();
-                    s_dalTask.Create(_newTask);
-                    break;
-                case "c": //Display Task
-                    Console.WriteLine("Enter the id of the task you would like to display:");
-                    int.TryParse(Console.ReadLine(), out _id);
-                    Task _taskToPrint = s_dalTask.Read(_id);
-                    Console.WriteLine(_taskToPrint);
-                    break;
-                case "d": //Display Task List
-                    List<Task> _taskList = s_dalTask.ReadAll();
-                    foreach (Task _task in _taskList)
-                    {
-                        Console.WriteLine(_task);
-                    }
-                    break;
-                case "e": //Update Task
-                    Console.WriteLine("Enter the updated information of the task, including - id, isMilestone, degree of difficulty, assigned engineer id, nickname, description, deliverables, notes, date created, projected start date, actual start date, duration, deadline, and actual end date (on seperate lines):");
-                    _newTask = ParseTask();
-                    s_dalTask.Update(_newTask);
-                    break;
-                case "f": //Delete Task
-                    Console.WriteLine("Enter the id of the task you would like to delete:");
-                    int.TryParse(Console.ReadLine(), out _id);
-                    s_dalTask.Delete(_id);
-                    break;
-                case "g": //Reset Tasks
-                    break;
-                default:
-                    Console.WriteLine("Not sure how you ended up here... Try again...");
-                    break;
+                switch (_userInput)
+                {
+                    case "a": //Go Back
+                        Console.WriteLine();
+                        break;
+                    case "b": //Add Task
+                        Console.WriteLine("Enter the id, isMilestone, degree of difficulty, assigned engineer id, nickname, description, deliverables, notes, date created, projected start date, actual start date, duration, deadline, and actual end date (on seperate lines):\n");
+                        _newTask = ParseTask();
+                        s_dalTask.Create(_newTask);
+                        break;
+                    case "c": //Display Task
+                        Console.WriteLine("Enter the id of the task you would like to display:\n");
+                        int.TryParse(Console.ReadLine(), out _id);
+                        Console.WriteLine();
+                        Task _taskToPrint = s_dalTask.Read(_id);
+                        Console.WriteLine(_taskToPrint + "\n");
+                        break;
+                    case "d": //Display Task List
+                        List<Task> _taskList = s_dalTask.ReadAll();
+                        foreach (Task _task in _taskList)
+                        {
+                            Console.WriteLine(_task);
+                        }
+                        Console.WriteLine();
+                        break;
+                    case "e": //Update Task
+                        Console.WriteLine("Enter the updated information of the task, including - id, isMilestone, degree of difficulty, assigned engineer id, nickname, description, deliverables, notes, date created, projected start date, actual start date, duration, deadline, and actual end date (on seperate lines):\n");
+                        _newTask = ParseTask();
+                        s_dalTask.Update(_newTask);
+                        break;
+                    case "f": //Delete Task
+                        Console.WriteLine("Enter the id of the task you would like to delete:\n");
+                        int.TryParse(Console.ReadLine(), out _id);
+                        Console.WriteLine();
+                        s_dalTask.Delete(_id);
+                        break;
+                    case "g": //Reset Tasks
+                        break;
+                    default:
+                        Console.WriteLine("Not sure how you ended up here... Try again...\n");
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
             }
         }
 
@@ -181,43 +208,54 @@ namespace DalTest
         {
             int _id;
             Dependency _newDependency;
-            switch (_userInput)
+            try
             {
-                case "a": //Go Back
-                    break;
-                case "b": //Add Dependency
-                    Console.WriteLine("Enter the id, dependent task id, depends-on task id, customer email, shipping address, and order creation date (on seperate lines):");
-                    _newDependency = ParseDependency();
-                    s_dalDependency.Create(_newDependency);
-                    break;
-                case "c": //Display Dependency
-                    Console.WriteLine("Enter the id of the dependency you would like to display:");
-                    int.TryParse(Console.ReadLine(), out _id);
-                    Dependency _dependencyToPrint = s_dalDependency.Read(_id);
-                    Console.WriteLine(_dependencyToPrint);
-                    break;
-                case "d": //Display Dependency List
-                    List<Dependency> _dependencyList = s_dalDependency.ReadAll();
-                    foreach (Dependency _dependency in _dependencyList)
-                    {
-                        Console.WriteLine(_dependency);
-                    }
-                    break;
-                case "e": //Update Dependency
-                    Console.WriteLine("Enter the updated information of the dependecy, including - id, dependent task id, depends-on task id, customer email, shipping address, and order creation date (on seperate lines):");
-                    _newDependency = ParseDependency();
-                    s_dalDependency.Update(_newDependency);
-                    break;
-                case "f": //Delete Dependency
-                    Console.WriteLine("Enter the id of the dependency you would like to delete:");
-                    int.TryParse(Console.ReadLine(), out _id);
-                    s_dalDependency.Delete(_id);
-                    break;
-                case "g": //Reset Dependencies
-                    break;
-                default:
-                    Console.WriteLine("Not sure how you ended up here... Try again...");
-                    break;
+                switch (_userInput)
+                {
+                    case "a": //Go Back
+                        Console.WriteLine();
+                        break;
+                    case "b": //Add Dependency
+                        Console.WriteLine("Enter the id, dependent task id, depends-on task id, customer email, shipping address, and order creation date (on seperate lines):\n");
+                        _newDependency = ParseDependency();
+                        s_dalDependency.Create(_newDependency);
+                        break;
+                    case "c": //Display Dependency
+                        Console.WriteLine("Enter the id of the dependency you would like to display:\n");
+                        int.TryParse(Console.ReadLine(), out _id);
+                        Console.WriteLine();
+                        Dependency _dependencyToPrint = s_dalDependency.Read(_id);
+                        Console.WriteLine(_dependencyToPrint + "\n");
+                        break;
+                    case "d": //Display Dependency List
+                        List<Dependency> _dependencyList = s_dalDependency.ReadAll();
+                        foreach (Dependency _dependency in _dependencyList)
+                        {
+                            Console.WriteLine(_dependency);
+                        }
+                        Console.WriteLine();
+                        break;
+                    case "e": //Update Dependency
+                        Console.WriteLine("Enter the updated information of the dependecy, including - id, dependent task id, depends-on task id, customer email, shipping address, and order creation date (on seperate lines):\n");
+                        _newDependency = ParseDependency();
+                        s_dalDependency.Update(_newDependency);
+                        break;
+                    case "f": //Delete Dependency
+                        Console.WriteLine("Enter the id of the dependency you would like to delete:\n");
+                        int.TryParse(Console.ReadLine(), out _id);
+                        Console.WriteLine();
+                        s_dalDependency.Delete(_id);
+                        break;
+                    case "g": //Reset Dependencies
+                        break;
+                    default:
+                        Console.WriteLine("Not sure how you ended up here... Try again...\n");
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
             }
         }
 
@@ -231,6 +269,8 @@ namespace DalTest
             _cost = _costConverted ? _costValue : null;
             Enum.TryParse(Console.ReadLine(), out EngineerExperience _level);
             Engineer _newEngineer = new(_id, _name, _email, _cost, _level);
+            Console.WriteLine();
+
             return _newEngineer;
         }
 
@@ -264,6 +304,7 @@ namespace DalTest
             DateTime? _actualEndDate;
             bool _endDateConverted = DateTime.TryParse(Console.ReadLine(), out DateTime _endDateValue);
             _actualEndDate = _endDateConverted ? _endDateValue : null;
+            Console.WriteLine();
 
             Task _newTask = new(_id, _isMilestone, _level, _assignedEngineerId, _nickname, _description, _deliverables, _notes, _dateCreated, _projectedStartDate, _actualStartDate, _duration, _deadline, _actualEndDate);
             return _newTask;
@@ -285,7 +326,8 @@ namespace DalTest
             DateTime? _deliveryDate;
             bool _deliveryDateConverted = DateTime.TryParse(Console.ReadLine(), out DateTime _deliveryDateValue);
             _deliveryDate = _deliveryDateConverted ? _deliveryDateValue : null;
-            
+            Console.WriteLine();
+
             Dependency _newDependency = new(_id, _dependentTask, _dependsOnTask, _customerEmail, _shippingAddress, _orderCreationDate, _shippingDate, _deliveryDate);
             return _newDependency;
         }
