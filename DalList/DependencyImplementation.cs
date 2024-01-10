@@ -2,10 +2,10 @@
 using DO;
 using DalApi;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http.Headers;
-using System.Threading.Tasks;
 
+/// <summary>
+/// Implementation of Dependency Interface, which implements CRUD methods and Reset
+/// </summary>
 public class DependencyImplementation : IDependency
 {
     public int Create(Dependency item)
@@ -33,19 +33,12 @@ public class DependencyImplementation : IDependency
 
     public Dependency? Read(int id)
     {
-        foreach (Dependency item in DataSource.Dependencies)
-        {
-            if (item.id == id)
-            {
-                return item;
-            }
-        }
-        return null;
+        return DataSource.Dependencies.Find(item => item.id == id && item.active);
     }
 
     public List<Dependency> ReadAll()
     {
-        return new List<Dependency>(DataSource.Dependencies);
+        return new List<Dependency>(DataSource.Dependencies.FindAll(item => item.active));
     }
 
     public void Update(Dependency item)

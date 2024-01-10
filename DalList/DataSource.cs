@@ -1,7 +1,13 @@
 ﻿namespace Dal;
 
+/// <summary>
+/// Class which acts as our databse, storing the lists on each entity
+/// </summary>
 internal static class DataSource
 {
+	/// <summary>
+	/// Internal Config class which stores project start and end dates, as well as auto-generating values for IDs
+	/// </summary>
 	internal static class Config {
 		internal static DateTime? _startDate { get; set; } = null;
 		internal static DateTime? _endDate { get; set; } = null;

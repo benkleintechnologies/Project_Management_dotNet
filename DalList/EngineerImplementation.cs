@@ -3,12 +3,11 @@ using DalApi;
 using DO;
 using System.Collections.Generic;
 
+/// <summary>
+/// Implementation of Engineer Interface, which implements CRUD methods and Reset
+/// </summary>
 public class EngineerImplementation: IEngineer
 {
-	public EngineerImplementation()
-	{
-	}
-
     public int Create(Engineer item)
     {
         if (DataSource.Engineers.Contains(item))
@@ -36,18 +35,12 @@ public class EngineerImplementation: IEngineer
 
     public Engineer? Read(int id)
     {
-        foreach (Engineer item in DataSource.Engineers)
-        {
-            if (item.id == id) {
-                return item;
-            }
-        }
-        return null;
+        return DataSource.Engineers.Find(item => item.id == id && item.active);
     }
 
     public List<Engineer> ReadAll()
     {
-        return new List<Engineer>(DataSource.Engineers);
+        return new List<Engineer>(DataSource.Engineers.FindAll(item => item.active));
     }
 
     public void Update(Engineer item)

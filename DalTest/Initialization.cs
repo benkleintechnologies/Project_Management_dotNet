@@ -1,21 +1,25 @@
 ﻿namespace DalTest;
 using DO;
 using DalApi;
-using System.Xml.Linq;
 using System;
+using Dal;
 
+/// <summary>
+/// Class to initialize data layer with "random" data
+/// </summary>
 public static class Initialization
 {
+    private static IConfig? s_dalConfig;
     private static IEngineer? s_dalEngineer; //stage 1
     private static IDependency? s_dalDependency; //stage 1
     private static ITask? s_dalTask; //stage 1
 
     private static readonly Random s_rand = new();
 
-    public static void Do(IEngineer? dalEngineer, IDependency? dalDependecy, ITask? dalTask)
+    public static void Do(IConfig? dalConfig, IEngineer? dalEngineer, IDependency? dalDependecy, ITask? dalTask)
     {
-        //Initialize config????????????
-
+        s_dalConfig = dalConfig ?? throw new NullReferenceException("DalConfig cannot be null!");
+        createConfig();
         s_dalEngineer = dalEngineer ?? throw new NullReferenceException("DalEngineer cannot be null!");
         createEngineers();
         s_dalTask = dalTask ?? throw new NullReferenceException("DalTask cannot be null!");
@@ -24,6 +28,20 @@ public static class Initialization
         createDependencies();
     }
 
+    /// <summary>
+    /// Set random start and end date for the project
+    /// </summary>
+    private static void createConfig()
+    {
+        DateTime _startDate = DateTime.Now.AddDays(s_rand.Next(1,28));
+        DateTime _endDate = DateTime.Now.AddMonths(s_rand.Next(6,12));
+        s_dalConfig!.setStartDate(_startDate);
+        s_dalConfig!.setEndDate(_endDate);
+    }
+
+    /// <summary>
+    /// Create 5 engineers "randomally"
+    /// </summary>
     private static void createEngineers()
     {
         String[] _engineerNames = {
@@ -54,6 +72,9 @@ public static class Initialization
 
     }
 
+    /// <summary>
+    /// Create 20 Tasks "radomally" between the start and end date of the project
+    /// </summary>
     private static void createTasks()
     {
         for (int i = 0; i<20; i++)
@@ -63,7 +84,7 @@ public static class Initialization
             int _randomIndex = s_rand.Next(_values.Length);
             EngineerExperience _difficultyLevel = (EngineerExperience)_values.GetValue(_randomIndex);
             
-            //Making each task a random length, starting when the previous one is supposed to finish
+            //Making each task a random length
             TimeSpan _toSubtract = TimeSpan.FromDays(s_rand.Next(1,28));
             DateTime _dateCreated = DateTime.Now - _toSubtract;
             DateTime _projectedStartDate = DateTime.Now.AddMonths(s_rand.Next(1, 5)).AddDays(s_rand.Next(0,28));
@@ -75,6 +96,10 @@ public static class Initialization
         }
     }
 
+    /// <summary>
+    /// Create 40 "radom" dependencies including some with multiple dependencies, 
+    /// avoiding duplicates and circular dependencies
+    /// </summary>
     private static void createDependencies()
     {
         Task[] _tasks = s_dalTask!.ReadAll().ToArray();
@@ -127,12 +152,25 @@ public static class Initialization
         }
     }
 
+    /// <summary>
+    /// Figure out if the dependentTask and DependsOnTask will create a ciircular dependency 
+    /// </summary>
+    /// <param name="_dependentTask"></param>
+    /// <param name="_dependsOnTask"></param>
+    /// <returns>If the dependency is circular</returns>
     private static bool createsCircularDependency(int _dependentTask, int _dependsOnTask)
     {
         // Check if dependsOnTask is directly or indirectly dependent on dependentTask
         return isIndirectlyDependent(_dependentTask, _dependsOnTask, new List<int>());
     }
 
+    /// <summary>
+    /// Recursively check if there is a direct or indirect circular dependency
+    /// </summary>
+    /// <param name="_targetTask"></param>
+    /// <param name="_currentTask"></param>
+    /// <param name="_visitedTasks"></param>
+    /// <returns>True if circular dependency found</returns>
     private static bool isIndirectlyDependent(int _targetTask, int _currentTask, List<int> _visitedTasks)
     {
         if (_visitedTasks.Contains(_currentTask))

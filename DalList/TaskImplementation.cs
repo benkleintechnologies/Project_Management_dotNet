@@ -2,8 +2,10 @@
 using DalApi;
 using DO;
 using System.Collections.Generic;
-using System.Linq;
 
+/// <summary>
+/// Implementation of Task Interface, which implements CRUD methods and Reset
+/// </summary>
 public class TaskImplementation : ITask
 {
     public int Create(Task item)
@@ -31,19 +33,12 @@ public class TaskImplementation : ITask
 
     public Task? Read(int id)
     {
-        foreach (Task item in DataSource.Tasks)
-        {
-            if (item.id == id)
-            {
-                return item;
-            }
-        }
-        return null;
+        return DataSource.Tasks.Find(item => item.id == id && item.active);
     }
 
     public List<Task> ReadAll()
     {
-        return new List<Task>(DataSource.Tasks);
+        return new List<Task>(DataSource.Tasks.FindAll(item => item.active));
     }
 
     public void Update(Task item)
