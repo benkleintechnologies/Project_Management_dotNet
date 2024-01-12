@@ -10,9 +10,9 @@ internal class EngineerImplementation: IEngineer
 {
     public int Create(Engineer item)
     {
-        if (DataSource.Engineers.Contains(item))
+        if (Read(item.id) is not null)
         {
-            throw new Exception($"An object of type Engineer with id {item.id} already exists");
+            throw new DalAlreadyExistsException($"An object of type Engineer with id {item.id} already exists");
         }
         DataSource.Engineers.Add(item);
         return item.id;
@@ -23,7 +23,7 @@ internal class EngineerImplementation: IEngineer
         Engineer engineer = Read(id);
         if (engineer == null) 
         { 
-            throw new Exception($"Object of type Engineer with identifier {id} does not exist"); 
+            throw new DalDoesNotExistException($"Object of type Engineer with identifier {id} does not exist, so it cannot be deleted."); 
         } 
         else
         {
@@ -36,6 +36,11 @@ internal class EngineerImplementation: IEngineer
     public Engineer? Read(int id)
     {
         return DataSource.Engineers.FirstOrDefault(item => item.id == id && item.active);
+    }
+
+    public Engineer? Read(Func<Engineer, bool> filter)
+    {
+        return DataSource.Engineers.Where(item => item.active).FirstOrDefault(filter);
     }
 
     public IEnumerable<Engineer> ReadAll(Func<Engineer, bool>? filter = null)
@@ -57,7 +62,7 @@ internal class EngineerImplementation: IEngineer
         }
         else
         {
-            throw new Exception($"Object of type Engineer with identifier {item.id} does not exist");
+            throw new DalDoesNotExistException($"Object of type Engineer with identifier {item.id} does not exist");
         }
     }
 
