@@ -6,7 +6,7 @@ using System.Collections.Generic;
 /// <summary>
 /// Implementation of Engineer Interface, which implements CRUD methods and Reset
 /// </summary>
-public class EngineerImplementation: IEngineer
+internal class EngineerImplementation: IEngineer
 {
     public int Create(Engineer item)
     {
