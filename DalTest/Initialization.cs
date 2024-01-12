@@ -96,7 +96,7 @@ public static class Initialization
     /// </summary>
     private static void createDependencies()
     {
-        Task[] _tasks = s_dal!.Task.ReadAll().ToArray();
+        Task?[] _tasks = s_dal!.Task.ReadAll().ToArray();
 
         //Create cases of multiple dependencies, and where two different tasks have the same dependencies
         int _dependentTask1 = _tasks[0].id;
@@ -177,7 +177,7 @@ public static class Initialization
 
         Dependency[] _dependencies = s_dal!.Dependency.ReadAll().Where(d => d.dependentTask == _currentTask).ToArray();
 
-        foreach (var _dependency in _dependencies)
+        foreach (Dependency _dependency in _dependencies)
         {
             if (_dependency.dependsOnTask == _targetTask || isIndirectlyDependent(_targetTask, _dependency.dependsOnTask, _visitedTasks))
             {

@@ -20,7 +20,7 @@ internal class EngineerImplementation: IEngineer
 
     public void Delete(int id)
     {
-        Engineer engineer = Read(id);
+        Engineer? engineer = Read(id);
         if (engineer == null) 
         { 
             throw new DalDoesNotExistException($"Object of type Engineer with identifier {id} does not exist, so it cannot be deleted."); 

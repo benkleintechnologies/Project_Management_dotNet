@@ -18,7 +18,7 @@ internal class DependencyImplementation : IDependency
 
     public void Delete(int id)
     {
-        Dependency dependency = Read(id);
+        Dependency? dependency = Read(id);
         if (dependency == null)
         {
             throw new DalDoesNotExistException($"Object of type Dependency with identifier {id} does not exist");

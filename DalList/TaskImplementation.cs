@@ -18,7 +18,7 @@ internal class TaskImplementation : ITask
 
     public void Delete(int id)
     {
-        Task task = Read(id);
+        Task? task = Read(id);
         if (task == null)
         {
             throw new DalDoesNotExistException($"Object of type Task with identifier {id} does not exist");

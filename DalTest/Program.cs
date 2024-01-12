@@ -107,7 +107,7 @@ internal class Program
     /// Switch to perform requested action with Engineers
     /// </summary>
     /// <param name="_userInput">Operation user chose to perform with the Engineers</param>
-    static void EngineerOptionsSwitch(string _userInput)
+    static void EngineerOptionsSwitch(string? _userInput)
     {
         int _id;
         Engineer _newEngineer;
@@ -127,7 +127,7 @@ internal class Program
                     Console.WriteLine("Enter the id of the engineer you would like to display:\n");
                     int.TryParse(Console.ReadLine(), out _id);
                     Console.WriteLine();
-                    Engineer _engineerToPrint = s_dal.Engineer.Read(_id);
+                    Engineer? _engineerToPrint = s_dal.Engineer.Read(_id);
                     Console.WriteLine();
                     Console.WriteLine(_engineerToPrint + "\n");
                     break;
@@ -168,7 +168,7 @@ internal class Program
     /// Switch to perform requested action with Tasks
     /// </summary>
     /// <param name="_userInput">Operation user chose to perform with the Tasks</param>
-    static void TaskOptionsSwitch(string _userInput)
+    static void TaskOptionsSwitch(string? _userInput)
     {
         int _id;
         Task _newTask;
