@@ -21,7 +21,7 @@ internal class TaskImplementation : ITask
         Task task = Read(id);
         if (task == null)
         {
-            throw new Exception($"Object of type Task with identifier {id} does not exist");
+            throw new DalDoesNotExistException($"Object of type Task with identifier {id} does not exist");
         }
         else
         {
@@ -60,7 +60,7 @@ internal class TaskImplementation : ITask
         }
         else
         {
-            throw new Exception($"Object of type Task with identifier {item.id} does not exist");
+            throw new DalDoesNotExistException($"Object of type Task with identifier {item.id} does not exist");
         }
     }
 

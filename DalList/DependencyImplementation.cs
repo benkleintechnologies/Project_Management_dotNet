@@ -21,7 +21,7 @@ internal class DependencyImplementation : IDependency
         Dependency dependency = Read(id);
         if (dependency == null)
         {
-            throw new Exception($"Object of type Dependency with identifier {id} does not exist");
+            throw new DalDoesNotExistException($"Object of type Dependency with identifier {id} does not exist");
         }
         else
         {
@@ -60,7 +60,7 @@ internal class DependencyImplementation : IDependency
         }
         else
         {
-            throw new Exception($"Object of type Dependency with identifier {item.id} does not exist");
+            throw new DalDoesNotExistException($"Object of type Dependency with identifier {item.id} does not exist");
         }
     }
 
