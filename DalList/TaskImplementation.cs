@@ -33,12 +33,12 @@ internal class TaskImplementation : ITask
 
     public Task? Read(int id)
     {
-        return DataSource.Tasks.Find(item => item.id == id && item.active);
+        return DataSource.Tasks.FirstOrDefault(item => item.id == id && item.active);
     }
 
     public List<Task> ReadAll()
     {
-        return new List<Task>(DataSource.Tasks.FindAll(item => item.active));
+        return DataSource.Tasks.Where(item => item.active).ToList();
     }
 
     public void Update(Task item)
