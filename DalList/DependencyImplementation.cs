@@ -52,7 +52,7 @@ internal class DependencyImplementation : IDependency
 
     public void Update(Dependency item)
     {
-        Dependency old = Read(item.id);
+        Dependency? old = Read(item.id);
         if (old != null)
         {
             DataSource.Dependencies.Remove(old);

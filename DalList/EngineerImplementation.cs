@@ -54,7 +54,7 @@ internal class EngineerImplementation: IEngineer
 
     public void Update(Engineer item)
     {
-        Engineer old = Read(item.id);
+        Engineer? old = Read(item.id);
         if (old != null)
         {
             DataSource.Engineers.Remove(old);

@@ -52,7 +52,7 @@ internal class TaskImplementation : ITask
 
     public void Update(Task item)
     {
-        Task old = Read(item.id);
+        Task? old = Read(item.id);
         if (old != null)
         {
             DataSource.Tasks.Remove(old);
