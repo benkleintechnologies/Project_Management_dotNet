@@ -9,13 +9,13 @@ using Dal;
 /// </summary>
 public static class Initialization
 {
-    private static IDal? s_Dal; // stage 2
+    private static IDal? s_dal; // stage 2
 
     private static readonly Random s_rand = new();
 
     public static void Do(IDal dal) // stage 2
     {
-        s_Dal = dal ?? throw new NullReferenceException("Dal cannot be null!"); // stage 2
+        s_dal = dal ?? throw new NullReferenceException("Dal cannot be null!"); // stage 2
         createConfig();
         createEngineers();
         createTasks();
@@ -29,8 +29,8 @@ public static class Initialization
     {
         DateTime _startDate = DateTime.Now.AddDays(s_rand.Next(1,28));
         DateTime _endDate = DateTime.Now.AddMonths(s_rand.Next(6,12));
-        s_Dal!.Config.setStartDate(_startDate);
-        s_Dal!.Config.setEndDate(_endDate);
+        s_dal!.Config.setStartDate(_startDate);
+        s_dal!.Config.setEndDate(_endDate);
     }
 
     /// <summary>
@@ -53,7 +53,7 @@ public static class Initialization
             int _id; 
             do
                 _id = s_rand.Next(200000000, 400000000); 
-            while (s_Dal!.Engineer.Read(_id) != null);
+            while (s_dal!.Engineer.Read(_id) != null);
 
             //randomaly choose experience level
             var _values = Enum.GetValues(typeof(EngineerExperience));
@@ -61,7 +61,7 @@ public static class Initialization
             EngineerExperience _engineerExperience = (EngineerExperience)_values.GetValue(_randomIndex);
             
             Engineer _newEng = new(_id, _engineerNames[i], _engineerEmails[i], s_rand.Next(80000, 200000), _engineerExperience);
-            s_Dal!.Engineer.Create(_newEng);
+            s_dal!.Engineer.Create(_newEng);
         }
 
     }
@@ -86,7 +86,7 @@ public static class Initialization
             TimeSpan _duration = _deadline.Subtract(_projectedStartDate);
 
             Task _newTask = new(0, false, _difficultyLevel, null, null, null, null, null, _dateCreated, _projectedStartDate, null, _duration, _deadline, null);
-            s_Dal!.Task.Create(_newTask);
+            s_dal!.Task.Create(_newTask);
         }
     }
 
@@ -96,7 +96,7 @@ public static class Initialization
     /// </summary>
     private static void createDependencies()
     {
-        Task[] _tasks = s_Dal!.Task.ReadAll().ToArray();
+        Task[] _tasks = s_dal!.Task.ReadAll().ToArray();
 
         //Create cases of multiple dependencies, and where two different tasks have the same dependencies
         int _dependentTask1 = _tasks[0].id;
@@ -107,10 +107,10 @@ public static class Initialization
         Dependency _dependency2 = new(0, _dependentTask1, _dependsOnTask2, null, null, null, null, null);
         Dependency _dependency3 = new(0, _dependentTask2, _dependsOnTask1, null, null, null, null, null);
         Dependency _dependency4 = new(0, _dependentTask2, _dependsOnTask2, null, null, null, null, null);
-        s_Dal!.Dependency.Create(_dependency1);
-        s_Dal!.Dependency.Create(_dependency2);
-        s_Dal!.Dependency.Create(_dependency3);
-        s_Dal!.Dependency.Create(_dependency4);
+        s_dal!.Dependency.Create(_dependency1);
+        s_dal!.Dependency.Create(_dependency2);
+        s_dal!.Dependency.Create(_dependency3);
+        s_dal!.Dependency.Create(_dependency4);
 
         //Generate random dependencies
         for (int i = 0; i <= 36; i++) 
@@ -129,7 +129,7 @@ public static class Initialization
             Dependency _newDependency = new(0, _dependentTask, _dependsOnTask, null, null, null, null, null);
 
             //Make sure a dependency doesn't exist in s_dalDependency with the same dependentTask and dependsOnTask
-            Dependency[] _dependencies = s_Dal!.Dependency.ReadAll().ToArray();
+            Dependency[] _dependencies = s_dal!.Dependency.ReadAll().ToArray();
             bool _existsAlready = false;
             foreach(Dependency _dependency in _dependencies)
             {
@@ -141,7 +141,7 @@ public static class Initialization
             }
             if (!_existsAlready)
             {
-                s_Dal!.Dependency.Create(_newDependency);
+                s_dal!.Dependency.Create(_newDependency);
             }
         }
     }
@@ -175,7 +175,7 @@ public static class Initialization
 
         _visitedTasks.Add(_currentTask);
 
-        Dependency[] _dependencies = s_Dal!.Dependency.ReadAll().Where(d => d.dependentTask == _currentTask).ToArray();
+        Dependency[] _dependencies = s_dal!.Dependency.ReadAll().Where(d => d.dependentTask == _currentTask).ToArray();
 
         foreach (var _dependency in _dependencies)
         {

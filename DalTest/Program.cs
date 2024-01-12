@@ -10,10 +10,7 @@ using Task = DO.Task;
 /// </summary>
 internal class Program
 {
-    private static IConfig? s_dalConfig = new ConfigImplementation();
-    private static IEngineer? s_dalEngineer = new EngineerImplementation();
-    private static ITask? s_dalTask = new TaskImplementation();
-    private static IDependency? s_dalDependency = new DependencyImplementation();
+    static readonly IDal s_dal = new DalList(); // stage 2
 
     /// <summary>
     /// Runs loop of main menu
@@ -23,7 +20,7 @@ internal class Program
     {
         try
         {
-            Initialization.Do(s_dalConfig, s_dalEngineer, s_dalDependency, s_dalTask);
+            Initialization.Do(s_dal); // stage 2
             bool _exit = false;
             while (!_exit)
             {
@@ -56,7 +53,7 @@ internal class Program
                         DependencyOptionsSwitch(_userInput);
                         break;
                     case 4:
-                        s_dalConfig!.reset();
+                        s_dal!.Config.reset();
                         Console.WriteLine("Project Reset...\n");
                         break;
                     default: Console.WriteLine("Incorrect input, try again\n"); 
@@ -124,18 +121,18 @@ internal class Program
                 case "b": //Add Engineer
                     Console.WriteLine("Enter the id, name, email, cost, and experience level (on seperate lines):\n");
                     _newEngineer = ParseEngineer();
-                    s_dalEngineer.Create(_newEngineer);
+                    s_dal.Engineer.Create(_newEngineer);
                     break;
                 case "c": //Display Engineer
                     Console.WriteLine("Enter the id of the engineer you would like to display:\n");
                     int.TryParse(Console.ReadLine(), out _id);
                     Console.WriteLine();
-                    Engineer _engineerToPrint = s_dalEngineer.Read(_id);
+                    Engineer _engineerToPrint = s_dal.Engineer.Read(_id);
                     Console.WriteLine();
                     Console.WriteLine(_engineerToPrint + "\n");
                     break;
                 case "d": //Display Engineer List
-                    List<Engineer> _engineerList = s_dalEngineer.ReadAll();
+                    List<Engineer> _engineerList = s_dal.Engineer.ReadAll();
                     foreach (Engineer _engineer in _engineerList)
                     {
                         Console.WriteLine(_engineer);
@@ -145,16 +142,16 @@ internal class Program
                 case "e": //Update Engineer
                     Console.WriteLine("Enter the updated information of the engineer, including - id, name, email, cost, and experience level (on seperate lines):\n");
                     _newEngineer = ParseEngineer();
-                    s_dalEngineer.Update(_newEngineer);
+                    s_dal.Engineer.Update(_newEngineer);
                     break;
                 case "f": //Delete Engineer
                     Console.WriteLine("Enter the id of the engineer you would like to delete:\n");
                     int.TryParse(Console.ReadLine(), out _id);
                     Console.WriteLine();
-                    s_dalEngineer.Delete(_id);
+                    s_dal.Engineer.Delete(_id);
                     break;
                 case "g": //Reset Engineers
-                    s_dalEngineer.Reset();
+                    s_dal.Engineer.Reset();
                     break;
                 default:
                     Console.WriteLine("Not sure how you ended up here... Try again...\n");
@@ -185,17 +182,17 @@ internal class Program
                 case "b": //Add Task
                     Console.WriteLine("Enter the id, isMilestone, degree of difficulty, assigned engineer id, nickname, description, deliverables, notes, date created, projected start date, actual start date, duration, deadline, and actual end date (on seperate lines):\n");
                     _newTask = ParseTask();
-                    s_dalTask.Create(_newTask);
+                    s_dal.Task.Create(_newTask);
                     break;
                 case "c": //Display Task
                     Console.WriteLine("Enter the id of the task you would like to display:\n");
                     int.TryParse(Console.ReadLine(), out _id);
                     Console.WriteLine();
-                    Task _taskToPrint = s_dalTask.Read(_id);
+                    Task _taskToPrint = s_dal.Task.Read(_id);
                     Console.WriteLine(_taskToPrint + "\n");
                     break;
                 case "d": //Display Task List
-                    List<Task> _taskList = s_dalTask.ReadAll();
+                    List<Task> _taskList = s_dal.Task.ReadAll();
                     foreach (Task _task in _taskList)
                     {
                         Console.WriteLine(_task);
@@ -205,16 +202,16 @@ internal class Program
                 case "e": //Update Task
                     Console.WriteLine("Enter the updated information of the task, including - id, isMilestone, degree of difficulty, assigned engineer id, nickname, description, deliverables, notes, date created, projected start date, actual start date, duration, deadline, and actual end date (on seperate lines):\n");
                     _newTask = ParseTask();
-                    s_dalTask.Update(_newTask);
+                    s_dal.Task.Update(_newTask);
                     break;
                 case "f": //Delete Task
                     Console.WriteLine("Enter the id of the task you would like to delete:\n");
                     int.TryParse(Console.ReadLine(), out _id);
                     Console.WriteLine();
-                    s_dalTask.Delete(_id);
+                    s_dal.Task.Delete(_id);
                     break;
                 case "g": //Reset Tasks
-                    s_dalTask.Reset();
+                    s_dal.Task.Reset();
                     break;
                 default:
                     Console.WriteLine("Not sure how you ended up here... Try again...\n");
@@ -245,17 +242,17 @@ internal class Program
                 case "b": //Add Dependency
                     Console.WriteLine("Enter the id, dependent task id, depends-on task id, customer email, shipping address, and order creation date (on seperate lines):\n");
                     _newDependency = ParseDependency();
-                    s_dalDependency.Create(_newDependency);
+                    s_dal.Dependency.Create(_newDependency);
                     break;
                 case "c": //Display Dependency
                     Console.WriteLine("Enter the id of the dependency you would like to display:\n");
                     int.TryParse(Console.ReadLine(), out _id);
                     Console.WriteLine();
-                    Dependency _dependencyToPrint = s_dalDependency.Read(_id);
+                    Dependency _dependencyToPrint = s_dal.Dependency.Read(_id);
                     Console.WriteLine(_dependencyToPrint + "\n");
                     break;
                 case "d": //Display Dependency List
-                    List<Dependency> _dependencyList = s_dalDependency.ReadAll();
+                    List<Dependency> _dependencyList = s_dal.Dependency.ReadAll();
                     foreach (Dependency _dependency in _dependencyList)
                     {
                         Console.WriteLine(_dependency);
@@ -265,16 +262,16 @@ internal class Program
                 case "e": //Update Dependency
                     Console.WriteLine("Enter the updated information of the dependecy, including - id, dependent task id, depends-on task id, customer email, shipping address, and order creation date (on seperate lines):\n");
                     _newDependency = ParseDependency();
-                    s_dalDependency.Update(_newDependency);
+                    s_dal.Dependency.Update(_newDependency);
                     break;
                 case "f": //Delete Dependency
                     Console.WriteLine("Enter the id of the dependency you would like to delete:\n");
                     int.TryParse(Console.ReadLine(), out _id);
                     Console.WriteLine();
-                    s_dalDependency.Delete(_id);
+                    s_dal.Dependency.Delete(_id);
                     break;
                 case "g": //Reset Dependencies
-                    s_dalDependency.Reset();
+                    s_dal.Dependency.Reset();
                     break;
                 default:
                     Console.WriteLine("Not sure how you ended up here... Try again...\n");
