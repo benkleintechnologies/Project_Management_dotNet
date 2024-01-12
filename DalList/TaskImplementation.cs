@@ -36,9 +36,13 @@ internal class TaskImplementation : ITask
         return DataSource.Tasks.FirstOrDefault(item => item.id == id && item.active);
     }
 
-    public List<Task> ReadAll()
+    public IEnumerable<Task> ReadAll(Func<Task, bool>? filter = null)
     {
-        return DataSource.Tasks.Where(item => item.active).ToList();
+        if (filter == null)
+        {
+            return DataSource.Tasks.Where(item => item.active);
+        }
+        return DataSource.Tasks.Where(filter).Where(item => item.active);
     }
 
     public void Update(Task item)

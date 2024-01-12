@@ -36,9 +36,13 @@ internal class DependencyImplementation : IDependency
         return DataSource.Dependencies.FirstOrDefault(item => item.id == id && item.active);
     }
 
-    public List<Dependency> ReadAll()
+    public IEnumerable<Dependency> ReadAll(Func<Dependency, bool>? filter = null)
     {
-        return DataSource.Dependencies.Where(item => item.active).ToList();
+        if (filter == null)
+        {
+            return DataSource.Dependencies.Where(item => item.active);
+        }
+        return DataSource.Dependencies.Where(filter).Where(item => item.active);
     }
 
     public void Update(Dependency item)

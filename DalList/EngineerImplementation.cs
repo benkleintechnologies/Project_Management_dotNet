@@ -38,9 +38,13 @@ internal class EngineerImplementation: IEngineer
         return DataSource.Engineers.FirstOrDefault(item => item.id == id && item.active);
     }
 
-    public List<Engineer> ReadAll()
+    public IEnumerable<Engineer> ReadAll(Func<Engineer, bool>? filter = null)
     {
-        return DataSource.Engineers.Where(item => item.active).ToList();
+        if (filter == null)
+        {
+            return DataSource.Engineers.Where(item => item.active);
+        }
+        return DataSource.Engineers.Where(filter).Where(item => item.active);
     }
 
     public void Update(Engineer item)

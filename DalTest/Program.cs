@@ -28,7 +28,7 @@ internal class Program
                 string? _input = Console.ReadLine();
                 int.TryParse(_input, out int _inputNumber);
                 Console.WriteLine();
-                string _userInput;
+                string? _userInput;
                 switch (_inputNumber)
                 {
                     case 0:
@@ -132,8 +132,8 @@ internal class Program
                     Console.WriteLine(_engineerToPrint + "\n");
                     break;
                 case "d": //Display Engineer List
-                    List<Engineer> _engineerList = s_dal.Engineer.ReadAll();
-                    foreach (Engineer _engineer in _engineerList)
+                    IEnumerable<Engineer?> _engineerList = s_dal.Engineer.ReadAll();
+                    foreach (Engineer? _engineer in _engineerList)
                     {
                         Console.WriteLine(_engineer);
                     }
@@ -188,12 +188,12 @@ internal class Program
                     Console.WriteLine("Enter the id of the task you would like to display:\n");
                     int.TryParse(Console.ReadLine(), out _id);
                     Console.WriteLine();
-                    Task _taskToPrint = s_dal.Task.Read(_id);
+                    Task? _taskToPrint = s_dal.Task.Read(_id);
                     Console.WriteLine(_taskToPrint + "\n");
                     break;
                 case "d": //Display Task List
-                    List<Task> _taskList = s_dal.Task.ReadAll();
-                    foreach (Task _task in _taskList)
+                    IEnumerable<Task?> _taskList = s_dal.Task.ReadAll();
+                    foreach (Task? _task in _taskList)
                     {
                         Console.WriteLine(_task);
                     }
@@ -228,7 +228,7 @@ internal class Program
     /// Switch to perform requested action with Dependencies
     /// </summary>
     /// <param name="_userInput">Operation user chose to perform with the Dependencies</param>
-    static void DependencyOptionsSwitch(string _userInput)
+    static void DependencyOptionsSwitch(string? _userInput)
     {
         int _id;
         Dependency _newDependency;
@@ -248,12 +248,12 @@ internal class Program
                     Console.WriteLine("Enter the id of the dependency you would like to display:\n");
                     int.TryParse(Console.ReadLine(), out _id);
                     Console.WriteLine();
-                    Dependency _dependencyToPrint = s_dal.Dependency.Read(_id);
+                    Dependency? _dependencyToPrint = s_dal.Dependency.Read(_id);
                     Console.WriteLine(_dependencyToPrint + "\n");
                     break;
                 case "d": //Display Dependency List
-                    List<Dependency> _dependencyList = s_dal.Dependency.ReadAll();
-                    foreach (Dependency _dependency in _dependencyList)
+                    IEnumerable<Dependency?> _dependencyList = s_dal.Dependency.ReadAll();
+                    foreach (Dependency? _dependency in _dependencyList)
                     {
                         Console.WriteLine(_dependency);
                     }
