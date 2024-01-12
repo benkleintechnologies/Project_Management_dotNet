@@ -33,12 +33,12 @@ public class DependencyImplementation : IDependency
 
     public Dependency? Read(int id)
     {
-        return DataSource.Dependencies.Find(item => item.id == id && item.active);
+        return DataSource.Dependencies.FirstOrDefault(item => item.id == id && item.active);
     }
 
     public List<Dependency> ReadAll()
     {
-        return new List<Dependency>(DataSource.Dependencies.FindAll(item => item.active));
+        return DataSource.Dependencies.Where(item => item.active).ToList();
     }
 
     public void Update(Dependency item)

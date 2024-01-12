@@ -35,12 +35,12 @@ public class EngineerImplementation: IEngineer
 
     public Engineer? Read(int id)
     {
-        return DataSource.Engineers.Find(item => item.id == id && item.active);
+        return DataSource.Engineers.FirstOrDefault(item => item.id == id && item.active);
     }
 
     public List<Engineer> ReadAll()
     {
-        return new List<Engineer>(DataSource.Engineers.FindAll(item => item.active));
+        return DataSource.Engineers.Where(item => item.active).ToList();
     }
 
     public void Update(Engineer item)
