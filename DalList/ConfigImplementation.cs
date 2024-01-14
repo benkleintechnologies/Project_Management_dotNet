@@ -7,6 +7,9 @@ using System;
 /// </summary>
 internal class ConfigImplementation : IConfig
 {
+    /// <summary>
+    /// Reset all items in the database
+    /// </summary>
     public void reset()
     {
         DataSource.Engineers.Clear();
