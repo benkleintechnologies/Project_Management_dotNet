@@ -8,6 +8,11 @@ using System.Collections.Generic;
 /// </summary>
 internal class TaskImplementation : ITask
 {
+    /// <summary>
+    /// Add Task to database
+    /// </summary>
+    /// <param name="item">The Task to add</param>
+    /// <returns>The ID of the Task</returns>
     public int Create(Task item)
     {
         int id = DataSource.Config.NextTaskId;
@@ -16,6 +21,11 @@ internal class TaskImplementation : ITask
         return id;
     }
 
+    /// <summary>
+    /// Delete a Task from the database
+    /// </summary>
+    /// <param name="id">ID of the Task to delete</param>
+    /// <exception cref="DalDoesNotExistException">Thrown if there is no Task with this ID in the database</exception>
     public void Delete(int id)
     {
         Task? task = Read(id);
@@ -31,16 +41,31 @@ internal class TaskImplementation : ITask
         }
     }
 
+    /// <summary>
+    /// Retreive a Task from the database by ID
+    /// </summary>
+    /// <param name="id">ID of the Task</param>
+    /// <returns>The Task object requested</returns>
     public Task? Read(int id)
     {
         return DataSource.Tasks.FirstOrDefault(item => item.id == id && item.active);
     }
 
+    /// <summary>
+    /// Retreive an Engineer from the databse based on a filter
+    /// </summary>
+    /// <param name="filter">The criteria of the requested Engineer</param>
+    /// <returns>The Engineer object requested</returns>
     public Task? Read(Func<Task, bool> filter)
     {
         return DataSource.Tasks.Where(item => item.active).FirstOrDefault(filter);
     }
 
+    /// <summary>
+    /// Retreive all Tasks from the database
+    /// </summary>
+    /// <param name="filter">Optional filter to limit list</param>
+    /// <returns>Requested Enumerable of Tasks</returns>
     public IEnumerable<Task> ReadAll(Func<Task, bool>? filter = null)
     {
         if (filter == null)
@@ -50,6 +75,11 @@ internal class TaskImplementation : ITask
         return DataSource.Tasks.Where(filter).Where(item => item.active);
     }
 
+    /// <summary>
+    /// Updates a Task in the database
+    /// </summary>
+    /// <param name="item">New Task information</param>
+    /// <exception cref="DalDoesNotExistException">Thrown if no Task with the same ID exists</exception>
     public void Update(Task item)
     {
         Task? old = Read(item.id);
@@ -64,6 +94,9 @@ internal class TaskImplementation : ITask
         }
     }
 
+    /// <summary>
+    /// Reset Enumerable of Tasks in the database
+    /// </summary>
     public void Reset()
     {
         DataSource.Tasks.Clear();
