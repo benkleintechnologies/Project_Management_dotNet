@@ -61,10 +61,10 @@ internal class TaskImplementation : ITask
     }
 
     /// <summary>
-    /// Retreive an Engineer from the XML File based on a filter
+    /// Retreive a Task from the XML File based on a filter
     /// </summary>
-    /// <param name="filter">The criteria of the requested Engineer</param>
-    /// <returns>The Engineer object requested</returns>
+    /// <param name="filter">The criteria of the requested Task</param>
+    /// <returns>The Task object requested</returns>
     public Task? Read(Func<Task, bool> filter)
     {
         List<Task> _tasks = XMLTools.LoadListFromXMLSerializer<Task>(s_tasks_xml);
