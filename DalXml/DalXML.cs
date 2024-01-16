@@ -5,7 +5,7 @@ using DalApi;
 /// <summary>
 /// Returns new implementation object for each of the entities
 /// </summary>
-sealed public class DalXML : IDal
+sealed public class DalXml : IDal
 {
     public IConfig Config => new ConfigImplementation();
 
