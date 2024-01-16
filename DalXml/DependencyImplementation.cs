@@ -23,7 +23,19 @@ internal class DependencyImplementation : IDependency
         int _id = Config.NextDependencyId;
         Dependency _dependency = item with { id = _id };
         XElement _dependencies = XMLTools.LoadListFromXMLElement(s_dependencies_xml);
-        _dependencies.Add(_dependency);
+        // Convert Dependency object to XElement
+        XElement _dependencyElement = new XElement("Dependency",
+            new XElement("id", _dependency.id),
+            new XElement("dependentTask", _dependency.dependentTask),
+            new XElement("dependsOnTask", _dependency.dependsOnTask),
+            new XElement("customerEmail", _dependency.customerEmail),
+            new XElement("shippingAddress", _dependency.shippingAddress),
+            new XElement("orderCreationDate", _dependency.orderCreationDate),
+            new XElement("shippingDate", _dependency.shippingDate),
+            new XElement("deliveryDate", _dependency.deliveryDate),
+            new XElement("active", _dependency.active)
+        );
+        _dependencies.Add(_dependencyElement);
         XMLTools.SaveListToXMLElement(_dependencies, s_dependencies_xml);
         return _id;
     }
@@ -36,61 +48,50 @@ internal class DependencyImplementation : IDependency
     public void Delete(int id)
     {
         Dependency? _dependency = Read(id);
-        if (_dependency == null)
-        {
-            throw new DalDoesNotExistException($"Object of type Dependency with identifier {id} does not exist");
-        }
-        else
-        {
-            //Get list of dependencies
-            XElement _dependencies = XMLTools.LoadListFromXMLElement(s_dependencies_xml);
-            //Find the dependency with id
-            XElement _dependencyElement = _dependencies.Elements("Dependency").FirstOrDefault(e => (int)e.Attribute("id")! == id)!;
-
-            if (_dependencyElement == null)
-            {
-                throw new DalDoesNotExistException($"Object of type Dependency with identifier {id} does not exist");
-            }
-            //Set it as deleted
-            _dependencyElement.Element("active")?.SetValue(false);
+        
+        //Get list of dependencies
+        XElement _dependencies = XMLTools.LoadListFromXMLElement(s_dependencies_xml);
+        //Find the dependency with id
+        XElement _dependencyElement = _dependencies.Elements("Dependency").FirstOrDefault(e => (int)e.Element("id")! == id)!;
+        //Set it as deleted
+        _dependencyElement.Element("active")?.SetValue(false);
             XMLTools.SaveListToXMLElement(_dependencies, s_dependencies_xml);
-        }
     }
 
     /// <summary>
-    /// Retreive a Dependency from the XML File by ID
+    /// Retrieve a Dependency from the XML File by ID
     /// </summary>
     /// <param name="id">ID of the Dependency</param>
     /// <returns>The Dependency object requested</returns>
     public Dependency? Read(int id)
     {
-        //Get list of dependencies
         XElement _dependencies = XMLTools.LoadListFromXMLElement(s_dependencies_xml);
-        //Find the dependency with id
-        XElement _dependencyElement = _dependencies.Elements("Dependency").FirstOrDefault(e => (int)e.Attribute("id")! == id && (bool)e.Element("active")!)!;
         
-        //Create Dependency object from the element
-        if (_dependencyElement is not null)
-        {
-            Dependency _dependency = new Dependency(
-                id: (int)_dependencyElement.Attribute("id")!,
-                dependentTask: (int)_dependencyElement.Element("dependentTask")!,
-                dependsOnTask: (int)_dependencyElement.Element("dependsOnTask")!,
-                customerEmail: (string?)_dependencyElement.Element("customerEmail"),
-                shippingAddress: (string?)_dependencyElement.Element("shippingAddress"),
-                orderCreationDate: (DateTime?)_dependencyElement.Element("orderCreationDate"),
-                shippingDate: (DateTime?)_dependencyElement.Element("shippingDate"),
-                deliveryDate: (DateTime?)_dependencyElement.Element("deliveryDate"),
-                active: (bool)_dependencyElement.Element("active")!
-            );
-            return _dependency;
-        }
+        IEnumerable<XElement> _dependencyElements = _dependencies.Elements("Dependency")
+        .Where(e => (bool)e.Element("active")!);
 
-        return null;
+        Dependency? _result = _dependencyElements
+            .Select(_dependencyElement => new Dependency(
+                id: int.Parse(_dependencyElement.Element("id")!.Value),
+                dependentTask: int.Parse(_dependencyElement.Element("dependentTask")!.Value),
+                dependsOnTask: int.Parse(_dependencyElement.Element("dependsOnTask")!.Value),
+                customerEmail: _dependencyElement.Element("customerEmail")?.Value,
+                shippingAddress: _dependencyElement.Element("shippingAddress")?.Value,
+                orderCreationDate: DateTime.TryParse(_dependencyElement.Element("orderCreationDate")!.Value, out var creationDate) ? creationDate : null,
+                shippingDate: DateTime.TryParse(_dependencyElement.Element("shippingDate")!.Value, out var shipDate) ? shipDate : null,
+                deliveryDate: DateTime.TryParse(_dependencyElement.Element("deliveryDate")!.Value, out var deliverDate) ? deliverDate : null,
+                active: bool.Parse(_dependencyElement.Element("active")!.Value)
+                ))
+            .FirstOrDefault(d => d.id == id);
+
+        if (_result is null)
+            throw new DalDoesNotExistException($"Object of type Dependency with given filter does not exist");
+
+        return _result;
     }
 
     /// <summary>
-    /// Retreive an Engineer from the XML File based on a filter
+    /// Retrieve an Engineer from the XML File based on a filter
     /// </summary>
     /// <param name="filter">The criteria of the requested Engineer</param>
     /// <returns>The Engineer object requested</returns>
@@ -101,51 +102,54 @@ internal class DependencyImplementation : IDependency
         IEnumerable<XElement> _dependencyElements = _dependencies.Elements("Dependency")
         .Where(e => (bool)e.Element("active")!);
 
-        Dependency? result = _dependencyElements
+        Dependency? _result = _dependencyElements
             .Select(_dependencyElement => new Dependency(
-                id: (int)_dependencyElement.Attribute("id")!,
-                dependentTask: (int)_dependencyElement.Element("dependentTask")!,
-                dependsOnTask: (int)_dependencyElement.Element("dependsOnTask")!,
-                customerEmail: (string?)_dependencyElement.Element("customerEmail"),
-                shippingAddress: (string?)_dependencyElement.Element("shippingAddress"),
-                orderCreationDate: (DateTime?)_dependencyElement.Element("orderCreationDate"),
-                shippingDate: (DateTime?)_dependencyElement.Element("shippingDate"),
-                deliveryDate: (DateTime?)_dependencyElement.Element("deliveryDate"),
-                active: (bool)_dependencyElement.Element("active")!
-            ))
+                id: int.Parse(_dependencyElement.Element("id")!.Value),
+                dependentTask: int.Parse(_dependencyElement.Element("dependentTask")!.Value),
+                dependsOnTask: int.Parse(_dependencyElement.Element("dependsOnTask")!.Value),
+                customerEmail: _dependencyElement.Element("customerEmail")?.Value,
+                shippingAddress: _dependencyElement.Element("shippingAddress")?.Value,
+                orderCreationDate: DateTime.TryParse(_dependencyElement.Element("orderCreationDate")!.Value, out var creationDate) ? creationDate : null,
+                shippingDate: DateTime.TryParse(_dependencyElement.Element("shippingDate")!.Value, out var shipDate) ? shipDate : null,
+                deliveryDate: DateTime.TryParse(_dependencyElement.Element("deliveryDate")!.Value, out var deliverDate) ? deliverDate : null,
+                active: bool.Parse(_dependencyElement.Element("active")!.Value)
+                ))
             .FirstOrDefault(filter);
 
-        return result;
+        if (_result is null)
+            throw new DalDoesNotExistException($"Object of type Dependency with given filter does not exist");
+
+        return _result;
     }
 
     /// <summary>
-    /// Retreive all Dependencies from the XML File
+    /// Retrieve all Dependencies from the XML File
     /// </summary>
     /// <param name="filter">Optional filter to limit list</param>
     /// <returns>Requested Enumerable of Dependencies</returns>
     public IEnumerable<Dependency?> ReadAll(Func<Dependency, bool>? filter = null)
     {
         //Get list of dependencies
-        XElement _dependencies = XMLTools.LoadListFromXMLElement(s_dependencies_xml);
+        XElement _dependenciesElement = XMLTools.LoadListFromXMLElement(s_dependencies_xml);
 
-        IEnumerable<XElement> _dependencyElements = _dependencies.Elements("Dependency")
-        .Where(e => (bool)e.Element("active")!);
+        IEnumerable<Dependency> _dependencies = _dependenciesElement.Elements("Dependency").Select(elem => new Dependency(
+            id: int.Parse(elem.Element("id")!.Value),
+            dependentTask: int.Parse(elem.Element("dependentTask")!.Value),
+            dependsOnTask: int.Parse(elem.Element("dependsOnTask")!.Value),
+            customerEmail: elem.Element("customerEmail")?.Value,
+            shippingAddress: elem.Element("shippingAddress")?.Value,
+            orderCreationDate: DateTime.TryParse(elem.Element("orderCreationDate")!.Value, out var creationDate) ? creationDate : null,
+            shippingDate: DateTime.TryParse(elem.Element("shippingDate")!.Value, out var shipDate) ? shipDate : null,
+            deliveryDate: DateTime.TryParse(elem.Element("deliveryDate")!.Value, out var deliverDate) ? deliverDate : null,
+            active: bool.Parse(elem.Element("active")!.Value)
+            ));
 
-        IEnumerable<Dependency?> _result = _dependencyElements
-            .Select(_dependencyElement => new Dependency(
-                id: (int)_dependencyElement.Attribute("id")!,
-                dependentTask: (int)_dependencyElement.Element("dependentTask")!,
-                dependsOnTask: (int)_dependencyElement.Element("dependsOnTask")!,
-                customerEmail: (string?)_dependencyElement.Element("customerEmail"),
-                shippingAddress: (string?)_dependencyElement.Element("shippingAddress"),
-                orderCreationDate: (DateTime?)_dependencyElement.Element("orderCreationDate"),
-                shippingDate: (DateTime?)_dependencyElement.Element("shippingDate"),
-                deliveryDate: (DateTime?)_dependencyElement.Element("deliveryDate"),
-                active: (bool)_dependencyElement.Element("active")!
-            ))
-            .Where(dependency => filter == null || filter(dependency));
+        if (filter == null)
+        {
+            return _dependencies.Where(item => item.active);
+        }
 
-        return _result;
+        return _dependencies.Where(filter).Where(item => item.active);
     }
 
     /// <summary>
@@ -168,7 +172,8 @@ internal class DependencyImplementation : IDependency
         //Get list of dependencies
         XElement _dependencies = XMLTools.LoadListFromXMLElement(s_dependencies_xml);
         //Find the dependency with id
-        XElement _dependencyElement = _dependencies.Elements("Dependency").FirstOrDefault(e => (int)e.Attribute("id")! == item.id)!;
+        XElement _dependencyElement = _dependencies.Elements("Dependency").FirstOrDefault(e => (int)e.Element("id")! == item.id)!;
+
         //Update values of the Element
         if (_dependencyElement is not null)
         {
@@ -176,9 +181,9 @@ internal class DependencyImplementation : IDependency
             _dependencyElement.SetElementValue("dependsOnTask", item.dependsOnTask);
             _dependencyElement.SetElementValue("customerEmail", item.customerEmail);
             _dependencyElement.SetElementValue("shippingAddress", item.shippingAddress);
-            _dependencyElement.SetElementValue("orderCreationDate", item.orderCreationDate);
-            _dependencyElement.SetElementValue("shippingDate", item.shippingDate);
-            _dependencyElement.SetElementValue("deliveryDate", item.deliveryDate);
+            _dependencyElement.SetElementValue("orderCreationDate", item.orderCreationDate?.ToString("dd/MM/yyyy") ?? "");//Fix this line
+            _dependencyElement.SetElementValue("shippingDate", item.shippingDate?.ToString("dd/MM/yyyy") ?? ""); //Fix this line
+            _dependencyElement.SetElementValue("deliveryDate", item.deliveryDate?.ToString("dd/MM/yyyy") ?? ""); //Fix this line
             _dependencyElement.SetElementValue("active", item.active);
 
             XMLTools.SaveListToXMLElement(_dependencies, s_dependencies_xml);

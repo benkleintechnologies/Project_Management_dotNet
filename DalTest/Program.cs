@@ -255,7 +255,7 @@ internal class Program
                     Console.WriteLine();
                     break;
                 case "b": //Add Dependency
-                    Console.WriteLine("Enter the id, dependent task id, depends-on task id, customer email, shipping address, and order creation date (on seperate lines):\n");
+                    Console.WriteLine("Enter the id, dependent task id, depends-on task id, customer email, shipping address, order creation date, shipping date, and delivery date (on seperate lines):\n");
                     _newDependency = ParseDependency();
                     s_dal.Dependency.Create(_newDependency);
                     break;
@@ -275,7 +275,7 @@ internal class Program
                     Console.WriteLine();
                     break;
                 case "e": //Update Dependency
-                    Console.WriteLine("Enter the updated information of the dependecy, including - id, dependent task id, depends-on task id, customer email, shipping address, and order creation date (on seperate lines):\n");
+                    Console.WriteLine("Enter the updated information of the dependecy, including - id, dependent task id, depends-on task id, customer email, shipping address, order creation date, shipping date, and delivery date (on seperate lines):\n");
                     _newDependency = ParseDependency();
                     s_dal.Dependency.Update(_newDependency);
                     break;
