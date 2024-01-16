@@ -19,7 +19,7 @@ internal class EngineerImplementation : IEngineer
     /// <exception cref="DalAlreadyExistsException">This Engineer doesn't exist on the database/exception>
     public int Create(Engineer item)
     {
-        if (Read(item.id) is not null)
+        if (InternalRead(item.id) is not null)
         {
             throw new DalAlreadyExistsException($"An object of type Engineer with id {item.id} already exists");
         }
@@ -36,19 +36,15 @@ internal class EngineerImplementation : IEngineer
     /// <exception cref="DalDoesNotExistException">Thrown if there is no Engineer with this ID in the database</exception>
     public void Delete(int id)
     {
-        Engineer? _engineer = Read(id);
-        if (_engineer == null)
-        {
-            throw new DalDoesNotExistException($"Object of type Engineer with identifier {id} does not exist, so it cannot be deleted.");
-        }
-        else
-        {
+       Engineer? _engineer = Read(id);
+       if (_engineer is not null)
+       {
             List<Engineer> _engineers = XMLTools.LoadListFromXMLSerializer<Engineer>(s_engineers_xml);
             _engineers.Remove(_engineer);
             Engineer _newEngineer = _engineer with { active = false };
             _engineers.Add(_newEngineer);
             XMLTools.SaveListToXMLSerializer<Engineer>(_engineers, s_engineers_xml);
-        }
+       }
     }
 
     /// <summary>
@@ -58,8 +54,12 @@ internal class EngineerImplementation : IEngineer
     /// <returns>The Engineer object requested</returns>
     public Engineer? Read(int id)
     {
-        List<Engineer> _engineers = XMLTools.LoadListFromXMLSerializer<Engineer>(s_engineers_xml);
-        return _engineers.FirstOrDefault(item => item.id == id && item.active);
+        Engineer? _engineer = InternalRead(id);
+        if (_engineer == null)
+        {
+            throw new DalDoesNotExistException($"Object of type Engineer with identifier {id} does not exist, so it cannot be deleted.");
+        }
+        return _engineer;
     }
 
     /// <summary>
@@ -70,7 +70,12 @@ internal class EngineerImplementation : IEngineer
     public Engineer? Read(Func<Engineer, bool> filter)
     {
         List<Engineer> _engineers = XMLTools.LoadListFromXMLSerializer<Engineer>(s_engineers_xml);
-        return _engineers.Where(item => item.active).FirstOrDefault(filter);
+        Engineer? _engineer = _engineers.Where(item => item.active).FirstOrDefault(filter);
+        if (_engineer == null)
+        {
+            throw new DalDoesNotExistException($"Object of type Engineer with this filter does not exist, so it cannot be deleted.");
+        }
+        return _engineer;
     }
 
     /// <summary>
@@ -104,16 +109,18 @@ internal class EngineerImplementation : IEngineer
     public void Update(Engineer item)
     {
         Engineer? _old = Read(item.id);
-        if (_old != null)
+        if (_old is not null)
         {
             List<Engineer> _engineers = XMLTools.LoadListFromXMLSerializer<Engineer>(s_engineers_xml);
             _engineers.Remove(_old);
             _engineers.Add(item);
             XMLTools.SaveListToXMLSerializer<Engineer>(_engineers, s_engineers_xml);
         }
-        else
-        {
-            throw new DalDoesNotExistException($"Object of type Engineer with identifier {item.id} does not exist");
-        }
     }
+    public Engineer? InternalRead(int id)
+    {
+       List<Engineer> _engineers = XMLTools.LoadListFromXMLSerializer<Engineer>(s_engineers_xml);
+       return _engineers.FirstOrDefault(item => item.id == id && item.active);
+    }
+
 }

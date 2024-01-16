@@ -35,16 +35,12 @@ internal class TaskImplementation : ITask
     public void Delete(int id)
     {
         Task? _task = Read(id);
-        if (_task == null)
-        {
-            throw new DalDoesNotExistException($"Object of type Task with identifier {id} does not exist");
-        }
-        else
+        if (_task is not null)
         {
             List<Task> _tasks = XMLTools.LoadListFromXMLSerializer<Task>(s_tasks_xml);
             _tasks.Remove(_task);
             Task _newTask = _task with { active = false };
-            _tasks.Add(_task);
+            _tasks.Add(_newTask);
             XMLTools.SaveListToXMLSerializer<Task>(_tasks, s_tasks_xml);
         }
     }
@@ -57,7 +53,12 @@ internal class TaskImplementation : ITask
     public Task? Read(int id)
     {
         List<Task> _tasks = XMLTools.LoadListFromXMLSerializer<Task>(s_tasks_xml);
-        return _tasks.FirstOrDefault(item => item.id == id && item.active);
+        Task? _task = _tasks.FirstOrDefault(item => item.id == id && item.active);
+        if (_task == null)
+        {
+            throw new DalDoesNotExistException($"Object of type Task with identifier {id} does not exist");
+        }
+        return _task;
     }
 
     /// <summary>
@@ -68,7 +69,12 @@ internal class TaskImplementation : ITask
     public Task? Read(Func<Task, bool> filter)
     {
         List<Task> _tasks = XMLTools.LoadListFromXMLSerializer<Task>(s_tasks_xml);
-        return _tasks.Where(item => item.active).FirstOrDefault(filter);
+        Task? _task = _tasks.Where(item => item.active).FirstOrDefault(filter);
+        if (_task == null)
+        {
+            throw new DalDoesNotExistException($"Object of type Task with given filter does not exist");
+        }
+        return _task;
     }
 
     /// <summary>
@@ -78,12 +84,23 @@ internal class TaskImplementation : ITask
     /// <returns>Requested Enumerable of Tasks</returns>
     public IEnumerable<Task?> ReadAll(Func<Task, bool>? filter = null)
     {
-        List<Task> _tasks = XMLTools.LoadListFromXMLSerializer<Task>(s_tasks_xml);
+        IEnumerable<Task> _tasks = XMLTools.LoadListFromXMLSerializer<Task>(s_tasks_xml);
+        IEnumerable<Task> _activeTasks = _tasks.Where(item => item.active);
+        if (_activeTasks.Count() == 0)
+        {
+            throw new DalDoesNotExistException($"No Object of type Task exists");
+        }
         if (filter == null)
         {
-            return _tasks.Where(item => item.active);
+            return _activeTasks;
         }
-        return _tasks.Where(filter).Where(item => item.active);
+        
+        IEnumerable<Task> _filteredTasks = _activeTasks.Where(filter);
+        if (_filteredTasks.Count() == 0)
+        {
+            throw new DalDoesNotExistException($"No Object of type Task exists");
+        }
+        return _filteredTasks;
     }
 
     /// <summary>
@@ -102,16 +119,12 @@ internal class TaskImplementation : ITask
     public void Update(Task item)
     {
         Task? _old = Read(item.id);
-        if (_old != null)
+        if (_old is not null)
         {
             List<Task> _tasks = XMLTools.LoadListFromXMLSerializer<Task>(s_tasks_xml);
             _tasks.Remove(_old);
             _tasks.Add(item);
             XMLTools.SaveListToXMLSerializer<Task>(_tasks, s_tasks_xml);
-        }
-        else
-        {
-            throw new DalDoesNotExistException($"Object of type Task with identifier {item.id} does not exist");
         }
     }
 }

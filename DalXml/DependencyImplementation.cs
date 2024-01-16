@@ -4,6 +4,7 @@ using DO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 
 /// <summary>
@@ -68,7 +69,12 @@ internal class DependencyImplementation : IDependency
         XElement _dependencies = XMLTools.LoadListFromXMLElement(s_dependencies_xml);
         //Find the dependency with id
         XElement _dependencyElement = _dependencies.Elements("Dependency").FirstOrDefault(e => (int)e.Attribute("id")! == id && (bool)e.Element("active")!)!;
-        
+
+        if (_dependencyElement == null)
+        {
+            throw new DalDoesNotExistException($"Object of type Task with identifier {id} does not exist");
+        }
+
         //Create Dependency object from the element
         if (_dependencyElement is not null)
         {
