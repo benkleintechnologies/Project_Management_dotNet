@@ -5,7 +5,6 @@
 /// </summary>
 public interface IDal
 {
-    IConfig Config { get; }
     IEngineer Engineer { get; }
     ITask Task { get; }
     IDependency Dependency { get; }

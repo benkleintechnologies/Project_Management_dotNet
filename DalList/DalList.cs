@@ -6,8 +6,6 @@ using DalApi;
 /// </summary>
 sealed public class DalList : IDal
 {
-    public IConfig Config => new ConfigImplementation();
-
     public IEngineer Engineer => new EngineerImplementation();
 
     public ITask Task => new TaskImplementation();

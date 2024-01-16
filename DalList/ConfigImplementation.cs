@@ -5,7 +5,7 @@ using System;
 /// <summary>
 /// Implementation of Config Interface, which allows setting start and end dates of project, and resetting
 /// </summary>
-internal class ConfigImplementation : IConfig
+sealed public class ConfigImplementation : IConfig
 {
     /// <summary>
     /// Reset all items in the database

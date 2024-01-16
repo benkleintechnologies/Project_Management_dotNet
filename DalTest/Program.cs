@@ -11,6 +11,7 @@ using Task = DO.Task;
 internal class Program
 {
     static readonly IDal s_dal = new DalList(); // stage 2
+    static readonly IConfig s_config = new ConfigImplementation();
 
     /// <summary>
     /// Runs loop of main menu
@@ -20,7 +21,7 @@ internal class Program
     {
         try
         {
-            Initialization.Do(s_dal); // stage 2
+            Initialization.Do(s_dal, s_config); // stage 2
             bool _exit = false;
             while (!_exit)
             {
@@ -53,7 +54,7 @@ internal class Program
                         DependencyOptionsSwitch(_userInput);
                         break;
                     case 4:
-                        s_dal!.Config.reset();
+                        s_config.reset();
                         Console.WriteLine("Project Reset...\n");
                         break;
                     default: Console.WriteLine("Incorrect input, try again\n"); 
