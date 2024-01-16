@@ -10,7 +10,8 @@ using Task = DO.Task;
 /// </summary>
 internal class Program
 {
-    static readonly IDal s_dal = new DalList(); // stage 2
+    //static readonly IDal s_dal = new DalList(); // stage 2
+    static readonly IDal s_dal = new DalXml();
     static readonly IConfig s_config = new ConfigImplementation();
 
     /// <summary>
@@ -21,11 +22,10 @@ internal class Program
     {
         try
         {
-            Initialization.Do(s_dal, s_config); // stage 2
             bool _exit = false;
             while (!_exit)
             {
-                Console.WriteLine("0. Exit the main menu\n1. Test out Engineer\n2. Test out Task\n3. Test out Dependency\n4. Reset Project\n");
+                Console.WriteLine("0. Exit the main menu\n1. Initialize data with random values\n2. Test out Engineer\n3. Test out Task\n4. Test out Dependency\n5. Reset Project\n");
                 string? _input = Console.ReadLine();
                 int.TryParse(_input, out int _inputNumber);
                 Console.WriteLine();
@@ -36,25 +36,39 @@ internal class Program
                         _exit = true;
                         break;
                     case 1:
+                        Console.Write("Would you like to create initial data? (Y/N)\n"); //stage 3
+                        string? ans = Console.ReadLine() ?? throw new FormatException("Wrong input"); //stage 3
+                        if (ans == "Y") //stage 3
+                        { 
+                            s_dal.Engineer.Reset();
+                            s_dal.Dependency.Reset();
+                            s_dal.Task.Reset();
+                            Initialization.Do(s_dal, s_config);
+                        }
+                        break;
+                    case 2:
                         EngineerOptionsPrint();
                         _userInput = Console.ReadLine();
                         Console.WriteLine();
                         EngineerOptionsSwitch(_userInput);
                         break;
-                    case 2:
+                    case 3:
                         TaskOptionsPrint();
                         _userInput = Console.ReadLine();
                         Console.WriteLine();
                         TaskOptionsSwitch(_userInput);
                         break;
-                    case 3:
+                    case 4:
                         DependencyOptionsPrint();
                         _userInput = Console.ReadLine();
                         Console.WriteLine();
                         DependencyOptionsSwitch(_userInput);
                         break;
-                    case 4:
+                    case 5:
                         s_config.reset();
+                        s_dal.Engineer.Reset();
+                        s_dal.Dependency.Reset();
+                        s_dal.Task.Reset();
                         Console.WriteLine("Project Reset...\n");
                         break;
                     default: Console.WriteLine("Incorrect input, try again\n"); 
