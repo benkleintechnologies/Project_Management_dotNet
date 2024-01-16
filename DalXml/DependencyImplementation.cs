@@ -165,32 +165,23 @@ internal class DependencyImplementation : IDependency
     /// <exception cref="DalDoesNotExistException">Thrown if no Dependency with the same ID exists</exception>
     public void Update(Dependency item)
     {
-        Dependency? _old = Read(item.id);
-        if (_old != null)
+        //Get list of dependencies
+        XElement _dependencies = XMLTools.LoadListFromXMLElement(s_dependencies_xml);
+        //Find the dependency with id
+        XElement _dependencyElement = _dependencies.Elements("Dependency").FirstOrDefault(e => (int)e.Attribute("id")! == item.id)!;
+        //Update values of the Element
+        if (_dependencyElement is not null)
         {
-            //Get list of dependencies
-            XElement _dependencies = XMLTools.LoadListFromXMLElement(s_dependencies_xml);
-            //Find the dependency with id
-            XElement _dependencyElement = _dependencies.Elements("Dependency")
-                .FirstOrDefault(e => (int)e.Attribute("id")! == item.id)!;
-            //Update values of the Element
-            if (_dependencyElement == null)
-            {
-                _dependencyElement!.SetElementValue("dependentTask", item.dependentTask);
-                _dependencyElement.SetElementValue("dependsOnTask", item.dependsOnTask);
-                _dependencyElement.SetElementValue("customerEmail", item.customerEmail);
-                _dependencyElement.SetElementValue("shippingAddress", item.shippingAddress);
-                _dependencyElement.SetElementValue("orderCreationDate", item.orderCreationDate);
-                _dependencyElement.SetElementValue("shippingDate", item.shippingDate);
-                _dependencyElement.SetElementValue("deliveryDate", item.deliveryDate);
-                _dependencyElement.SetElementValue("active", item.active);
+            _dependencyElement!.SetElementValue("dependentTask", item.dependentTask);
+            _dependencyElement.SetElementValue("dependsOnTask", item.dependsOnTask);
+            _dependencyElement.SetElementValue("customerEmail", item.customerEmail);
+            _dependencyElement.SetElementValue("shippingAddress", item.shippingAddress);
+            _dependencyElement.SetElementValue("orderCreationDate", item.orderCreationDate);
+            _dependencyElement.SetElementValue("shippingDate", item.shippingDate);
+            _dependencyElement.SetElementValue("deliveryDate", item.deliveryDate);
+            _dependencyElement.SetElementValue("active", item.active);
 
-                XMLTools.SaveListToXMLElement(_dependencies, s_dependencies_xml);
-            }
-            else
-            {
-                throw new DalDoesNotExistException($"Object of type Dependency with identifier {item.id} does not exist");
-            }
+            XMLTools.SaveListToXMLElement(_dependencies, s_dependencies_xml);
         }
         else
         {
