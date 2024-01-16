@@ -3,6 +3,7 @@ using DalApi;
 using DO;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 /// <summary>
 /// Implementation of Engineer interface using XML
@@ -57,7 +58,7 @@ internal class EngineerImplementation : IEngineer
         Engineer? _engineer = InternalRead(id);
         if (_engineer == null)
         {
-            throw new DalDoesNotExistException($"Object of type Engineer with identifier {id} does not exist, so it cannot be deleted.");
+            throw new DalDoesNotExistException($"Object of type Engineer with identifier {id} does not exist");
         }
         return _engineer;
     }
@@ -86,11 +87,22 @@ internal class EngineerImplementation : IEngineer
     public IEnumerable<Engineer?> ReadAll(Func<Engineer, bool>? filter = null)
     {
         List<Engineer> _engineers = XMLTools.LoadListFromXMLSerializer<Engineer>(s_engineers_xml);
+        IEnumerable<Engineer> _activeEngineers = _engineers.Where(item => item.active);
+        if (_activeEngineers.Count() == 0)
+        {
+            throw new DalDoesNotExistException($"No Object of type Engineer exists");
+        }
         if (filter == null)
         {
-            return _engineers.Where(item => item.active);
+            return _activeEngineers;
         }
-        return _engineers.Where(filter).Where(item => item.active);
+
+        IEnumerable<Engineer> _filteredEngineers = _activeEngineers.Where(filter);
+        if (_filteredEngineers.Count() == 0)
+        {
+            throw new DalDoesNotExistException($"No Object of type Task exists");
+        }
+        return _filteredEngineers;
     }
 
     /// <summary>
