@@ -15,10 +15,10 @@ internal class TaskImplementation : ITask
     /// <returns>The ID of the Task</returns>
     public int Create(Task item)
     {
-        int id = DataSource.Config.NextTaskId;
-        Task task = item with { id = id };
-        DataSource.Tasks.Add(task);
-        return id;
+        int _id = DataSource.Config.NextTaskId;
+        Task _task = item with { id = _id };
+        DataSource.Tasks.Add(_task);
+        return _id;
     }
 
     /// <summary>
@@ -28,21 +28,21 @@ internal class TaskImplementation : ITask
     /// <exception cref="DalDoesNotExistException">Thrown if there is no Task with this ID in the database</exception>
     public void Delete(int id)
     {
-        Task? task = Read(id);
-        if (task == null)
+        Task? _task = Read(id);
+        if (_task == null)
         {
             throw new DalDoesNotExistException($"Object of type Task with identifier {id} does not exist");
         }
         else
         {
-            DataSource.Tasks.Remove(task);
-            Task _newTask = task with { active = false };
+            DataSource.Tasks.Remove(_task);
+            Task _newTask = _task with { active = false };
             DataSource.Tasks.Add(_newTask);
         }
     }
 
     /// <summary>
-    /// Retreive a Task from the database by ID
+    /// Retrieve a Task from the database by ID
     /// </summary>
     /// <param name="id">ID of the Task</param>
     /// <returns>The Task object requested</returns>
@@ -52,7 +52,7 @@ internal class TaskImplementation : ITask
     }
 
     /// <summary>
-    /// Retreive an Engineer from the databse based on a filter
+    /// Retrieve an Engineer from the database based on a filter
     /// </summary>
     /// <param name="filter">The criteria of the requested Engineer</param>
     /// <returns>The Engineer object requested</returns>
@@ -62,7 +62,7 @@ internal class TaskImplementation : ITask
     }
 
     /// <summary>
-    /// Retreive all Tasks from the database
+    /// Retrieve all Tasks from the database
     /// </summary>
     /// <param name="filter">Optional filter to limit list</param>
     /// <returns>Requested Enumerable of Tasks</returns>
@@ -82,10 +82,10 @@ internal class TaskImplementation : ITask
     /// <exception cref="DalDoesNotExistException">Thrown if no Task with the same ID exists</exception>
     public void Update(Task item)
     {
-        Task? old = Read(item.id);
-        if (old != null)
+        Task? _old = Read(item.id);
+        if (_old != null)
         {
-            DataSource.Tasks.Remove(old);
+            DataSource.Tasks.Remove(_old);
             DataSource.Tasks.Add(item);
         }
         else

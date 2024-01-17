@@ -31,21 +31,21 @@ internal class EngineerImplementation: IEngineer
     /// <exception cref="DalDoesNotExistException">Thrown if there is no Engineer with this ID in the database</exception>
     public void Delete(int id)
     {
-        Engineer? engineer = Read(id);
-        if (engineer == null) 
+        Engineer? _engineer = Read(id);
+        if (_engineer == null) 
         { 
             throw new DalDoesNotExistException($"Object of type Engineer with identifier {id} does not exist, so it cannot be deleted."); 
         } 
         else
         {
-            DataSource.Engineers.Remove(engineer);
-            Engineer _newEngineer = engineer with { active = false };
+            DataSource.Engineers.Remove(_engineer);
+            Engineer _newEngineer = _engineer with { active = false };
             DataSource.Engineers.Add(_newEngineer);
         }
     }
 
     /// <summary>
-    /// Retreive an Engineer from the database by ID
+    /// Retrieve an Engineer from the database by ID
     /// </summary>
     /// <param name="id">ID of the Engineer</param>
     /// <returns>The Engineer object requested</returns>
@@ -55,7 +55,7 @@ internal class EngineerImplementation: IEngineer
     }
 
     /// <summary>
-    /// Retreive an Engineer from the databse based on a filter
+    /// Retrieve an Engineer from the database based on a filter
     /// </summary>
     /// <param name="filter">The criteria of the requested Engineer</param>
     /// <returns>The Engineer object requested</returns>
@@ -65,7 +65,7 @@ internal class EngineerImplementation: IEngineer
     }
 
     /// <summary>
-    /// Retreive all Engineers from the database
+    /// Retrieve all Engineers from the database
     /// </summary>
     /// <param name="filter">Optional filter to limit list</param>
     /// <returns>Requested Enumerable of Engineers</returns>
@@ -85,10 +85,10 @@ internal class EngineerImplementation: IEngineer
     /// <exception cref="DalDoesNotExistException">Thrown if no Engineer with the same ID exists</exception>
     public void Update(Engineer item)
     {
-        Engineer? old = Read(item.id);
-        if (old != null)
+        Engineer? _old = Read(item.id);
+        if (_old != null)
         {
-            DataSource.Engineers.Remove(old);
+            DataSource.Engineers.Remove(_old);
             DataSource.Engineers.Add(item);
         }
         else

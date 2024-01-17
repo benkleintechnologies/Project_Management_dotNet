@@ -61,8 +61,19 @@ internal class Program
                 }
             }
         }
-        catch (Exception ex)
+        catch (DalDoesNotExistException ex)
         {
+            //Exception because Entity does not exists
+            Console.WriteLine(ex.ToString());
+        }
+        catch (DalAlreadyExistsException ex)
+        {
+            //Exception because Entity already exists
+            Console.WriteLine(ex.ToString());
+        }
+        catch (DalDeletionImpossible ex)
+        {
+            //Exception because deletion is impossible
             Console.WriteLine(ex.ToString());
         }
     }
@@ -158,9 +169,20 @@ internal class Program
                     break;
             }
         }
-        catch (Exception ex)
+        catch (DalDoesNotExistException ex)
         {
-            Console.WriteLine(ex);
+            //Exception because Entity does not exists
+            Console.WriteLine(ex.ToString());
+        }
+        catch (DalAlreadyExistsException ex)
+        {
+            //Exception because Entity already exists
+            Console.WriteLine(ex.ToString());
+        }
+        catch (DalDeletionImpossible ex)
+        {
+            //Exception because deletion is impossible
+            Console.WriteLine(ex.ToString());
         }
     }
 
@@ -218,9 +240,20 @@ internal class Program
                     break;
             }
         }
-        catch (Exception ex)
+        catch (DalDoesNotExistException ex)
         {
-            Console.WriteLine(ex);
+            //Exception because Entity does not exists
+            Console.WriteLine(ex.ToString());
+        }
+        catch (DalAlreadyExistsException ex)
+        {
+            //Exception because Entity already exists
+            Console.WriteLine(ex.ToString());
+        }
+        catch (DalDeletionImpossible ex)
+        {
+            //Exception because deletion is impossible
+            Console.WriteLine(ex.ToString());
         }
     }
 
@@ -278,9 +311,20 @@ internal class Program
                     break;
             }
         }
-        catch (Exception ex)
+        catch (DalDoesNotExistException ex)
         {
-            Console.WriteLine(ex);
+            //Exception because Entity does not exists
+            Console.WriteLine(ex.ToString());
+        }
+        catch (DalAlreadyExistsException ex)
+        {
+            //Exception because Entity already exists
+            Console.WriteLine(ex.ToString());
+        }
+        catch (DalDeletionImpossible ex)
+        {
+            //Exception because deletion is impossible
+            Console.WriteLine(ex.ToString());
         }
     }
 
