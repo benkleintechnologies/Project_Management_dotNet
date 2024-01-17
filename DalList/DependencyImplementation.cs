@@ -15,10 +15,10 @@ internal class DependencyImplementation : IDependency
     /// <returns>id of the Dependency</returns>
     public int Create(Dependency item)
     {
-        int id = DataSource.Config.NextDependencyId;
-        Dependency dependency = item with { id = id };
-        DataSource.Dependencies.Add(dependency);
-        return id;
+        int _id = DataSource.Config.NextDependencyId;
+        Dependency _dependency = item with { id = _id };
+        DataSource.Dependencies.Add(_dependency);
+        return _id;
     }
 
     /// <summary>
@@ -28,15 +28,15 @@ internal class DependencyImplementation : IDependency
     /// <exception cref="DalDoesNotExistException">the Dependency can't be deleted because doesn't exist in the database</exception>
     public void Delete(int id)
     {
-        Dependency? dependency = Read(id);
-        if (dependency == null)
+        Dependency? _dependency = Read(id);
+        if (_dependency == null)
         {
             throw new DalDoesNotExistException($"Object of type Dependency with identifier {id} does not exist");
         }
         else
         {
-            DataSource.Dependencies.Remove(dependency);
-            Dependency _newDependency = dependency with { active = false };
+            DataSource.Dependencies.Remove(_dependency);
+            Dependency _newDependency = _dependency with { active = false };
             DataSource.Dependencies.Add(_newDependency);
         }
     }
@@ -76,16 +76,16 @@ internal class DependencyImplementation : IDependency
     }
 
     /// <summary>
-    /// Updating an exisiting Dependency in the database
+    /// Updating an existing Dependency in the database
     /// </summary>
     /// <param name="item">Dependency to update</param>
     /// <exception cref="DalDoesNotExistException">Dependency doesn't exist so can't update</exception>
     public void Update(Dependency item)
     {
-        Dependency? old = Read(item.id);
-        if (old != null)
+        Dependency? _old = Read(item.id);
+        if (_old != null)
         {
-            DataSource.Dependencies.Remove(old);
+            DataSource.Dependencies.Remove(_old);
             DataSource.Dependencies.Add(item);
         }
         else

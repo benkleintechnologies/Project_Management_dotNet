@@ -319,7 +319,7 @@ internal class Program
     }
 
     /// <summary>
-    /// Receives input from user for all feilds of Task
+    /// Receives input from user for all fields of Task
     /// </summary>
     /// <returns>Task object based on user input</returns>
     static Task ParseTask()
