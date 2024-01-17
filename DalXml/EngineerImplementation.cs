@@ -16,7 +16,7 @@ internal class EngineerImplementation : IEngineer
     /// </summary>
     /// <param name="item">The Engineer to add</param>
     /// <returns>The ID of the Engineer</returns>
-    /// <exception cref="DalAlreadyExistsException">This Engineer doesn't exist on the database/exception>
+    /// <exception cref="DalAlreadyExistsException">Thrown if this Engineer doesn't exist on the database/exception>
     public int Create(Engineer item)
     {
         if (InternalRead(item.id) is not null)
@@ -33,7 +33,6 @@ internal class EngineerImplementation : IEngineer
     /// Delete an Engineer from the XML File
     /// </summary>
     /// <param name="id">ID of the Engineer to delete</param>
-    /// <exception cref="DalDoesNotExistException">Thrown if there is no Engineer with this ID in the database</exception>
     public void Delete(int id)
     {
        Engineer? _engineer = Read(id);
@@ -52,6 +51,7 @@ internal class EngineerImplementation : IEngineer
     /// </summary>
     /// <param name="id">ID of the Engineer</param>
     /// <returns>The Engineer object requested</returns>
+    /// <exception cref="DalDoesNotExistException">Thrown if no Engineer with this ID exists</exception>
     public Engineer? Read(int id)
     {
         Engineer? _engineer = InternalRead(id);
@@ -67,13 +67,15 @@ internal class EngineerImplementation : IEngineer
     /// </summary>
     /// <param name="filter">The criteria of the requested Engineer</param>
     /// <returns>The Engineer object requested</returns>
+    /// <exception cref="DalDoesNotExistException">Thrown if no Engineer with this ID and filter exists</exception>
+    /// 
     public Engineer? Read(Func<Engineer, bool> filter)
     {
         List<Engineer> _engineers = XMLTools.LoadListFromXMLSerializer<Engineer>(s_engineers_xml);
         Engineer? _engineer = _engineers.Where(item => item.active).FirstOrDefault(filter);
         if (_engineer == null)
         {
-            throw new DalDoesNotExistException($"Object of type Engineer with this filter does not exist, so it cannot be deleted.");
+            throw new DalDoesNotExistException($"Object of type Engineer with this filter does not exist");
         }
         return _engineer;
     }
@@ -83,6 +85,7 @@ internal class EngineerImplementation : IEngineer
     /// </summary>
     /// <param name="filter">Optional filter to limit list</param>
     /// <returns>Requested Enumerable of Engineer</returns>
+    /// <exception cref="DalDoesNotExistException">Thrown if no Engineers in the list</exception>
     public IEnumerable<Engineer?> ReadAll(Func<Engineer, bool>? filter = null)
     {
         List<Engineer> _engineers = XMLTools.LoadListFromXMLSerializer<Engineer>(s_engineers_xml);
@@ -99,7 +102,7 @@ internal class EngineerImplementation : IEngineer
         IEnumerable<Engineer> _filteredEngineers = _activeEngineers.Where(filter);
         if (_filteredEngineers.Count() == 0)
         {
-            throw new DalDoesNotExistException($"No Object of type Task exists");
+            throw new DalDoesNotExistException($"No Object of type Engineer exists");
         }
         return _filteredEngineers;
     }

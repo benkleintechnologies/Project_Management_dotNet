@@ -31,7 +31,6 @@ internal class TaskImplementation : ITask
     /// Delete a Task from the XML File
     /// </summary>
     /// <param name="id">ID of the Task to delete</param>
-    /// <exception cref="DalDoesNotExistException">Thrown if there is no Task with this ID in the database</exception>
     public void Delete(int id)
     {
         Task? _task = Read(id);
@@ -50,6 +49,7 @@ internal class TaskImplementation : ITask
     /// </summary>
     /// <param name="id">ID of the Task</param>
     /// <returns>The Task object requested</returns>
+    /// <exception cref="DalDoesNotExistException">Thrown if no Task with the same ID exists</exception>
     public Task? Read(int id)
     {
         List<Task> _tasks = XMLTools.LoadListFromXMLSerializer<Task>(s_tasks_xml);
@@ -66,6 +66,7 @@ internal class TaskImplementation : ITask
     /// </summary>
     /// <param name="filter">The criteria of the requested Task</param>
     /// <returns>The Task object requested</returns>
+    /// <exception cref="DalDoesNotExistException">Thrown if no Task with the same ID and filter exists</exception>
     public Task? Read(Func<Task, bool> filter)
     {
         List<Task> _tasks = XMLTools.LoadListFromXMLSerializer<Task>(s_tasks_xml);
@@ -82,6 +83,7 @@ internal class TaskImplementation : ITask
     /// </summary>
     /// <param name="filter">Optional filter to limit list</param>
     /// <returns>Requested Enumerable of Tasks</returns>
+    /// <exception cref="DalDoesNotExistException">Thrown if no Tasks with this filter exist</exception>
     public IEnumerable<Task?> ReadAll(Func<Task, bool>? filter = null)
     {
         IEnumerable<Task> _tasks = XMLTools.LoadListFromXMLSerializer<Task>(s_tasks_xml);
@@ -115,7 +117,6 @@ internal class TaskImplementation : ITask
     /// Updates a Task in the XML File
     /// </summary>
     /// <param name="item">New Task information</param>
-    /// <exception cref="DalDoesNotExistException">Thrown if no Task with the same ID exists</exception>
     public void Update(Task item)
     {
         Task? _old = Read(item.id);

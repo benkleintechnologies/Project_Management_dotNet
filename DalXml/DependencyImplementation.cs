@@ -48,7 +48,6 @@ internal class DependencyImplementation : IDependency
     /// Delete a Dependency from the XML File
     /// </summary>
     /// <param name="id">ID of the Dependency to delete</param>
-    /// <exception cref="DalDoesNotExistException">Thrown if there is no Dependency with this ID in the database</exception>
     public void Delete(int id)
     {
         Dependency? _dependency = Read(id);
@@ -67,6 +66,7 @@ internal class DependencyImplementation : IDependency
     /// </summary>
     /// <param name="id">ID of the Dependency</param>
     /// <returns>The Dependency object requested</returns>
+    /// <exception cref="DalDoesNotExistException">Thrown if no Dependency with this ID and filter exists</exception>
     public Dependency? Read(int id)
     {
         XElement _dependencies = XMLTools.LoadListFromXMLElement(s_dependencies_xml);
@@ -100,6 +100,7 @@ internal class DependencyImplementation : IDependency
     /// </summary>
     /// <param name="filter">The criteria of the requested Engineer</param>
     /// <returns>The Engineer object requested</returns>
+    /// <exception cref="DalDoesNotExistException">Thrown if no Dependency with this ID exists</exception>
     public Dependency? Read(Func<Dependency, bool> filter)
     {
         XElement _dependencies = XMLTools.LoadListFromXMLElement(s_dependencies_xml);
@@ -132,6 +133,7 @@ internal class DependencyImplementation : IDependency
     /// </summary>
     /// <param name="filter">Optional filter to limit list</param>
     /// <returns>Requested Enumerable of Dependencies</returns>
+    /// <exception cref="DalDoesNotExistException">Thrown if no Dependencies exist in the list</exception>
     public IEnumerable<Dependency?> ReadAll(Func<Dependency, bool>? filter = null)
     {
         //Get list of dependencies
@@ -148,13 +150,22 @@ internal class DependencyImplementation : IDependency
             deliveryDate: DateTime.TryParse(elem.Element("deliveryDate")!.Value, out var deliverDate) ? deliverDate : null,
             active: bool.Parse(elem.Element("active")!.Value)
             ));
+        IEnumerable<Dependency> _activeDependencies = _dependencies.Where(item => item.active);
+        if (_activeDependencies.Count() == 0)
+        {
+            throw new DalDoesNotExistException($"No Object of type Dependency exists");
+        }
 
         if (filter == null)
         {
-            return _dependencies.Where(item => item.active);
+            return _activeDependencies;
         }
-
-        return _dependencies.Where(filter).Where(item => item.active);
+        IEnumerable<Dependency> _filteredDependencies = _activeDependencies.Where(filter);
+        if (_filteredDependencies.Count() == 0)
+        {
+            throw new DalDoesNotExistException($"No Object of type Dependency exists");
+        }
+        return _filteredDependencies;
     }
 
     /// <summary>
