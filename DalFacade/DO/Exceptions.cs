@@ -16,6 +16,12 @@ public class DalDeletionImpossible : Exception
     public DalDeletionImpossible(string? message) : base(message) { }
 }
 
-public class DalXMLFileLoadCreateException : Exception{
+public class DalXMLFileLoadCreateException : Exception
+{
     public DalXMLFileLoadCreateException(string? message) : base(message) { }
+}
+
+public class DateCannotBeChangedException : Exception
+{
+    public DateCannotBeChangedException(string? message) : base(message) { }
 }

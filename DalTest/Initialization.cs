@@ -10,14 +10,12 @@ using Dal;
 public static class Initialization
 {
     private static IDal? s_dal;
-    private static IConfig? s_config;
 
     private static readonly Random s_rand = new();
 
-    public static void Do(IDal dal, IConfig config) 
+    public static void Do(IDal dal) 
     {
         s_dal = dal ?? throw new NullReferenceException("Dal cannot be null!");
-        s_config = config ?? throw new NullReferenceException("Config cannot be null!");
         createConfig();
         createEngineers();
         createTasks();
@@ -31,8 +29,8 @@ public static class Initialization
     {
         DateTime _startDate = DateTime.Now.AddDays(s_rand.Next(1,28));
         DateTime _endDate = DateTime.Now.AddMonths(s_rand.Next(6,12));
-        s_config!.setStartDate(_startDate);
-        s_config.setEndDate(_endDate);
+        s_dal!.Config.setStartDate(_startDate);
+        s_dal!.Config.setEndDate(_endDate);
     }
 
     /// <summary>

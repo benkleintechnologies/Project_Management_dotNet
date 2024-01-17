@@ -7,6 +7,8 @@ using DalApi;
 /// </summary>
 sealed public class DalXml : IDal
 {
+    public IConfig Config => new XMLConfigImplementation();
+
     public IEngineer Engineer => new EngineerImplementation();
 
     public ITask Task => new TaskImplementation();

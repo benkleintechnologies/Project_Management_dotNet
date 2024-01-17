@@ -1,2 +1,443 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<ArrayOfDependency />
+<ArrayOfDependency>
+  <Dependency>
+    <id>1037</id>
+    <dependentTask>20</dependentTask>
+    <dependsOnTask>22</dependsOnTask>
+    <customerEmail />
+    <shippingAddress />
+    <orderCreationDate />
+    <shippingDate />
+    <deliveryDate />
+    <active>true</active>
+  </Dependency>
+  <Dependency>
+    <id>1038</id>
+    <dependentTask>20</dependentTask>
+    <dependsOnTask>23</dependsOnTask>
+    <customerEmail />
+    <shippingAddress />
+    <orderCreationDate />
+    <shippingDate />
+    <deliveryDate />
+    <active>true</active>
+  </Dependency>
+  <Dependency>
+    <id>1039</id>
+    <dependentTask>21</dependentTask>
+    <dependsOnTask>22</dependsOnTask>
+    <customerEmail />
+    <shippingAddress />
+    <orderCreationDate />
+    <shippingDate />
+    <deliveryDate />
+    <active>true</active>
+  </Dependency>
+  <Dependency>
+    <id>1040</id>
+    <dependentTask>21</dependentTask>
+    <dependsOnTask>23</dependsOnTask>
+    <customerEmail />
+    <shippingAddress />
+    <orderCreationDate />
+    <shippingDate />
+    <deliveryDate />
+    <active>true</active>
+  </Dependency>
+  <Dependency>
+    <id>1041</id>
+    <dependentTask>27</dependentTask>
+    <dependsOnTask>20</dependsOnTask>
+    <customerEmail />
+    <shippingAddress />
+    <orderCreationDate />
+    <shippingDate />
+    <deliveryDate />
+    <active>true</active>
+  </Dependency>
+  <Dependency>
+    <id>1042</id>
+    <dependentTask>31</dependentTask>
+    <dependsOnTask>31</dependsOnTask>
+    <customerEmail />
+    <shippingAddress />
+    <orderCreationDate />
+    <shippingDate />
+    <deliveryDate />
+    <active>true</active>
+  </Dependency>
+  <Dependency>
+    <id>1043</id>
+    <dependentTask>22</dependentTask>
+    <dependsOnTask>30</dependsOnTask>
+    <customerEmail />
+    <shippingAddress />
+    <orderCreationDate />
+    <shippingDate />
+    <deliveryDate />
+    <active>true</active>
+  </Dependency>
+  <Dependency>
+    <id>1044</id>
+    <dependentTask>38</dependentTask>
+    <dependsOnTask>38</dependsOnTask>
+    <customerEmail />
+    <shippingAddress />
+    <orderCreationDate />
+    <shippingDate />
+    <deliveryDate />
+    <active>true</active>
+  </Dependency>
+  <Dependency>
+    <id>1045</id>
+    <dependentTask>31</dependentTask>
+    <dependsOnTask>20</dependsOnTask>
+    <customerEmail />
+    <shippingAddress />
+    <orderCreationDate />
+    <shippingDate />
+    <deliveryDate />
+    <active>true</active>
+  </Dependency>
+  <Dependency>
+    <id>1046</id>
+    <dependentTask>34</dependentTask>
+    <dependsOnTask>23</dependsOnTask>
+    <customerEmail />
+    <shippingAddress />
+    <orderCreationDate />
+    <shippingDate />
+    <deliveryDate />
+    <active>true</active>
+  </Dependency>
+  <Dependency>
+    <id>1047</id>
+    <dependentTask>27</dependentTask>
+    <dependsOnTask>27</dependsOnTask>
+    <customerEmail />
+    <shippingAddress />
+    <orderCreationDate />
+    <shippingDate />
+    <deliveryDate />
+    <active>true</active>
+  </Dependency>
+  <Dependency>
+    <id>1048</id>
+    <dependentTask>30</dependentTask>
+    <dependsOnTask>36</dependsOnTask>
+    <customerEmail />
+    <shippingAddress />
+    <orderCreationDate />
+    <shippingDate />
+    <deliveryDate />
+    <active>true</active>
+  </Dependency>
+  <Dependency>
+    <id>1049</id>
+    <dependentTask>28</dependentTask>
+    <dependsOnTask>25</dependsOnTask>
+    <customerEmail />
+    <shippingAddress />
+    <orderCreationDate />
+    <shippingDate />
+    <deliveryDate />
+    <active>true</active>
+  </Dependency>
+  <Dependency>
+    <id>1050</id>
+    <dependentTask>35</dependentTask>
+    <dependsOnTask>23</dependsOnTask>
+    <customerEmail />
+    <shippingAddress />
+    <orderCreationDate />
+    <shippingDate />
+    <deliveryDate />
+    <active>true</active>
+  </Dependency>
+  <Dependency>
+    <id>1051</id>
+    <dependentTask>23</dependentTask>
+    <dependsOnTask>24</dependsOnTask>
+    <customerEmail />
+    <shippingAddress />
+    <orderCreationDate />
+    <shippingDate />
+    <deliveryDate />
+    <active>true</active>
+  </Dependency>
+  <Dependency>
+    <id>1052</id>
+    <dependentTask>22</dependentTask>
+    <dependsOnTask>26</dependsOnTask>
+    <customerEmail />
+    <shippingAddress />
+    <orderCreationDate />
+    <shippingDate />
+    <deliveryDate />
+    <active>true</active>
+  </Dependency>
+  <Dependency>
+    <id>1053</id>
+    <dependentTask>32</dependentTask>
+    <dependsOnTask>32</dependsOnTask>
+    <customerEmail />
+    <shippingAddress />
+    <orderCreationDate />
+    <shippingDate />
+    <deliveryDate />
+    <active>true</active>
+  </Dependency>
+  <Dependency>
+    <id>1054</id>
+    <dependentTask>32</dependentTask>
+    <dependsOnTask>39</dependsOnTask>
+    <customerEmail />
+    <shippingAddress />
+    <orderCreationDate />
+    <shippingDate />
+    <deliveryDate />
+    <active>true</active>
+  </Dependency>
+  <Dependency>
+    <id>1055</id>
+    <dependentTask>31</dependentTask>
+    <dependsOnTask>24</dependsOnTask>
+    <customerEmail />
+    <shippingAddress />
+    <orderCreationDate />
+    <shippingDate />
+    <deliveryDate />
+    <active>true</active>
+  </Dependency>
+  <Dependency>
+    <id>1056</id>
+    <dependentTask>36</dependentTask>
+    <dependsOnTask>36</dependsOnTask>
+    <customerEmail />
+    <shippingAddress />
+    <orderCreationDate />
+    <shippingDate />
+    <deliveryDate />
+    <active>true</active>
+  </Dependency>
+  <Dependency>
+    <id>1057</id>
+    <dependentTask>28</dependentTask>
+    <dependsOnTask>33</dependsOnTask>
+    <customerEmail />
+    <shippingAddress />
+    <orderCreationDate />
+    <shippingDate />
+    <deliveryDate />
+    <active>true</active>
+  </Dependency>
+  <Dependency>
+    <id>1058</id>
+    <dependentTask>25</dependentTask>
+    <dependsOnTask>37</dependsOnTask>
+    <customerEmail />
+    <shippingAddress />
+    <orderCreationDate />
+    <shippingDate />
+    <deliveryDate />
+    <active>true</active>
+  </Dependency>
+  <Dependency>
+    <id>1059</id>
+    <dependentTask>32</dependentTask>
+    <dependsOnTask>28</dependsOnTask>
+    <customerEmail />
+    <shippingAddress />
+    <orderCreationDate />
+    <shippingDate />
+    <deliveryDate />
+    <active>true</active>
+  </Dependency>
+  <Dependency>
+    <id>1060</id>
+    <dependentTask>39</dependentTask>
+    <dependsOnTask>39</dependsOnTask>
+    <customerEmail />
+    <shippingAddress />
+    <orderCreationDate />
+    <shippingDate />
+    <deliveryDate />
+    <active>true</active>
+  </Dependency>
+  <Dependency>
+    <id>1061</id>
+    <dependentTask>36</dependentTask>
+    <dependsOnTask>26</dependsOnTask>
+    <customerEmail />
+    <shippingAddress />
+    <orderCreationDate />
+    <shippingDate />
+    <deliveryDate />
+    <active>true</active>
+  </Dependency>
+  <Dependency>
+    <id>1062</id>
+    <dependentTask>35</dependentTask>
+    <dependsOnTask>25</dependsOnTask>
+    <customerEmail />
+    <shippingAddress />
+    <orderCreationDate />
+    <shippingDate />
+    <deliveryDate />
+    <active>true</active>
+  </Dependency>
+  <Dependency>
+    <id>1063</id>
+    <dependentTask>21</dependentTask>
+    <dependsOnTask>28</dependsOnTask>
+    <customerEmail />
+    <shippingAddress />
+    <orderCreationDate />
+    <shippingDate />
+    <deliveryDate />
+    <active>true</active>
+  </Dependency>
+  <Dependency>
+    <id>1064</id>
+    <dependentTask>25</dependentTask>
+    <dependsOnTask>34</dependsOnTask>
+    <customerEmail />
+    <shippingAddress />
+    <orderCreationDate />
+    <shippingDate />
+    <deliveryDate />
+    <active>true</active>
+  </Dependency>
+  <Dependency>
+    <id>1065</id>
+    <dependentTask>29</dependentTask>
+    <dependsOnTask>26</dependsOnTask>
+    <customerEmail />
+    <shippingAddress />
+    <orderCreationDate />
+    <shippingDate />
+    <deliveryDate />
+    <active>true</active>
+  </Dependency>
+  <Dependency>
+    <id>1066</id>
+    <dependentTask>22</dependentTask>
+    <dependsOnTask>23</dependsOnTask>
+    <customerEmail />
+    <shippingAddress />
+    <orderCreationDate />
+    <shippingDate />
+    <deliveryDate />
+    <active>true</active>
+  </Dependency>
+  <Dependency>
+    <id>1067</id>
+    <dependentTask>23</dependentTask>
+    <dependsOnTask>29</dependsOnTask>
+    <customerEmail />
+    <shippingAddress />
+    <orderCreationDate />
+    <shippingDate />
+    <deliveryDate />
+    <active>true</active>
+  </Dependency>
+  <Dependency>
+    <id>1068</id>
+    <dependentTask>35</dependentTask>
+    <dependsOnTask>28</dependsOnTask>
+    <customerEmail />
+    <shippingAddress />
+    <orderCreationDate />
+    <shippingDate />
+    <deliveryDate />
+    <active>true</active>
+  </Dependency>
+  <Dependency>
+    <id>1069</id>
+    <dependentTask>25</dependentTask>
+    <dependsOnTask>33</dependsOnTask>
+    <customerEmail />
+    <shippingAddress />
+    <orderCreationDate />
+    <shippingDate />
+    <deliveryDate />
+    <active>true</active>
+  </Dependency>
+  <Dependency>
+    <id>1070</id>
+    <dependentTask>24</dependentTask>
+    <dependsOnTask>24</dependsOnTask>
+    <customerEmail />
+    <shippingAddress />
+    <orderCreationDate />
+    <shippingDate />
+    <deliveryDate />
+    <active>true</active>
+  </Dependency>
+  <Dependency>
+    <id>1071</id>
+    <dependentTask>23</dependentTask>
+    <dependsOnTask>26</dependsOnTask>
+    <customerEmail />
+    <shippingAddress />
+    <orderCreationDate />
+    <shippingDate />
+    <deliveryDate />
+    <active>true</active>
+  </Dependency>
+  <Dependency>
+    <id>1072</id>
+    <dependentTask>33</dependentTask>
+    <dependsOnTask>26</dependsOnTask>
+    <customerEmail />
+    <shippingAddress />
+    <orderCreationDate />
+    <shippingDate />
+    <deliveryDate />
+    <active>true</active>
+  </Dependency>
+  <Dependency>
+    <id>1073</id>
+    <dependentTask>30</dependentTask>
+    <dependsOnTask>33</dependsOnTask>
+    <customerEmail />
+    <shippingAddress />
+    <orderCreationDate />
+    <shippingDate />
+    <deliveryDate />
+    <active>true</active>
+  </Dependency>
+  <Dependency>
+    <id>1074</id>
+    <dependentTask>37</dependentTask>
+    <dependsOnTask>33</dependsOnTask>
+    <customerEmail />
+    <shippingAddress />
+    <orderCreationDate />
+    <shippingDate />
+    <deliveryDate />
+    <active>true</active>
+  </Dependency>
+  <Dependency>
+    <id>1075</id>
+    <dependentTask>20</dependentTask>
+    <dependsOnTask>37</dependsOnTask>
+    <customerEmail />
+    <shippingAddress />
+    <orderCreationDate />
+    <shippingDate />
+    <deliveryDate />
+    <active>true</active>
+  </Dependency>
+  <Dependency>
+    <id>1076</id>
+    <dependentTask>35</dependentTask>
+    <dependsOnTask>37</dependsOnTask>
+    <customerEmail />
+    <shippingAddress />
+    <orderCreationDate />
+    <shippingDate />
+    <deliveryDate />
+    <active>true</active>
+  </Dependency>
+</ArrayOfDependency>

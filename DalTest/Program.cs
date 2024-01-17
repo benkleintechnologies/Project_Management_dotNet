@@ -12,7 +12,6 @@ internal class Program
 {
     //static readonly IDal s_dal = new DalList(); // stage 2
     static readonly IDal s_dal = new DalXml();
-    static readonly IConfig s_config = new ConfigImplementation();
 
     /// <summary>
     /// Runs loop of main menu
@@ -43,7 +42,7 @@ internal class Program
                             s_dal.Engineer.Reset();
                             s_dal.Dependency.Reset();
                             s_dal.Task.Reset();
-                            Initialization.Do(s_dal, s_config);
+                            Initialization.Do(s_dal);
                         }
                         break;
                     case 2:
@@ -65,7 +64,7 @@ internal class Program
                         DependencyOptionsSwitch(_userInput);
                         break;
                     case 5:
-                        s_config.reset();
+                        s_dal.Config.reset();
                         s_dal.Engineer.Reset();
                         s_dal.Dependency.Reset();
                         s_dal.Task.Reset();
