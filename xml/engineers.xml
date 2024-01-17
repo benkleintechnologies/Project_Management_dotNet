@@ -1,11 +1,2 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ArrayOfEngineer xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <Engineer>
-    <id>0</id>
-    <name>222</name>
-    <email />
-    <cost xsi:nil="true" />
-    <level>Beginner</level>
-    <active>true</active>
-  </Engineer>
-</ArrayOfEngineer>
+<ArrayOfEngineer xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />

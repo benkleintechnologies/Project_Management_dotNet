@@ -3,7 +3,6 @@ using DalApi;
 using DO;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 /// <summary>
 /// Implementation of Engineer interface using XML
@@ -49,7 +48,7 @@ internal class EngineerImplementation : IEngineer
     }
 
     /// <summary>
-    /// Retreive a Engineer from the XML File by ID
+    /// Retrieve a Engineer from the XML File by ID
     /// </summary>
     /// <param name="id">ID of the Engineer</param>
     /// <returns>The Engineer object requested</returns>
@@ -64,7 +63,7 @@ internal class EngineerImplementation : IEngineer
     }
 
     /// <summary>
-    /// Retreive an Engineer from the XML File based on a filter
+    /// Retrieve an Engineer from the XML File based on a filter
     /// </summary>
     /// <param name="filter">The criteria of the requested Engineer</param>
     /// <returns>The Engineer object requested</returns>
@@ -80,7 +79,7 @@ internal class EngineerImplementation : IEngineer
     }
 
     /// <summary>
-    /// Retreive all Engineer from the XML File
+    /// Retrieve all Engineer from the XML File
     /// </summary>
     /// <param name="filter">Optional filter to limit list</param>
     /// <returns>Requested Enumerable of Engineer</returns>
@@ -129,7 +128,7 @@ internal class EngineerImplementation : IEngineer
             XMLTools.SaveListToXMLSerializer<Engineer>(_engineers, s_engineers_xml);
         }
     }
-    public Engineer? InternalRead(int id)
+    private Engineer? InternalRead(int id)
     {
        List<Engineer> _engineers = XMLTools.LoadListFromXMLSerializer<Engineer>(s_engineers_xml);
        return _engineers.FirstOrDefault(item => item.id == id && item.active);

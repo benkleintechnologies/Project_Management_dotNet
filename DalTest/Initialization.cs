@@ -52,12 +52,23 @@ public static class Initialization
 
         for (int i=0; i < _engineerNames.Length; i++)
         {
-            int _id; 
-            do
-                _id = s_rand.Next(200000000, 400000000); 
-            while (s_dal!.Engineer.Read(_id) != null);
+            //Pick unused Engineer ID
+            int _id = s_rand.Next(200000000, 400000000); 
+            while (true)
+            {
+                try
+                {
+                    s_dal!.Engineer.Read(_id); //Try to read Engineer with _id. Will throw error if it doesn't exist
+                    _id = s_rand.Next(200000000, 400000000);
+                }
+                catch (Exception ex)
+                {
+                    //Unused ID Found. Continue...
+                    break;
+                }
+            }
 
-            //randomaly choose experience level
+            //randomly choose experience level
             var _values = Enum.GetValues(typeof(EngineerExperience));
             int _randomIndex = s_rand.Next(_values.Length);
             EngineerExperience _engineerExperience = (EngineerExperience)_values.GetValue(_randomIndex);

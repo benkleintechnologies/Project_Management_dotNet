@@ -46,7 +46,7 @@ internal class TaskImplementation : ITask
     }
 
     /// <summary>
-    /// Retreive a Task from the XML File by ID
+    /// Retrieve a Task from the XML File by ID
     /// </summary>
     /// <param name="id">ID of the Task</param>
     /// <returns>The Task object requested</returns>
@@ -62,7 +62,7 @@ internal class TaskImplementation : ITask
     }
 
     /// <summary>
-    /// Retreive a Task from the XML File based on a filter
+    /// Retrieve a Task from the XML File based on a filter
     /// </summary>
     /// <param name="filter">The criteria of the requested Task</param>
     /// <returns>The Task object requested</returns>
@@ -78,7 +78,7 @@ internal class TaskImplementation : ITask
     }
 
     /// <summary>
-    /// Retreive all Tasks from the XML File
+    /// Retrieve all Tasks from the XML File
     /// </summary>
     /// <param name="filter">Optional filter to limit list</param>
     /// <returns>Requested Enumerable of Tasks</returns>

@@ -4,7 +4,6 @@ using DO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Xml.Linq;
 
 /// <summary>
@@ -22,7 +21,9 @@ internal class DependencyImplementation : IDependency
     public int Create(Dependency item)
     {
         int _id = Config.NextDependencyId;
+        //Create Dependency with auto-incrementing ID
         Dependency _dependency = item with { id = _id };
+        //Load XML data of Dependencies
         XElement _dependencies = XMLTools.LoadListFromXMLElement(s_dependencies_xml);
         // Convert Dependency object to XElement
         XElement _dependencyElement = new XElement("Dependency",
@@ -36,7 +37,9 @@ internal class DependencyImplementation : IDependency
             new XElement("deliveryDate", _dependency.deliveryDate),
             new XElement("active", _dependency.active)
         );
+        //Add Dependency to the data loaded from XML
         _dependencies.Add(_dependencyElement);
+        //Save back to the XML
         XMLTools.SaveListToXMLElement(_dependencies, s_dependencies_xml);
         return _id;
     }
@@ -67,10 +70,11 @@ internal class DependencyImplementation : IDependency
     public Dependency? Read(int id)
     {
         XElement _dependencies = XMLTools.LoadListFromXMLElement(s_dependencies_xml);
-        
+        //Get enumerable of all active dependencies in XML
         IEnumerable<XElement> _dependencyElements = _dependencies.Elements("Dependency")
         .Where(e => (bool)e.Element("active")!);
 
+        //Find the Dependency (after converting each Element to Dependency) with the correct ID if it exists
         Dependency? _result = _dependencyElements
             .Select(_dependencyElement => new Dependency(
                 id: int.Parse(_dependencyElement.Element("id")!.Value),
@@ -182,9 +186,9 @@ internal class DependencyImplementation : IDependency
             _dependencyElement.SetElementValue("dependsOnTask", item.dependsOnTask);
             _dependencyElement.SetElementValue("customerEmail", item.customerEmail);
             _dependencyElement.SetElementValue("shippingAddress", item.shippingAddress);
-            _dependencyElement.SetElementValue("orderCreationDate", item.orderCreationDate?.ToString("dd/MM/yyyy") ?? "");//Fix this line
-            _dependencyElement.SetElementValue("shippingDate", item.shippingDate?.ToString("dd/MM/yyyy") ?? ""); //Fix this line
-            _dependencyElement.SetElementValue("deliveryDate", item.deliveryDate?.ToString("dd/MM/yyyy") ?? ""); //Fix this line
+            _dependencyElement.SetElementValue("orderCreationDate", item.orderCreationDate?.ToString("dd/MM/yyyy") ?? "");
+            _dependencyElement.SetElementValue("shippingDate", item.shippingDate?.ToString("dd/MM/yyyy") ?? "");
+            _dependencyElement.SetElementValue("deliveryDate", item.deliveryDate?.ToString("dd/MM/yyyy") ?? "");
             _dependencyElement.SetElementValue("active", item.active);
 
             XMLTools.SaveListToXMLElement(_dependencies, s_dependencies_xml);
