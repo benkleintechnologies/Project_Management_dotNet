@@ -75,10 +75,10 @@ internal class TaskImplementation : ITask
     /// </summary>
     /// <param name="filter">Optional filter to limit list</param>
     /// <returns>Requested Enumerable of Tasks</returns>
-    /// /// <exception cref="DalDoesNotExistException">Thrown if there is no Task with this information and filter in the database</exception>
+    /// <exception cref="DalDoesNotExistException">Thrown if there is no Task with this information and filter in the database</exception>
     public IEnumerable<Task> ReadAll(Func<Task, bool>? filter = null)
     {
-        IEnumerable<Task> _activeTasks = DataSource.Tasks.Where(filter).Where(item => item.active);
+        IEnumerable<Task> _activeTasks = DataSource.Tasks.Where(item => item.active);
         if (_activeTasks.Count() == 0)
         {
             throw new DalDoesNotExistException($"No Object of type Task exists");
