@@ -76,7 +76,7 @@ internal class DependencyImplementation : IDependency
     }
 
     /// <summary>
-    /// Updating an exisiting Dependency in the database
+    /// Updating an existing Dependency in the database
     /// </summary>
     /// <param name="item">Dependency to update</param>
     /// <exception cref="DalDoesNotExistException">Dependency doesn't exist so can't update</exception>

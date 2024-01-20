@@ -22,4 +22,7 @@ public record Dependency
 	DateTime? shippingDate = null,
 	DateTime? deliveryDate = null,
     bool active = true
-);
+)
+{
+    public Dependency() : this(0,0,0) { } // empty ctor for stage 3
+}

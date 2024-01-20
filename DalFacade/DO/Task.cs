@@ -18,20 +18,23 @@
 /// <param name="deadline"></param>
 /// <param name="actualEndDate"></param>
 public record Task
-	(
-		int id,
-        bool isMilestone = false,
-        EngineerExperience degreeOfDifficulty = EngineerExperience.Beginner,
-        int? assignedEngineerId = null,
-        String? nickname = null,
-        String? description = null,
-        String? deliverables = null,
-        String? notes = null,
-        DateTime? dateCreated = null,
-        DateTime? projectedStartDate = null,
-        DateTime? actualStartDate = null,
-        TimeSpan? duration = null,
-        DateTime? deadline = null,
-        DateTime? actualEndDate = null,
-        bool active = true
-    );
+(
+    int id,
+    bool isMilestone = false,
+    EngineerExperience degreeOfDifficulty = EngineerExperience.Beginner,
+    int? assignedEngineerId = null,
+    String? nickname = null,
+    String? description = null,
+    String? deliverables = null,
+    String? notes = null,
+    DateTime? dateCreated = null,
+    DateTime? projectedStartDate = null,
+    DateTime? actualStartDate = null,
+    TimeSpan? duration = null,
+    DateTime? deadline = null,
+    DateTime? actualEndDate = null,
+    bool active = true
+)
+{
+    public Task() : this(0) { } // empty ctor for stage 3
+};

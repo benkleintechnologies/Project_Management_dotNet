@@ -16,4 +16,7 @@ public record Engineer
 	double? cost = null,
 	EngineerExperience level = EngineerExperience.Beginner,
 	bool active = true
-);
+)
+{
+    public Engineer() : this(0) { } // empty ctor for stage 3
+};

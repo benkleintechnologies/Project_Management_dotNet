@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfEngineer xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Engineer>
+    <id>284059800</id>
+    <name>Moishe Goldstein</name>
+    <email>moishe.goldstein@example.com</email>
+    <cost>174522</cost>
+    <level>AdvancedBeginner</level>
+    <active>true</active>
+  </Engineer>
+  <Engineer>
+    <id>235253850</id>
+    <name>Shloimy Rosenberg</name>
+    <email>shloimy.rosenberg@example.com</email>
+    <cost>197579</cost>
+    <level>Expert</level>
+    <active>true</active>
+  </Engineer>
+  <Engineer>
+    <id>204949952</id>
+    <name>Yitzy Schwartz</name>
+    <email>yitzy.schwartz@example.com</email>
+    <cost>159057</cost>
+    <level>Expert</level>
+    <active>true</active>
+  </Engineer>
+  <Engineer>
+    <id>233078710</id>
+    <name>Shmuly Cohen</name>
+    <email>shmuly.cohen@example.com</email>
+    <cost>199320</cost>
+    <level>AdvancedBeginner</level>
+    <active>true</active>
+  </Engineer>
+  <Engineer>
+    <id>359021093</id>
+    <name>Dovid Greenbaum</name>
+    <email>dovid.greenbaum@example.com</email>
+    <cost>148005</cost>
+    <level>Advanced</level>
+    <active>true</active>
+  </Engineer>
+</ArrayOfEngineer>

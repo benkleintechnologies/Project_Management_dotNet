@@ -10,7 +10,8 @@ using Task = DO.Task;
 /// </summary>
 internal class Program
 {
-    static readonly IDal s_dal = new DalList(); // stage 2
+    //static readonly IDal s_dal = new DalList(); // stage 2
+    static readonly IDal s_dal = new DalXml();
 
     /// <summary>
     /// Runs loop of main menu
@@ -20,11 +21,10 @@ internal class Program
     {
         try
         {
-            Initialization.Do(s_dal); // stage 2
             bool _exit = false;
             while (!_exit)
             {
-                Console.WriteLine("0. Exit the main menu\n1. Test out Engineer\n2. Test out Task\n3. Test out Dependency\n4. Reset Project\n");
+                Console.WriteLine("0. Exit the main menu\n1. Initialize data with random values\n2. Test out Engineer\n3. Test out Task\n4. Test out Dependency\n5. Reset Project\n");
                 string? _input = Console.ReadLine();
                 int.TryParse(_input, out int _inputNumber);
                 Console.WriteLine();
@@ -35,25 +35,39 @@ internal class Program
                         _exit = true;
                         break;
                     case 1:
+                        Console.Write("Would you like to create initial data? (Y/N)\n"); //stage 3
+                        string? ans = Console.ReadLine() ?? throw new FormatException("Wrong input"); //stage 3
+                        if (ans == "Y") //stage 3
+                        { 
+                            s_dal.Engineer.Reset();
+                            s_dal.Dependency.Reset();
+                            s_dal.Task.Reset();
+                            Initialization.Do(s_dal);
+                        }
+                        break;
+                    case 2:
                         EngineerOptionsPrint();
                         _userInput = Console.ReadLine();
                         Console.WriteLine();
                         EngineerOptionsSwitch(_userInput);
                         break;
-                    case 2:
+                    case 3:
                         TaskOptionsPrint();
                         _userInput = Console.ReadLine();
                         Console.WriteLine();
                         TaskOptionsSwitch(_userInput);
                         break;
-                    case 3:
+                    case 4:
                         DependencyOptionsPrint();
                         _userInput = Console.ReadLine();
                         Console.WriteLine();
                         DependencyOptionsSwitch(_userInput);
                         break;
-                    case 4:
-                        s_dal!.Config.reset();
+                    case 5:
+                        s_dal.Config.reset();
+                        s_dal.Engineer.Reset();
+                        s_dal.Dependency.Reset();
+                        s_dal.Task.Reset();
                         Console.WriteLine("Project Reset...\n");
                         break;
                     default: Console.WriteLine("Incorrect input, try again\n"); 
@@ -273,7 +287,7 @@ internal class Program
                     Console.WriteLine();
                     break;
                 case "b": //Add Dependency
-                    Console.WriteLine("Enter the id, dependent task id, depends-on task id, customer email, shipping address, and order creation date (on seperate lines):\n");
+                    Console.WriteLine("Enter the id, dependent task id, depends-on task id, customer email, shipping address, order creation date, shipping date, and delivery date (on seperate lines):\n");
                     _newDependency = ParseDependency();
                     s_dal.Dependency.Create(_newDependency);
                     break;
@@ -293,7 +307,7 @@ internal class Program
                     Console.WriteLine();
                     break;
                 case "e": //Update Dependency
-                    Console.WriteLine("Enter the updated information of the dependecy, including - id, dependent task id, depends-on task id, customer email, shipping address, and order creation date (on seperate lines):\n");
+                    Console.WriteLine("Enter the updated information of the dependecy, including - id, dependent task id, depends-on task id, customer email, shipping address, order creation date, shipping date, and delivery date (on seperate lines):\n");
                     _newDependency = ParseDependency();
                     s_dal.Dependency.Update(_newDependency);
                     break;
@@ -348,7 +362,7 @@ internal class Program
     }
 
     /// <summary>
-    /// Receives input from user for all feilds of Task
+    /// Receives input from user for all fields of Task
     /// </summary>
     /// <returns>Task object based on user input</returns>
     static Task ParseTask()
