@@ -2,6 +2,8 @@
 using DalApi;
 using DO;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using Task = DO.Task;
 
 /// <summary>
 /// Implementation of Task Interface, which implements CRUD methods and Reset
@@ -25,15 +27,10 @@ internal class TaskImplementation : ITask
     /// Delete a Task from the database
     /// </summary>
     /// <param name="id">ID of the Task to delete</param>
-    /// <exception cref="DalDoesNotExistException">Thrown if there is no Task with this ID in the database</exception>
     public void Delete(int id)
     {
-        Task? _task = Read(id);
-        if (_task == null)
-        {
-            throw new DalDoesNotExistException($"Object of type Task with identifier {id} does not exist");
-        }
-        else
+        Task _task = Read(id);
+        if (_task is not null)
         {
             DataSource.Tasks.Remove(_task);
             Task _newTask = _task with { active = false };
@@ -46,9 +43,15 @@ internal class TaskImplementation : ITask
     /// </summary>
     /// <param name="id">ID of the Task</param>
     /// <returns>The Task object requested</returns>
-    public Task? Read(int id)
+    /// <exception cref="DalDoesNotExistException">Thrown if there is no Task with this ID in the database</exception>
+    public Task Read(int id)
     {
-        return DataSource.Tasks.FirstOrDefault(item => item.id == id && item.active);
+        Task? _task = DataSource.Tasks.FirstOrDefault(item => item.id == id && item.active);
+        if (_task == null)
+        {
+            throw new DalDoesNotExistException($"Object of type Task with identifier {id} does not exist");
+        }
+        return _task;
     }
 
     /// <summary>
@@ -56,9 +59,15 @@ internal class TaskImplementation : ITask
     /// </summary>
     /// <param name="filter">The criteria of the requested Engineer</param>
     /// <returns>The Engineer object requested</returns>
-    public Task? Read(Func<Task, bool> filter)
+    /// <exception cref="DalDoesNotExistException">Thrown if there is no Task with this information and filter in the database</exception>
+    public Task Read(Func<Task, bool> filter)
     {
-        return DataSource.Tasks.Where(item => item.active).FirstOrDefault(filter);
+        Task? _task = DataSource.Tasks.Where(item => item.active).FirstOrDefault(filter);
+        if (_task == null)
+        {
+            throw new DalDoesNotExistException($"Object of type Task with given filter does not exist");
+        }
+        return _task;
     }
 
     /// <summary>
@@ -66,32 +75,35 @@ internal class TaskImplementation : ITask
     /// </summary>
     /// <param name="filter">Optional filter to limit list</param>
     /// <returns>Requested Enumerable of Tasks</returns>
+    /// /// <exception cref="DalDoesNotExistException">Thrown if there is no Task with this information and filter in the database</exception>
     public IEnumerable<Task> ReadAll(Func<Task, bool>? filter = null)
     {
+        IEnumerable<Task> _activeTasks = DataSource.Tasks.Where(filter).Where(item => item.active);
+        if (_activeTasks.Count() == 0)
+        {
+            throw new DalDoesNotExistException($"No Object of type Task exists");
+        }
         if (filter == null)
         {
-            return DataSource.Tasks.Where(item => item.active);
+            return _activeTasks;
         }
-        return DataSource.Tasks.Where(filter).Where(item => item.active);
+        IEnumerable<Task> _filteredTasks = _activeTasks.Where(filter);
+        if (_filteredTasks.Count() == 0)
+        {
+            throw new DalDoesNotExistException($"No Object of type Task exists");
+        }
+        return _filteredTasks;
     }
 
     /// <summary>
     /// Updates a Task in the database
     /// </summary>
     /// <param name="item">New Task information</param>
-    /// <exception cref="DalDoesNotExistException">Thrown if no Task with the same ID exists</exception>
     public void Update(Task item)
     {
-        Task? _old = Read(item.id);
-        if (_old != null)
-        {
-            DataSource.Tasks.Remove(_old);
-            DataSource.Tasks.Add(item);
-        }
-        else
-        {
-            throw new DalDoesNotExistException($"Object of type Task with identifier {item.id} does not exist");
-        }
+        Task _old = Read(item.id);
+        DataSource.Tasks.Remove(_old);
+        DataSource.Tasks.Add(item);
     }
 
     /// <summary>
