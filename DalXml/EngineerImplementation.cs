@@ -35,15 +35,12 @@ internal class EngineerImplementation : IEngineer
     /// <param name="id">ID of the Engineer to delete</param>
     public void Delete(int id)
     {
-       Engineer? _engineer = Read(id);
-       if (_engineer is not null)
-       {
-            List<Engineer> _engineers = XMLTools.LoadListFromXMLSerializer<Engineer>(s_engineers_xml);
-            _engineers.Remove(_engineer);
-            Engineer _newEngineer = _engineer with { active = false };
-            _engineers.Add(_newEngineer);
-            XMLTools.SaveListToXMLSerializer<Engineer>(_engineers, s_engineers_xml);
-       }
+        Engineer _engineer = Read(id); //Check that this item exists
+        List<Engineer> _engineers = XMLTools.LoadListFromXMLSerializer<Engineer>(s_engineers_xml);
+        _engineers.Remove(_engineer);
+        Engineer _newEngineer = _engineer with { active = false };
+        _engineers.Add(_newEngineer);
+        XMLTools.SaveListToXMLSerializer<Engineer>(_engineers, s_engineers_xml);
     }
 
     /// <summary>
@@ -52,7 +49,7 @@ internal class EngineerImplementation : IEngineer
     /// <param name="id">ID of the Engineer</param>
     /// <returns>The Engineer object requested</returns>
     /// <exception cref="DalDoesNotExistException">Thrown if no Engineer with this ID exists</exception>
-    public Engineer? Read(int id)
+    public Engineer Read(int id)
     {
         Engineer? _engineer = InternalRead(id);
         if (_engineer == null)
@@ -119,17 +116,13 @@ internal class EngineerImplementation : IEngineer
     /// Updates an Engineer in the XML File
     /// </summary>
     /// <param name="item">New Engineer information</param>
-    /// <exception cref="DalDoesNotExistException">Thrown if no Engineer with the same ID exists</exception>
     public void Update(Engineer item)
     {
         Engineer? _old = Read(item.id);
-        if (_old is not null)
-        {
-            List<Engineer> _engineers = XMLTools.LoadListFromXMLSerializer<Engineer>(s_engineers_xml);
-            _engineers.Remove(_old);
-            _engineers.Add(item);
-            XMLTools.SaveListToXMLSerializer<Engineer>(_engineers, s_engineers_xml);
-        }
+        List<Engineer> _engineers = XMLTools.LoadListFromXMLSerializer<Engineer>(s_engineers_xml);
+        _engineers.Remove(_old);
+        _engineers.Add(item);
+        XMLTools.SaveListToXMLSerializer<Engineer>(_engineers, s_engineers_xml);
     }
     private Engineer? InternalRead(int id)
     {

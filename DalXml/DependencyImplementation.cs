@@ -80,7 +80,7 @@ internal class DependencyImplementation : IDependency
             .FirstOrDefault(d => d.id == id);
 
         if (_result is null)
-            throw new DalDoesNotExistException($"Object of type Dependency with given filter does not exist");
+            throw new DalDoesNotExistException($"Object of type Dependency with identifier {id} does not exist");
 
         return _result;
     }
