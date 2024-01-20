@@ -124,6 +124,5 @@ internal class TaskImplementation : ITask
         _tasks.Remove(_old);
         _tasks.Add(item);
         XMLTools.SaveListToXMLSerializer<Task>(_tasks, s_tasks_xml);
-        }
     }
 }

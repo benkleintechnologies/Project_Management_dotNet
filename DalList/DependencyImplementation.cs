@@ -54,13 +54,13 @@ internal class DependencyImplementation : IDependency
     /// </summary>
     /// <param name="filter">filter to find a specific type of Dependency</param>
     /// <returns>The requested Dependency</returns>
-    /// <exception cref="DalDoesNotExistException">Dependency doesn't exist</exception>
+    /// <exception cref="DalDoesNotExistException">Dependency doesn't exist with this filter</exception>
     public Dependency Read(Func<Dependency, bool> filter) 
     {
         Dependency? _dependency = DataSource.Dependencies.Where(item => item.active).FirstOrDefault(filter);
         if (_dependency == null)
         {
-            throw new DalDoesNotExistException($"Object of type Dependency with identifier {id} does not exist");
+            throw new DalDoesNotExistException($"Object of type Dependency with this filter does not exist");
         }
         return _dependency;
 
