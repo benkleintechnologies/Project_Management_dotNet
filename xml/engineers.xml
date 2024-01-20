@@ -1,2 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ArrayOfEngineer xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+<ArrayOfEngineer xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Engineer>
+    <id>293468294</id>
+    <name>Moishe Goldstein</name>
+    <email>moishe.goldstein@example.com</email>
+    <cost>109967</cost>
+    <level>Expert</level>
+    <active>true</active>
+  </Engineer>
+  <Engineer>
+    <id>228154651</id>
+    <name>Shloimy Rosenberg</name>
+    <email>shloimy.rosenberg@example.com</email>
+    <cost>182825</cost>
+    <level>AdvancedBeginner</level>
+    <active>true</active>
+  </Engineer>
+  <Engineer>
+    <id>332977749</id>
+    <name>Yitzy Schwartz</name>
+    <email>yitzy.schwartz@example.com</email>
+    <cost>143031</cost>
+    <level>Expert</level>
+    <active>true</active>
+  </Engineer>
+  <Engineer>
+    <id>220102229</id>
+    <name>Shmuly Cohen</name>
+    <email>shmuly.cohen@example.com</email>
+    <cost>86097</cost>
+    <level>Advanced</level>
+    <active>true</active>
+  </Engineer>
+  <Engineer>
+    <id>292560777</id>
+    <name>Dovid Greenbaum</name>
+    <email>dovid.greenbaum@example.com</email>
+    <cost>80955</cost>
+    <level>Beginner</level>
+    <active>true</active>
+  </Engineer>
+</ArrayOfEngineer>
