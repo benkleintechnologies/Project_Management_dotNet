@@ -30,11 +30,6 @@ internal class DependencyImplementation : IDependency
             new XElement("id", _dependency.id),
             new XElement("dependentTask", _dependency.dependentTask),
             new XElement("dependsOnTask", _dependency.dependsOnTask),
-            new XElement("customerEmail", _dependency.customerEmail),
-            new XElement("shippingAddress", _dependency.shippingAddress),
-            new XElement("orderCreationDate", _dependency.orderCreationDate),
-            new XElement("shippingDate", _dependency.shippingDate),
-            new XElement("deliveryDate", _dependency.deliveryDate),
             new XElement("active", _dependency.active)
         );
         //Add Dependency to the data loaded from XML
@@ -80,11 +75,6 @@ internal class DependencyImplementation : IDependency
                 id: int.Parse(_dependencyElement.Element("id")!.Value),
                 dependentTask: int.Parse(_dependencyElement.Element("dependentTask")!.Value),
                 dependsOnTask: int.Parse(_dependencyElement.Element("dependsOnTask")!.Value),
-                customerEmail: _dependencyElement.Element("customerEmail")?.Value,
-                shippingAddress: _dependencyElement.Element("shippingAddress")?.Value,
-                orderCreationDate: DateTime.TryParse(_dependencyElement.Element("orderCreationDate")!.Value, out var creationDate) ? creationDate : null,
-                shippingDate: DateTime.TryParse(_dependencyElement.Element("shippingDate")!.Value, out var shipDate) ? shipDate : null,
-                deliveryDate: DateTime.TryParse(_dependencyElement.Element("deliveryDate")!.Value, out var deliverDate) ? deliverDate : null,
                 active: bool.Parse(_dependencyElement.Element("active")!.Value)
                 ))
             .FirstOrDefault(d => d.id == id);
@@ -113,11 +103,6 @@ internal class DependencyImplementation : IDependency
                 id: int.Parse(_dependencyElement.Element("id")!.Value),
                 dependentTask: int.Parse(_dependencyElement.Element("dependentTask")!.Value),
                 dependsOnTask: int.Parse(_dependencyElement.Element("dependsOnTask")!.Value),
-                customerEmail: _dependencyElement.Element("customerEmail")?.Value,
-                shippingAddress: _dependencyElement.Element("shippingAddress")?.Value,
-                orderCreationDate: DateTime.TryParse(_dependencyElement.Element("orderCreationDate")!.Value, out var creationDate) ? creationDate : null,
-                shippingDate: DateTime.TryParse(_dependencyElement.Element("shippingDate")!.Value, out var shipDate) ? shipDate : null,
-                deliveryDate: DateTime.TryParse(_dependencyElement.Element("deliveryDate")!.Value, out var deliverDate) ? deliverDate : null,
                 active: bool.Parse(_dependencyElement.Element("active")!.Value)
                 ))
             .FirstOrDefault(filter);
@@ -143,11 +128,6 @@ internal class DependencyImplementation : IDependency
             id: int.Parse(elem.Element("id")!.Value),
             dependentTask: int.Parse(elem.Element("dependentTask")!.Value),
             dependsOnTask: int.Parse(elem.Element("dependsOnTask")!.Value),
-            customerEmail: elem.Element("customerEmail")?.Value,
-            shippingAddress: elem.Element("shippingAddress")?.Value,
-            orderCreationDate: DateTime.TryParse(elem.Element("orderCreationDate")!.Value, out var creationDate) ? creationDate : null,
-            shippingDate: DateTime.TryParse(elem.Element("shippingDate")!.Value, out var shipDate) ? shipDate : null,
-            deliveryDate: DateTime.TryParse(elem.Element("deliveryDate")!.Value, out var deliverDate) ? deliverDate : null,
             active: bool.Parse(elem.Element("active")!.Value)
             ));
         IEnumerable<Dependency> _activeDependencies = _dependencies.Where(item => item.active);
@@ -195,11 +175,6 @@ internal class DependencyImplementation : IDependency
         {
             _dependencyElement!.SetElementValue("dependentTask", item.dependentTask);
             _dependencyElement.SetElementValue("dependsOnTask", item.dependsOnTask);
-            _dependencyElement.SetElementValue("customerEmail", item.customerEmail);
-            _dependencyElement.SetElementValue("shippingAddress", item.shippingAddress);
-            _dependencyElement.SetElementValue("orderCreationDate", item.orderCreationDate?.ToString("dd/MM/yyyy") ?? "");
-            _dependencyElement.SetElementValue("shippingDate", item.shippingDate?.ToString("dd/MM/yyyy") ?? "");
-            _dependencyElement.SetElementValue("deliveryDate", item.deliveryDate?.ToString("dd/MM/yyyy") ?? "");
             _dependencyElement.SetElementValue("active", item.active);
 
             XMLTools.SaveListToXMLElement(_dependencies, s_dependencies_xml);

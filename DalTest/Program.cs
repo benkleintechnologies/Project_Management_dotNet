@@ -11,7 +11,7 @@ using Task = DO.Task;
 internal class Program
 {
     //static readonly IDal s_dal = new DalList(); // stage 2
-    static readonly IDal s_dal = new DalXml();
+    static readonly IDal s_dal = new DalXml(); //Stage 3
 
     /// <summary>
     /// Runs loop of main menu
@@ -423,7 +423,7 @@ internal class Program
         _deliveryDate = _deliveryDateConverted ? _deliveryDateValue : null;
         Console.WriteLine();
 
-        Dependency _newDependency = new(_id, _dependentTask, _dependsOnTask, _customerEmail, _shippingAddress, _orderCreationDate, _shippingDate, _deliveryDate);
+        Dependency _newDependency = new(_id, _dependentTask, _dependsOnTask);
         return _newDependency;
     }
 }

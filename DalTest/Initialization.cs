@@ -114,10 +114,10 @@ public static class Initialization
         int _dependentTask2 = _tasks[1].id;
         int _dependsOnTask1 = _tasks[2].id;
         int _dependsOnTask2 = _tasks[3].id;
-        Dependency _dependency1 = new(0, _dependentTask1, _dependsOnTask1, null, null, null, null, null);
-        Dependency _dependency2 = new(0, _dependentTask1, _dependsOnTask2, null, null, null, null, null);
-        Dependency _dependency3 = new(0, _dependentTask2, _dependsOnTask1, null, null, null, null, null);
-        Dependency _dependency4 = new(0, _dependentTask2, _dependsOnTask2, null, null, null, null, null);
+        Dependency _dependency1 = new(0, _dependentTask1, _dependsOnTask1);
+        Dependency _dependency2 = new(0, _dependentTask1, _dependsOnTask2);
+        Dependency _dependency3 = new(0, _dependentTask2, _dependsOnTask1);
+        Dependency _dependency4 = new(0, _dependentTask2, _dependsOnTask2);
         s_dal!.Dependency.Create(_dependency1);
         s_dal!.Dependency.Create(_dependency2);
         s_dal!.Dependency.Create(_dependency3);
@@ -137,7 +137,7 @@ public static class Initialization
                 _dependsOnTask = _tasks[s_rand.Next(0, _tasks.Length)].id;
             }
 
-            Dependency _newDependency = new(0, _dependentTask, _dependsOnTask, null, null, null, null, null);
+            Dependency _newDependency = new(0, _dependentTask, _dependsOnTask);
 
             //Make sure a dependency doesn't exist in s_dalDependency with the same dependentTask and dependsOnTask
             Dependency[] _dependencies = s_dal!.Dependency.ReadAll().ToArray();
