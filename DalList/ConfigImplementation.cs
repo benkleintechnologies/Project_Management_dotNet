@@ -11,13 +11,15 @@ public class ConfigImplementation : IConfig
     /// <summary>
     /// Reset all items in the database
     /// </summary>
-    public void reset()
+    public void Reset()
     {
         DataSource.Engineers.Clear();
         DataSource.Tasks.Clear();
         DataSource.Dependencies.Clear();
         DataSource.Config._startDate = null;
         DataSource.Config._endDate = null;
+        DataSource.Config.resetDependencyId();
+        DataSource.Config.resetTaskId();
     }
 
     /// <summary>

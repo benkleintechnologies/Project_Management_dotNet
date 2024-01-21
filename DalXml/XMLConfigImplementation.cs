@@ -8,7 +8,7 @@ using System;
 /// </summary>
 public class XMLConfigImplementation : IConfig
 {
-    public void reset()
+    public void Reset()
     {
         Config.Reset();
     }

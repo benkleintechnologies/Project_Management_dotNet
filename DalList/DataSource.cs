@@ -19,6 +19,18 @@ internal static class DataSource
         internal const int _startDependencyId = 1000;
         private static int _nextDependencyId = _startDependencyId;
         internal static int NextDependencyId { get => _nextDependencyId++; }
+
+        // Method to reset the nextTaskId
+        internal static void resetTaskId()
+        {
+            _nextTaskId = _startTaskId;
+        }
+
+        // Method to reset the nextDependencyId
+        internal static void resetDependencyId()
+        {
+            _nextDependencyId = _startDependencyId;
+        }
     }
 
 	internal static List<DO.Engineer> Engineers { get; } = new();

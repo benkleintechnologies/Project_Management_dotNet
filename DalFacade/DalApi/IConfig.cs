@@ -7,5 +7,5 @@ public interface IConfig
 {
     void setStartDate(DateTime startDate); // Set Start Date of the Project
     void setEndDate(DateTime endDate); // Set End Date of the Project
-    void reset(); // Reset all entity lists
+    void Reset(); // Reset all entity lists
 }

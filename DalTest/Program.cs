@@ -43,6 +43,7 @@ internal class Program
                             s_dal.Engineer.Reset();
                             s_dal.Dependency.Reset();
                             s_dal.Task.Reset();
+                            s_dal.Config.Reset();
                             //Initialization.Do(s_dal); // stage 2
                             Initialization.Do(); // stage 4
                         }
@@ -66,7 +67,7 @@ internal class Program
                         DependencyOptionsSwitch(_userInput);
                         break;
                     case 5:
-                        s_dal.Config.reset();
+                        s_dal.Config.Reset();
                         s_dal.Engineer.Reset();
                         s_dal.Dependency.Reset();
                         s_dal.Task.Reset();
