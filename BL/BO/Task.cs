@@ -22,5 +22,6 @@ public class Task
     public string? Notes { get; set; }
     public EngineerInTask? Engineer { get; set; }
     public EngineerExperience Complexity { get; set; }
+    public override string ToString() => this.ToStringProperty();
 
 }
