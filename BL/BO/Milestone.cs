@@ -1,4 +1,8 @@
 ﻿namespace BO;
+
+/// <summary>
+/// Milestone Entity
+/// </summary>
 public class Milestone
 {
     public int Id { get; init; }

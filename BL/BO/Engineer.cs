@@ -1,5 +1,8 @@
 ﻿namespace BO;
 
+/// <summary>
+/// Engineer Entity
+/// </summary>
 public class Engineer
 {
     public int Id { get; init; }
