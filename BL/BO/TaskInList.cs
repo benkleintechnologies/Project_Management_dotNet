@@ -1,5 +1,8 @@
 ﻿namespace BO;
 
+/// <summary>
+/// The list of tasks that the entity depends on
+/// </summary>
 public class TaskInList
 {
     public int Id { get; init; }

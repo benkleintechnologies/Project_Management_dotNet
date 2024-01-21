@@ -1,5 +1,8 @@
 ﻿namespace BO;
 
+/// <summary>
+/// Milestones that exist
+/// </summary>
 public class MilestoneInList
 {
     public string Name { get; init; }
