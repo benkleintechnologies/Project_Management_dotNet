@@ -1,9 +1,9 @@
 ﻿namespace BO;
 
 [Serializable]
-public class BlDoesNotexistException : Exception
+public class BlDoesNotExistException : Exception
 {
-    public BlDoesNotexistException(string? message) : base(message) { }
+    public BlDoesNotExistException(string? message) : base(message) { }
 }
 
 public class BlAlreadyExistsException : Exception
