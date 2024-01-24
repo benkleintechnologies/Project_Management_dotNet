@@ -16,5 +16,44 @@ public class Milestone
     public double CompletionPercentage { get; set; }
     public string? Notes { get; set; }
     List<TaskInList>? Dependencies { get; set; }
+    /// <summary>
+    /// Constructor for the Milestone class.
+    /// </summary>
+    /// <param name="id">The unique identifier for the milestone.</param>
+    /// <param name="name">The name of the milestone (can be null).</param>
+    /// <param name="description">The description of the milestone (can be null).</param>
+    /// <param name="createdAtDate">The date when the milestone was created.</param>
+    /// <param name="status">The status of the milestone.</param>
+    /// <param name="projectedEndDate">The projected end date for the milestone (can be null).</param>
+    /// <param name="deadline">The deadline for the milestone (can be null).</param>
+    /// <param name="actualEndDate">The actual end date for the milestone (can be null).</param>
+    /// <param name="completionPercentage">The completion percentage of the milestone.</param>
+    /// <param name="notes">Additional notes for the milestone (can be null).</param>
+    /// <param name="dependencies">List of dependencies for the milestone (can be null).</param>
+    public Milestone(
+        int id,
+        string? name,
+        string? description,
+        DateTime? createdAtDate,
+        Status status,
+        DateTime? projectedEndDate,
+        DateTime? deadline,
+        DateTime? actualEndDate,
+        double completionPercentage,
+        string? notes,
+        List<TaskInList>? dependencies)
+    {
+        Id = id;
+        Name = name;
+        Description = description;
+        CreatedAtDate = createdAtDate;
+        Status = status;
+        ProjectedEndDate = projectedEndDate;
+        Deadline = deadline;
+        ActualEndDate = actualEndDate;
+        CompletionPercentage = completionPercentage;
+        Notes = notes;
+        Dependencies = dependencies;
+    }
     public override string ToString() => this.ToStringProperty();
 }
