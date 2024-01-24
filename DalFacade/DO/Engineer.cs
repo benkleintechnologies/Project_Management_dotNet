@@ -11,12 +11,12 @@
 public record Engineer
 (
 	int id,
-    String? name = null,
-    String? email = null,
-	double? cost = null,
+    String name,
+    String email,
+	double cost,
 	EngineerExperience level = EngineerExperience.Beginner,
 	bool active = true
 )
 {
-    public Engineer() : this(0) { } // empty ctor for stage 3
+    public Engineer() : this(0, "", "", 0) { } // empty ctor for stage 3
 };

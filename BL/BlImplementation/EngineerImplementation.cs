@@ -4,6 +4,7 @@ using BO;
 using DO;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 internal class EngineerImplementation : IEngineer
@@ -54,12 +55,8 @@ internal class EngineerImplementation : IEngineer
         {
             //Get Engineer from DAL
             DO.Engineer engineer = _dal.Engineer.Read(Id);
-            //Get task assigned to engineer
-            DO.Task taskAssigned = _dal.Task.Read(t => t.assignedEngineerId == Id);
-            //Create TaskInEngineer
-            TaskInEngineer taskInEngineer = new TaskInEngineer(taskAssigned.id, taskAssigned.nickname);
             //Make a BL type Engineer
-            BO.Engineer blEngineer = BO.Engineer();
+            return toBlEngineer(engineer);
         }
         catch (DalDoesNotExistException exc)
         {
@@ -69,12 +66,49 @@ internal class EngineerImplementation : IEngineer
 
     public IEnumerable<BO.Engineer> getListOfEngineers(Func<BO.Engineer, bool>? filter = null)
     {
-        throw new NotImplementedException();
+        try
+        {
+            //Get all Engineers from the DL
+            IEnumerable<DO.Engineer> engineers = _dal.Engineer.ReadAll();
+            //Filter the DL objects based on the filter
+            IEnumerable<DO.Engineer> filteredDlEngineers = filter != null ? engineers.Where(e => filter(toBlEngineer(e))) : engineers;
+            //Return the list of BL typ Engineers
+            return filteredDlEngineers.Select(toBlEngineer);
+        }
+        catch (DalDoesNotExistException exc)
+        {
+            throw new BlDoesNotExistException(exc.Message);
+        }
     }
 
     public void updateEngineer(BO.Engineer engineer)
     {
-        throw new NotImplementedException();
+        try
+        {
+            //Check for invalid data
+            if (engineer.Id <= 0 || engineer.Name == "" || engineer.Cost <= 0 || !IsValidEmail(engineer.Email))
+            {
+                throw new BlInvalidInputException($"One of the fields of the Engineer with id {engineer.Id} was invalid");
+            }
+
+            //Get Engineer from DAL
+            DO.Engineer dlEngineer = _dal.Engineer.Read(engineer.Id);
+            //Make a BL type Engineer of the current engineer in the databse
+            BO.Engineer oldEngineer = toBlEngineer(dlEngineer);
+
+            //Check the Experience level is the same or higher
+            BO.EngineerExperience engineerExperience = engineer.Experience >= oldEngineer.Experience ? engineer.Experience : oldEngineer.Experience;
+
+            //Make update DL type Engineer
+            DO.Engineer newEngineer = new(engineer.Id, engineer.Name, engineer.Email, engineer.Cost, (DO.EngineerExperience)engineerExperience, true);
+
+            //Call update on DL
+            _dal.Engineer.Update(newEngineer);
+        }
+        catch (DalDoesNotExistException exc)
+        {
+            throw new BlDoesNotExistException(exc.Message);
+        }
     }
 
     static bool IsValidEmail(string email)
@@ -89,4 +123,17 @@ internal class EngineerImplementation : IEngineer
         // Return true if there is a match, indicating a valid email
         return match.Success;
     }
+
+    private BO.Engineer toBlEngineer(DO.Engineer engineer)
+    {
+        //Get task assigned to engineer
+        DO.Task taskAssigned = _dal.Task.Read(t => t.assignedEngineerId == engineer.id);
+        //Create TaskInEngineer
+        TaskInEngineer taskInEngineer = new(taskAssigned.id, taskAssigned.nickname);
+        //Make a BL type Engineer
+        BO.Engineer blEngineer = new(engineer.id, engineer.name, engineer.email, (BO.EngineerExperience)engineer.level, engineer.cost, taskInEngineer);
+
+        return blEngineer;
+    }
+
 }

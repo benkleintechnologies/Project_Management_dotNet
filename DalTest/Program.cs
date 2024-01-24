@@ -354,9 +354,9 @@ internal class Program
         int.TryParse(Console.ReadLine(), out int _id);
         String? _name = Console.ReadLine();
         String? _email = Console.ReadLine();
-        double? _cost;
+        double _cost;
         bool _costConverted = double.TryParse(Console.ReadLine(), out double _costValue);
-        _cost = _costConverted ? _costValue : null;
+        _cost = _costConverted ? _costValue : 0;
         Enum.TryParse(Console.ReadLine(), out EngineerExperience _level);
         Engineer _newEngineer = new(_id, _name, _email, _cost, _level);
         Console.WriteLine();
