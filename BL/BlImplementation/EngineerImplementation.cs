@@ -93,14 +93,12 @@ internal class EngineerImplementation : IEngineer
 
             //Get Engineer from DAL
             DO.Engineer dlEngineer = _dal.Engineer.Read(engineer.Id);
-            //Make a BL type Engineer of the current engineer in the databse
-            BO.Engineer oldEngineer = toBlEngineer(dlEngineer);
 
             //Check the Experience level is the same or higher
-            BO.EngineerExperience engineerExperience = engineer.Experience >= oldEngineer.Experience ? engineer.Experience : oldEngineer.Experience;
+            DO.EngineerExperience engineerExperience = (DO.EngineerExperience)engineer.Experience >= dlEngineer.level ? (DO.EngineerExperience)engineer.Experience : dlEngineer.level;
 
             //Make update DL type Engineer
-            DO.Engineer newEngineer = new(engineer.Id, engineer.Name, engineer.Email, engineer.Cost, (DO.EngineerExperience)engineerExperience, true);
+            DO.Engineer newEngineer = new(engineer.Id, engineer.Name, engineer.Email, engineer.Cost, engineerExperience, true);
 
             //Call update on DL
             _dal.Engineer.Update(newEngineer);
