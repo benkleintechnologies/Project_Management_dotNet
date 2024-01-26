@@ -15,7 +15,7 @@ public class Milestone
     public DateTime? ActualEndDate { get; set; }
     public double CompletionPercentage { get; set; }
     public string? Notes { get; set; }
-    List<TaskInList>? Dependencies { get; set; }
+    IEnumerable<TaskInList>? Dependencies { get; set; }
     /// <summary>
     /// Constructor for the Milestone class.
     /// </summary>
@@ -41,7 +41,7 @@ public class Milestone
         DateTime? actualEndDate,
         double completionPercentage,
         string? notes,
-        List<TaskInList>? dependencies)
+        IEnumerable<TaskInList>? dependencies)
     {
         Id = id;
         Name = name;

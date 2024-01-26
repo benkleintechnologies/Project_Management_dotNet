@@ -9,7 +9,7 @@ public class Task
     public string? Name { get; set; }
     public string? Description { get; set; }
     public Status Status { get; set; }
-    public List<TaskInList>? Dependencies { get; set; }
+    public IEnumerable<TaskInList>? Dependencies { get; set; }
     public MilestoneInTask? Milestone { get; set; }
     public DateTime? CreatedAtDate { get; init; }
     public DateTime? ProjectedStartDate { get; set; }
@@ -48,7 +48,7 @@ public class Task
         string? name,
         string? description,
         Status status,
-        List<TaskInList>? dependencies,
+        IEnumerable<TaskInList>? dependencies,
         MilestoneInTask? milestone,
         DateTime? createdAtDate,
         DateTime? projectedStartDate,

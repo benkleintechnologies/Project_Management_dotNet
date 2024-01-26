@@ -21,9 +21,9 @@ internal class EngineerImplementation : IEngineer
             }
 
             //Try to add the Engineer to the data layer
-            DO.Engineer newEngineer = new(engineer.Id, engineer.Name, engineer.Email, engineer.Cost, (DO.EngineerExperience)engineer.Experience, true);
+            DO.Engineer _newEngineer = new(engineer.Id, engineer.Name, engineer.Email, engineer.Cost, (DO.EngineerExperience)engineer.Experience, true);
 
-            _dal.Engineer.Create(newEngineer);
+            _dal.Engineer.Create(_newEngineer);
         } 
         catch(DalAlreadyExistsException exc) 
         {
@@ -54,9 +54,9 @@ internal class EngineerImplementation : IEngineer
         try
         {
             //Get Engineer from DAL
-            DO.Engineer engineer = _dal.Engineer.Read(Id);
+            DO.Engineer _engineer = _dal.Engineer.Read(Id);
             //Make a BL type Engineer
-            return toBlEngineer(engineer);
+            return toBlEngineer(_engineer);
         }
         catch (DalDoesNotExistException exc)
         {
@@ -69,11 +69,11 @@ internal class EngineerImplementation : IEngineer
         try
         {
             //Get all Engineers from the DL
-            IEnumerable<DO.Engineer> engineers = _dal.Engineer.ReadAll();
+            IEnumerable<DO.Engineer> _engineers = _dal.Engineer.ReadAll();
             //Filter the DL objects based on the filter
-            IEnumerable<DO.Engineer> filteredDlEngineers = filter != null ? engineers.Where(e => filter(toBlEngineer(e))) : engineers;
+            IEnumerable<DO.Engineer> _filteredDlEngineers = filter != null ? _engineers.Where(e => filter(toBlEngineer(e))) : _engineers;
             //Return the list of BL typ Engineers
-            return filteredDlEngineers.Select(toBlEngineer);
+            return _filteredDlEngineers.Select(toBlEngineer);
         }
         catch (DalDoesNotExistException exc)
         {
@@ -92,16 +92,37 @@ internal class EngineerImplementation : IEngineer
             }
 
             //Get Engineer from DAL
-            DO.Engineer dlEngineer = _dal.Engineer.Read(engineer.Id);
+            DO.Engineer _dlEngineer = _dal.Engineer.Read(engineer.Id);
 
-            //Check the Experience level is the same or higher
-            DO.EngineerExperience engineerExperience = (DO.EngineerExperience)engineer.Experience >= dlEngineer.level ? (DO.EngineerExperience)engineer.Experience : dlEngineer.level;
+            //Check the Experience level is the same or higher and only change it if it is
+            DO.EngineerExperience _engineerExperience = (DO.EngineerExperience)engineer.Experience >= _dlEngineer.level ? (DO.EngineerExperience)engineer.Experience : _dlEngineer.level;
 
             //Make update DL type Engineer
-            DO.Engineer newEngineer = new(engineer.Id, engineer.Name, engineer.Email, engineer.Cost, engineerExperience, true);
+            DO.Engineer _newEngineer = new(engineer.Id, engineer.Name, engineer.Email, engineer.Cost, _engineerExperience, true);
 
             //Call update on DL
-            _dal.Engineer.Update(newEngineer);
+            _dal.Engineer.Update(_newEngineer);
+
+            //Update the Task the Engineer is assigned to.
+            //Find the task the engineer is currently assigned to
+            DO.Task _assignedTask = _dal.Task.Read(t => t.assignedEngineerId == engineer.Id);
+
+            // Unassign the engineer from the old task if there was a change in assignment
+            if (engineer.Task?.Id != _assignedTask?.id && _assignedTask is not null)
+            {
+                _dal.Task.Update(_assignedTask with { assignedEngineerId = null });
+            }
+
+            // If the engineer is assigned to a new task, update the task with the engineer's ID
+            if (engineer.Task is not null)
+            {
+                DO.Task _toAssignTask = _dal.Task.Read(engineer.Task.Id);
+
+                if (_toAssignTask is not null)
+                {
+                    _dal.Task.Update(_toAssignTask with { assignedEngineerId = engineer.Id });
+                }
+            }
         }
         catch (DalDoesNotExistException exc)
         {
@@ -112,26 +133,31 @@ internal class EngineerImplementation : IEngineer
     static bool IsValidEmail(string email)
     {
         // Define a regular expression pattern for a simple email validation
-        string pattern = @"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$";
+        string _pattern = @"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$";
 
         // Create a Regex object and match the email against the pattern
-        Regex regex = new Regex(pattern);
-        Match match = regex.Match(email);
+        Regex _regex = new Regex(_pattern);
+        Match _match = _regex.Match(email);
 
         // Return true if there is a match, indicating a valid email
-        return match.Success;
+        return _match.Success;
     }
 
+    /// <summary>
+    /// Converts an Engineer object from the DL to a BL Engineer with its assigned task
+    /// </summary>
+    /// <param name="engineer">The Data Layer Engineer object</param>
+    /// <returns>The Business Layer Engineer Object</returns>
     private BO.Engineer toBlEngineer(DO.Engineer engineer)
     {
         //Get task assigned to engineer
-        DO.Task taskAssigned = _dal.Task.Read(t => t.assignedEngineerId == engineer.id);
+        DO.Task _taskAssigned = _dal.Task.Read(t => t.assignedEngineerId == engineer.id);
         //Create TaskInEngineer
-        TaskInEngineer taskInEngineer = new(taskAssigned.id, taskAssigned.nickname);
+        TaskInEngineer _taskInEngineer = new(_taskAssigned.id, _taskAssigned.nickname);
         //Make a BL type Engineer
-        BO.Engineer blEngineer = new(engineer.id, engineer.name, engineer.email, (BO.EngineerExperience)engineer.level, engineer.cost, taskInEngineer);
+        BO.Engineer _blEngineer = new(engineer.id, engineer.name, engineer.email, (BO.EngineerExperience)engineer.level, engineer.cost, _taskInEngineer);
 
-        return blEngineer;
+        return _blEngineer;
     }
 
 }
