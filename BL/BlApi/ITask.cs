@@ -23,18 +23,18 @@ public interface ITask
     /// <summary>
     /// Creates a new Task
     /// </summary>
-    /// <param name="Task"></param>
+    /// <param name="task"></param>
     /// <exception cref="BO.BlAlreadyExistsException">when a Task already exists in the DAL<exception>
     /// <exception cref="BO.BlInvalidInputException">when invalid input for Task<exception>
-    public void addTask(BO.Task Task);
+    public void addTask(BO.Task task);
 
     /// <summary>
     /// Updating an existing Task
     /// </summary>
-    /// <param name="Task">the entity Task</param>
+    /// <param name="task">the entity Task</param>
     /// <exception cref="BO.BlDoesNotExistException">when a Task id is not found in the DAL<exception>
     /// <exception cref="BO.BlInvalidInputException">when invalid input for Task<exception>
-    public void updateTask(BO.Task Task);
+    public void updateTask(BO.Task task);
 
     /// <summary>
     /// Deleting an existing Task
