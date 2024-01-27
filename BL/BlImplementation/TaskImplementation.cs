@@ -1,10 +1,13 @@
 ﻿namespace BlImplementation;
 using BlApi;
 using BO;
+using DalApi;
 using DO;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using ITask = BlApi.ITask;
 
 internal class TaskImplementation : ITask
 {
@@ -77,17 +80,78 @@ internal class TaskImplementation : ITask
 
     public BO.Task getTask(int id)
     {
-        throw new NotImplementedException();
+        try
+        {
+            //Check for invalid data
+            if (id <= 0)
+            {
+                throw new BlInvalidInputException($"The id {id} was invalid");
+            }
+            // Get the Task from the Data Layer, convert to BL Task and return it
+            return toBlTask(_dal.Task.Read(id));
+        }
+        catch (DalDoesNotExistException exc)
+        {
+            throw new BlDoesNotExistException(exc.Message);
+        }
     }
 
-    public void updateTask(BO.Task Task)
+    public void updateTask(BO.Task task)
     {
-        throw new NotImplementedException();
+        try
+        {
+            DO.Task _dlTask = _dal.Task.Read(task.Id);
+            
+            // Check if task exists in the DL and that name is nonempty
+            if (_dlTask is not null || task.Name == "")
+            {
+                throw new BlInvalidInputException($"One of the fields of the Task with id {task.Id} was invalid");
+            }
+            
+            // Create the updated task to update the existing task in the Data Layer with
+            DO.Task _newTask = new(task.Id, false, (DO.EngineerExperience)task.Complexity, task.Engineer?.Id, task.Name, task.Description, task.Deliverables, task.Notes, task.CreatedAtDate, task.ProjectedStartDate, task.ActualStartDate, task.RequiredEffortTime, task.Deadline, task.ActualEndDate);
+
+            // After creating a schedule, it is possible to modify the
+            // textual fields and the assigned engineer for the task
+            // Not sure what this wants... what is the textual field, and do we just randomly change the engineer?
+
+            _dal.Task.Update(_newTask);
+        }
+        catch (DalDoesNotExistException exc)
+        {
+            throw new BlDoesNotExistException(exc.Message);
+        }
     }
 
     public void updateTaskStartDate(int id, DateTime startDate)
     {
-        throw new NotImplementedException();
+        try
+        {
+            DO.Task _task = _dal.Task.Read(id);
+
+            // Getting all previous tasks
+            IEnumerable<DO.Task> _prevTasks = _dal.Task.ReadAll(t => t.dateCreated < _task.dateCreated);
+            
+            // Check if all the projected start dates of the previous tasks are already updated (exist)
+            if (_prevTasks.Any(t => t.projectedStartDate == null))
+            {
+                throw new BlNullPropertyException("One or more of the previous tasks projected start date is null");
+            }
+
+            // Ensure that startDate isn't earlier than any of the projected end dates of previous tasks
+            if (_prevTasks.All(t => startDate < t.deadline))
+            {
+                throw new BlInvalidInputException("Cannot make a new task start date before the previous ones finish");
+            }
+
+            // Add the updated task -- with the startDate as the projectedStartDate
+            DO.Task _updatedTask = new(_task.id, false, _task.degreeOfDifficulty, _task.assignedEngineerId, _task.nickname, _task.description, _task.deliverables, _task.notes, _task.dateCreated, startDate, _task.actualStartDate, _task.duration, _task.deadline, _task.actualEndDate);
+            _dal.Task.Update(_updatedTask);
+        }
+        catch (DalDoesNotExistException exc)
+        {
+            throw new BlDoesNotExistException(exc.Message);
+        }
     }
 
     private BO.Task toBlTask(DO.Task task)
