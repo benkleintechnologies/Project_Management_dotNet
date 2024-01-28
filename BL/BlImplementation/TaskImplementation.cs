@@ -139,7 +139,7 @@ internal class TaskImplementation : ITask
             }
 
             // Ensure that startDate isn't earlier than any of the projected end dates of previous tasks
-            if (_prevTasks.All(t => startDate < t.deadline))
+            if (_prevTasks.Any(t => startDate < t.deadline))
             {
                 throw new BlInvalidInputException("Cannot make a new task start date before the previous ones finish");
             }
