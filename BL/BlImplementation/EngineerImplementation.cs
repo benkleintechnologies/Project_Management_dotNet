@@ -8,6 +8,13 @@ using System.Text.RegularExpressions;
 internal class EngineerImplementation : IEngineer
 {
     private DalApi.IDal _dal = DalApi.Factory.Get;
+    
+    /// <summary>
+    /// -- Uses nothing
+    /// </summary>
+    /// <param name="engineer"></param>
+    /// <exception cref="BO.BlInvalidInputException"></exception>
+    /// <exception cref="BO.BlAlreadyExistsException"></exception>
     public void addEngineer(BO.Engineer engineer)
     {
         try
@@ -29,6 +36,12 @@ internal class EngineerImplementation : IEngineer
         }   
     }
 
+    /// <summary>
+    /// -- Uses nothing
+    /// </summary>
+    /// <param name="Id"></param>
+    /// <exception cref="BO.BlCannotBeDeletedException"></exception>
+    /// <exception cref="BO.BlDoesNotExistException"></exception>
     public void deleteEngineer(int Id)
     {
         try
@@ -47,6 +60,12 @@ internal class EngineerImplementation : IEngineer
         }
     }
 
+    /// <summary>
+    /// -- Uses nothing
+    /// </summary>
+    /// <param name="Id"></param>
+    /// <returns></returns>
+    /// <exception cref="BO.BlDoesNotExistException"></exception>
     public BO.Engineer getEngineer(int Id)
     {
         try
@@ -62,16 +81,23 @@ internal class EngineerImplementation : IEngineer
         }
     }
 
+    /// <summary>
+    /// -- Uses Linq, let, and sort
+    /// </summary>
+    /// <param name="filter"></param>
+    /// <returns></returns>
+    /// <exception cref="BO.BlDoesNotExistException"></exception>
     public IEnumerable<BO.Engineer> getListOfEngineers(Func<BO.Engineer, bool>? filter = null)
     {
         try
         {
-            //Get all Engineers from the DL
-            IEnumerable<DO.Engineer> _engineers = _dal.Engineer.ReadAll();
-            //Filter the DL objects based on the filter
-            IEnumerable<DO.Engineer> _filteredDlEngineers = filter != null ? _engineers.Where(e => filter(toBlEngineer(e))) : _engineers;
-            //Return the list of BL typ Engineers
-            return _filteredDlEngineers.Select(toBlEngineer);
+            // Convert Dl engineers to BL engineers and filter it before putting it into a list
+            IEnumerable<BO.Engineer> result = from engineer in _dal.Engineer.ReadAll()
+                         let blEngineer = toBlEngineer(engineer)
+                         where filter == null || filter(blEngineer)
+                         select blEngineer;
+
+            return result;
         }
         catch (DO.DalDoesNotExistException exc)
         {
@@ -79,6 +105,12 @@ internal class EngineerImplementation : IEngineer
         }
     }
 
+    /// <summary>
+    /// -- Uses nothing
+    /// </summary>
+    /// <param name="engineer"></param>
+    /// <exception cref="BO.BlInvalidInputException"></exception>
+    /// <exception cref="BO.BlDoesNotExistException"></exception>
     public void updateEngineer(BO.Engineer engineer)
     {
         try

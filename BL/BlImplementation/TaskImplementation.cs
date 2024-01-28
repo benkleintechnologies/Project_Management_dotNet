@@ -6,6 +6,12 @@ using BlApi;
 internal class TaskImplementation : ITask
 {
     private DalApi.IDal _dal = DalApi.Factory.Get;
+    /// <summary>
+    ///  -- uses Linq and select new
+    /// </summary>
+    /// <param name="task"></param>
+    /// <exception cref="BO.BlInvalidInputException"></exception>
+    /// <exception cref="BO.BlAlreadyExistsException"></exception>
     public void addTask(BO.Task task)
     {
         try
@@ -36,6 +42,12 @@ internal class TaskImplementation : ITask
         }
     }
 
+    /// <summary>
+    /// -- Uses nothing
+    /// </summary>
+    /// <param name="id"></param>
+    /// <exception cref="BO.BlCannotBeDeletedException"></exception>
+    /// <exception cref="BO.BlDoesNotExistException"></exception>
     public void deleteTask(int id)
     {
         try
@@ -55,6 +67,12 @@ internal class TaskImplementation : ITask
         }
     }
 
+    /// <summary>
+    /// -- Uses extension
+    /// </summary>
+    /// <param name="filter"></param>
+    /// <returns></returns>
+    /// <exception cref="BO.BlDoesNotExistException"></exception>
     public IEnumerable<BO.Task> getListOfTasks(Func<BO.Task, bool>? filter = null)
     {
         try
@@ -72,6 +90,13 @@ internal class TaskImplementation : ITask
         }
     }
 
+    /// <summary>
+    /// -- Uses nothing
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    /// <exception cref="BO.BlInvalidInputException"></exception>
+    /// <exception cref="BO.BlDoesNotExistException"></exception>
     public BO.Task getTask(int id)
     {
         try
@@ -90,6 +115,12 @@ internal class TaskImplementation : ITask
         }
     }
 
+    /// <summary>
+    /// -- Uses nothing
+    /// </summary>
+    /// <param name="task"></param>
+    /// <exception cref="BO.BlInvalidInputException"></exception>
+    /// <exception cref="BO.BlDoesNotExistException"></exception>
     public void updateTask(BO.Task task)
     {
         try
@@ -117,6 +148,14 @@ internal class TaskImplementation : ITask
         }
     }
 
+    /// <summary>
+    /// -- Uses extension
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="startDate"></param>
+    /// <exception cref="BO.BlNullPropertyException"></exception>
+    /// <exception cref="BO.BlInvalidInputException"></exception>
+    /// <exception cref="BO.BlDoesNotExistException"></exception>
     public void updateTaskStartDate(int id, DateTime startDate)
     {
         try
