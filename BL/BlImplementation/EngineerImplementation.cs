@@ -1,7 +1,5 @@
 ﻿namespace BlImplementation;
 using BlApi;
-using BO;
-using DO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +15,7 @@ internal class EngineerImplementation : IEngineer
             //Check for invalid data
             if (engineer.Id <= 0 || engineer.Name == "" || engineer.Cost <= 0 || !IsValidEmail(engineer.Email))
             {
-                throw new BlInvalidInputException($"One of the fields of the Engineer with id {engineer.Id} was invalid");
+                throw new BO.BlInvalidInputException($"One of the fields of the Engineer with id {engineer.Id} was invalid");
             }
 
             //Try to add the Engineer to the data layer
@@ -25,9 +23,9 @@ internal class EngineerImplementation : IEngineer
 
             _dal.Engineer.Create(_newEngineer);
         } 
-        catch(DalAlreadyExistsException exc) 
+        catch(DO.DalAlreadyExistsException exc) 
         {
-            throw new BlAlreadyExistsException(exc.Message);
+            throw new BO.BlAlreadyExistsException(exc.Message);
         }   
     }
 
@@ -38,14 +36,14 @@ internal class EngineerImplementation : IEngineer
             //Make sure the engineer is not assigned to a task
             if (_dal.Task.Read(t => t.assignedEngineerId == Id) is null)
             {
-                throw new BlCannotBeDeletedException($"This engineer with ID {Id} could not be deleted because they are assigned to a Task.");
+                throw new BO.BlCannotBeDeletedException($"This engineer with ID {Id} could not be deleted because they are assigned to a Task.");
             }
             //try to delete the engineer from the DAL
             _dal.Engineer.Delete(Id);
         }
-        catch (DalDoesNotExistException exc)
+        catch (DO.DalDoesNotExistException exc)
         {
-            throw new BlDoesNotExistException(exc.Message);
+            throw new BO.BlDoesNotExistException(exc.Message);
         }
     }
 
@@ -58,9 +56,9 @@ internal class EngineerImplementation : IEngineer
             //Make a BL type Engineer
             return toBlEngineer(_engineer);
         }
-        catch (DalDoesNotExistException exc)
+        catch (DO.DalDoesNotExistException exc)
         {
-            throw new BlDoesNotExistException(exc.Message);
+            throw new BO.BlDoesNotExistException(exc.Message);
         }
     }
 
@@ -75,9 +73,9 @@ internal class EngineerImplementation : IEngineer
             //Return the list of BL typ Engineers
             return _filteredDlEngineers.Select(toBlEngineer);
         }
-        catch (DalDoesNotExistException exc)
+        catch (DO.DalDoesNotExistException exc)
         {
-            throw new BlDoesNotExistException(exc.Message);
+            throw new BO.BlDoesNotExistException(exc.Message);
         }
     }
 
@@ -88,7 +86,7 @@ internal class EngineerImplementation : IEngineer
             //Check for invalid data
             if (engineer.Id <= 0 || engineer.Name == "" || engineer.Cost <= 0 || !IsValidEmail(engineer.Email))
             {
-                throw new BlInvalidInputException($"One of the fields of the Engineer with id {engineer.Id} was invalid");
+                throw new BO.BlInvalidInputException($"One of the fields of the Engineer with id {engineer.Id} was invalid");
             }
 
             //Get Engineer from DAL
@@ -124,9 +122,9 @@ internal class EngineerImplementation : IEngineer
                 }
             }
         }
-        catch (DalDoesNotExistException exc)
+        catch (DO.DalDoesNotExistException exc)
         {
-            throw new BlDoesNotExistException(exc.Message);
+            throw new BO.BlDoesNotExistException(exc.Message);
         }
     }
 
@@ -153,7 +151,7 @@ internal class EngineerImplementation : IEngineer
         //Get task assigned to engineer
         DO.Task _taskAssigned = _dal.Task.Read(t => t.assignedEngineerId == engineer.id);
         //Create TaskInEngineer
-        TaskInEngineer _taskInEngineer = new(_taskAssigned.id, _taskAssigned.nickname);
+        BO.TaskInEngineer _taskInEngineer = new(_taskAssigned.id, _taskAssigned.nickname);
         //Make a BL type Engineer
         BO.Engineer _blEngineer = new(engineer.id, engineer.name, engineer.email, (BO.EngineerExperience)engineer.level, engineer.cost, _taskInEngineer);
 
