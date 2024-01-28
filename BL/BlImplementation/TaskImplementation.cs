@@ -187,6 +187,7 @@ internal class TaskImplementation : ITask
         }
     }
 
+    //--uses extension
     private BO.Task toBlTask(DO.Task task)
     {
         //Calculate status - may need to update in the future
