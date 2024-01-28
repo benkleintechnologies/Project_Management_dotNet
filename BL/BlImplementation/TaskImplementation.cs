@@ -204,7 +204,7 @@ internal class TaskImplementation : ITask
     {
         // Get direct dependencies of the current task
         IEnumerable<int> _directDependencyIds = _dal.Dependency
-            .ReadAll(d => d.dependentTask == taskId && d.active)
+            .ReadAll(d => d.dependentTask == taskId)
             .Select(dependency => dependency.dependsOnTask);
 
         // Recursively get dependent tasks of direct dependencies
