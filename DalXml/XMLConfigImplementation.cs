@@ -8,6 +8,16 @@ using System;
 /// </summary>
 public class XMLConfigImplementation : IConfig
 {
+    public DateTime? getEndDate()
+    {
+        return Config.EndDate;
+    }
+
+    public DateTime? getStartDate()
+    {
+        return Config.StartDate;
+    }
+
     public void Reset()
     {
         Config.Reset();

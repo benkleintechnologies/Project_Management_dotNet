@@ -15,7 +15,7 @@ public class Milestone
     public DateTime? ActualEndDate { get; set; }
     public double CompletionPercentage { get; set; }
     public string? Notes { get; set; }
-    IEnumerable<TaskInList>? Dependencies { get; set; }
+    public IEnumerable<TaskInList>? Dependencies { get; set; }
     /// <summary>
     /// Constructor for the Milestone class.
     /// </summary>

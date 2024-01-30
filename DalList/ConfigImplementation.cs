@@ -8,6 +8,16 @@ using DO;
 /// </summary>
 public class ConfigImplementation : IConfig
 {
+    public DateTime? getEndDate()
+    {
+        return DataSource.Config._endDate;
+    }
+
+    public DateTime? getStartDate()
+    {
+        return DataSource.Config._startDate;
+    }
+
     /// <summary>
     /// Reset all items in the database
     /// </summary>

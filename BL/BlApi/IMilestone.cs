@@ -8,6 +8,8 @@ public interface IMilestone
     /// <summary>
     /// Create Project Schedule
     /// </summary>
+    /// <exception cref="BO.BlDoesNotExistException">Thrown when trying to access an item which does not exist in the DAL</exception>
+    /// <exception cref="BO.BlCannotBeDeletedException">Thrown when trying to delete an item which cannot be deleted in the DAL</exception>
     public void createProjectSchedule();
 
     /// <summary>
