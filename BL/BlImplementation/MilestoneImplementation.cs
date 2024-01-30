@@ -119,15 +119,31 @@ internal class MilestoneImplementation : IMilestone
             calculateMilestones();
 
             //Get initial data
-            DateTime _projectStartDate = _dal.Config.getStartDate;
-            DateTime _projectEndDate = _dal.Config.getEndDate;
+            DateTime? _projectStartDate = _dal.Config.getStartDate();
+            DateTime? _projectEndDate = _dal.Config.getEndDate();
             IEnumerable<DO.Task> _tasks = _dal.Task.ReadAll();
-            IEnumerable<BO.Milestone> _milestones;
+            IEnumerable<DO.Task> _milestones = _dal.Task.ReadAll(t => t.isMilestone);
             IEnumerable<DO.Dependency> _dependencies = _dal.Dependency.ReadAll();
 
-            //TODO: Create project Schedule
+            //Check for nulls - error
+            //TODO: Make sure to catch errors and throw necessary exceptions
 
-        }catch (DO.DalDoesNotExistException exc) 
+            //Use a breadth-first style algorithm to go through the the tasks based on their dependencies, backwards, starting from the "End" milestone
+            Queue<DO.Task> taskQueue = new Queue<DO.Task>();
+            // Add the "End" milestone as the starting point
+            taskQueue.Enqueue(_milestones.Single(m => m.nickname == "End"));
+            // Perform breadth-first traversal
+            BreadthFirstTraversal(taskQueue);
+
+            //Check that we've succeeded so far
+            //TODO
+
+            //Reverse Process (i.e. forward breadth first search) to set start dates
+
+            //Check that we've succeeded
+
+        }
+        catch (DO.DalDoesNotExistException exc) 
         {
             throw new BO.BlDoesNotExistException(exc.Message);
         }
@@ -145,5 +161,42 @@ internal class MilestoneImplementation : IMilestone
     public BO.Milestone updateMilestone(int id, string? nickname, string? description, string? notes)
     {
         throw new NotImplementedException();
+    }
+
+    private void BreadthFirstTraversal(Queue<DO.Task> queue)
+    {
+        if (queue.Count == 0)
+            return;
+
+        // Dequeue the next task from the queue
+        DO.Task currentTask = queue.Dequeue();
+
+        // Get the tasks which the current task depends on
+        IEnumerable<DO.Task> dependentTasks = _dal.Dependency
+            .ReadAll(d => d.dependentTask == currentTask.id)
+            .Select(d => _dal.Task.Read(d.dependsOnTask));
+
+        // Calculate the latest possible completion date (LPCD) based on the instructions
+        TimeSpan? duration = currentTask.duration;
+        DateTime? lpcd = duration is not null ? currentTask.deadline - duration.Value : currentTask.deadline is not null ? currentTask.deadline : _dal.Config.getEndDate();
+
+        // Check if deadline already exists which is later
+        if (lpcd is not null)
+        {
+            dependentTasks.ToList().ForEach(dependentTask =>
+            {
+                if (dependentTask.deadline is not null)
+                    lpcd = lpcd < dependentTask.deadline ? lpcd : dependentTask.deadline;
+            });
+        }
+
+        // Update the task's deadline in the database
+        _dal.Task.Update(currentTask with { deadline = lpcd });
+
+        // Add dependent tasks to the queue for further processing
+        dependentTasks.ToList().ForEach(task => queue.Enqueue(task));
+
+        // Recursive call for the next iteration
+        BreadthFirstTraversal(queue);
     }
 }
