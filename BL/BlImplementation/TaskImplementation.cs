@@ -23,11 +23,11 @@ internal class TaskImplementation : ITask
             }
 
             // Getting all previous tasks to add into Dependencies
-            IEnumerable<DO.Task> previousTasks = _dal.Task.ReadAll(t => t.projectedStartDate < task.ProjectedStartDate); 
+            IEnumerable<DO.Task> previousTasks = _dal.Task.ReadAll(t => t.ProjectedStartDate < task.ProjectedStartDate); 
 
             // Make the new task dependent on all previous tasks
             IEnumerable<DO.Dependency> dependencies = from t in previousTasks 
-                                                  select new DO.Dependency(0, task.Id, t.id);
+                                                  select new DO.Dependency(0, task.Id, t.ID);
             dependencies.ToList().ForEach(d => _dal.Dependency.Create(d));
 
 
@@ -53,7 +53,7 @@ internal class TaskImplementation : ITask
         try
         {
             //Check that this task can be deleted - i.e. Not depended on by another Task. Otherwise throw error
-            if (_dal.Dependency.ReadAll(d => d.dependsOnTask == id) is not null)
+            if (_dal.Dependency.ReadAll(d => d.DependsOnTask == id) is not null)
             {
                 throw new BO.BlCannotBeDeletedException($"Task with id {id} cannot be deleted because another task depends on it.");
             }
@@ -163,22 +163,22 @@ internal class TaskImplementation : ITask
             DO.Task task = _dal.Task.Read(id);
 
             // Getting all previous tasks on which _task depends directly or indirectly
-            IEnumerable<DO.Task> dependentTasks = getDependentTasks(task.id);
+            IEnumerable<DO.Task> dependentTasks = getDependentTasks(task.ID);
 
             // Check if all the projected start dates of the previous tasks are already updated (exist)
-            if (dependentTasks.Any(t => t.projectedStartDate == null))
+            if (dependentTasks.Any(t => t.ProjectedStartDate == null))
             {
                 throw new BO.BlNullPropertyException("One or more of the previous tasks projected start date is null");
             }
 
             // Ensure that startDate isn't earlier than any of the projected end dates of previous tasks
-            if (dependentTasks.Any(t => startDate < t.deadline))
+            if (dependentTasks.Any(t => startDate < t.Deadline))
             {
                 throw new BO.BlInvalidInputException("Cannot make a new task start date before the previous ones finish");
             }
 
             // Add the updated task -- with the startDate as the projectedStartDate
-            DO.Task updatedTask = new(task.id, false, task.degreeOfDifficulty, task.assignedEngineerId, task.nickname, task.description, task.deliverables, task.notes, task.dateCreated, startDate, task.actualStartDate, task.duration, task.deadline, task.actualEndDate);
+            DO.Task updatedTask = new(task.ID, false, task.DegreeOfDifficulty, task.AssignedEngineerId, task.Nickname, task.Description, task.Deliverables, task.Notes, task.DateCreated, startDate, task.ActualStartDate, task.Duration, task.Deadline, task.ActualEndDate);
             _dal.Task.Update(updatedTask);
         }
         catch (DO.DalDoesNotExistException exc)
@@ -191,18 +191,18 @@ internal class TaskImplementation : ITask
     private BO.Task toBlTask(DO.Task task)
     {
         //Calculate status - may need to update in the future
-        BO.Status getStatusForTask(DO.Task t) => t.projectedStartDate is not null ? BO.Status.Scheduled : BO.Status.Unscheduled;
+        BO.Status getStatusForTask(DO.Task t) => t.ProjectedStartDate is not null ? BO.Status.Scheduled : BO.Status.Unscheduled;
 
         //Get Dependencies
-        IEnumerable<DO.Dependency>? dependencies = _dal.Dependency.ReadAll(d => d.dependentTask == task.id);
+        IEnumerable<DO.Dependency>? dependencies = _dal.Dependency.ReadAll(d => d.DependentTask == task.ID);
         IEnumerable<BO.TaskInList>? dependentTasks = dependencies.Select(dep =>
         {
-            DO.Task dependsOnTask = _dal.Task.Read(dep.dependsOnTask);
+            DO.Task dependsOnTask = _dal.Task.Read(dep.DependsOnTask);
 
             return new BO.TaskInList(
-                id: dep.dependsOnTask,
-                name: dependsOnTask.nickname,
-                description: dependsOnTask.description,
+                id: dep.DependsOnTask,
+                name: dependsOnTask.Nickname,
+                description: dependsOnTask.Description,
                 status: getStatusForTask(dependsOnTask)
             );
         });
@@ -214,23 +214,23 @@ internal class TaskImplementation : ITask
 
         //Calculate Projected End Date based on max of projectedStartDate and actualStartDate plus the duration
         DateTime? projectedEndDate = null;
-        if (task.projectedStartDate is not null && task.duration is not null)
+        if (task.ProjectedStartDate is not null && task.Duration is not null)
         {
-            if (task.actualStartDate is not null)
+            if (task.ActualStartDate is not null)
             {
-                projectedEndDate = (task.actualStartDate > task.projectedStartDate) ? task.actualStartDate.Value.Add(task.duration.Value) : task.projectedStartDate.Value.Add(task.duration.Value);
+                projectedEndDate = (task.ActualStartDate > task.ProjectedStartDate) ? task.ActualStartDate.Value.Add(task.Duration.Value) : task.ProjectedStartDate.Value.Add(task.Duration.Value);
             }
             else
             {
-                projectedEndDate = task.projectedStartDate.Value.Add(task.duration.Value);
+                projectedEndDate = task.ProjectedStartDate.Value.Add(task.Duration.Value);
             }
         }
 
         //Create engineerInTask
-        BO.EngineerInTask? assignedEngineer = task.assignedEngineerId is not null ? new BO.EngineerInTask(task.assignedEngineerId.Value, _dal.Engineer.Read(task.assignedEngineerId.Value).name) : null;
+        BO.EngineerInTask? assignedEngineer = task.AssignedEngineerId is not null ? new BO.EngineerInTask(task.AssignedEngineerId.Value, _dal.Engineer.Read(task.AssignedEngineerId.Value).Name) : null;
 
         //Make a BL type Task
-        BO.Task blTask = new(task.id, task.nickname, task.description, getStatusForTask(task), dependentTasks, milestone, task.dateCreated, task.projectedStartDate, task.actualStartDate, projectedEndDate, task.deadline, task.actualEndDate, task.duration, task.deliverables, task.notes, assignedEngineer, (BO.EngineerExperience)task.degreeOfDifficulty);
+        BO.Task blTask = new(task.ID, task.Nickname, task.Description, getStatusForTask(task), dependentTasks, milestone, task.DateCreated, task.ProjectedStartDate, task.ActualStartDate, projectedEndDate, task.Deadline, task.ActualEndDate, task.Duration, task.Deliverables, task.Notes, assignedEngineer, (BO.EngineerExperience)task.DegreeOfDifficulty);
 
         return blTask;
     }
@@ -244,14 +244,14 @@ internal class TaskImplementation : ITask
     {
         // Get direct dependencies of the current task
         IEnumerable<int> directDependencyIds = _dal.Dependency
-            .ReadAll(d => d.dependentTask == taskId)
-            .Select(dependency => dependency.dependsOnTask);
+            .ReadAll(d => d.DependentTask == taskId)
+            .Select(dependency => dependency.DependsOnTask);
 
         // Recursively get dependent tasks of direct dependencies
         IEnumerable<DO.Task> indirectDependentTasks = directDependencyIds
             .SelectMany(getDependentTasks);
 
         // Combine direct and indirect dependent tasks
-        return _dal.Task.ReadAll(t => directDependencyIds.Contains(t.id)).Concat(indirectDependentTasks);
+        return _dal.Task.ReadAll(t => directDependencyIds.Contains(t.ID)).Concat(indirectDependentTasks);
     }
 }

@@ -5,7 +5,7 @@
 /// </summary>
 public class TaskInList
 {
-    public int Id { get; init; }
+    public int ID { get; init; }
     public string? Name { get; set; }
     public string? Description { get; set; }
     public Status Status { get; set; }
@@ -19,7 +19,7 @@ public class TaskInList
     /// <param name="status">The status of the task in the list.</param>
     public TaskInList(int id, string? name, string? description, Status status)
     {
-        Id = id;
+        ID = id;
         Name = name;
         Description = description;
         Status = status;

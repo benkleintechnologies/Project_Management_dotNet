@@ -16,7 +16,7 @@ internal class MilestoneImplementation : IMilestone
     private int createMilestoneTaskAndGetId()
     {
         // Create a task for the milestone
-        DO.Task milestoneTask = new DO.Task(0, true, nickname: "M" + NextMilestoneId);
+        DO.Task milestoneTask = new DO.Task(0, true, Nickname: "M" + NextMilestoneId);
         // Add the milestone task to the database and return its ID
         return _dal.Task.Create(milestoneTask);
     }
@@ -29,7 +29,7 @@ internal class MilestoneImplementation : IMilestone
         IEnumerable<DO.Dependency> oldDependencies = _dal.Dependency.ReadAll();
 
         //Create a list of tasks and their dependencies, grouped
-        IEnumerable<IGrouping<DO.Task, DO.Task>> groupedDependencies = oldDependencies.GroupBy(d => _dal.Task.Read(d.dependentTask), d => _dal.Task.Read(d.dependsOnTask));
+        IEnumerable<IGrouping<DO.Task, DO.Task>> groupedDependencies = oldDependencies.GroupBy(d => _dal.Task.Read(d.DependentTask), d => _dal.Task.Read(d.DependsOnTask));
         //Sort the list by Dependent Task
         groupedDependencies = groupedDependencies.OrderBy(group => group.Key);
         //Filter the list using distinct (to remove items which have the same dependencies)
@@ -40,10 +40,10 @@ internal class MilestoneImplementation : IMilestone
                 new BO.Milestone(NextMilestoneId, null, null, null, BO.Status.Unscheduled, null, null, null, 0, null,
                     dependency.Select(task =>
                         new BO.TaskInList(
-                            task.id,
-                            task.nickname,
-                            task.description,
-                            task.projectedStartDate is not null ? BO.Status.Scheduled : BO.Status.Unscheduled)
+                            task.ID,
+                            task.Nickname,
+                            task.Description,
+                            task.ProjectedStartDate is not null ? BO.Status.Scheduled : BO.Status.Unscheduled)
                     ).ToList()
                 )
             );
@@ -54,18 +54,18 @@ internal class MilestoneImplementation : IMilestone
         //Create Tasks representing each milestone
         IEnumerable<int> milestoneTaskIds = filteredDependencies.Select(_ => createMilestoneTaskAndGetId()).ToList();
         //Get those Task Milestones
-        IEnumerable<DO.Task> milestoneTasks = _dal.Task.ReadAll(t => t.isMilestone);
+        IEnumerable<DO.Task> milestoneTasks = _dal.Task.ReadAll(t => t.IsMilestone);
         // Add dependencies for each milestone to the tasks that it depends on
         milestoneTasks.SelectMany(milestone =>
         {
             // Find the corresponding milestone in _milestones
-            BO.Milestone? correspondingMilestone = milestones.FirstOrDefault(m => "M"+m.Id == milestone.nickname);
+            BO.Milestone? correspondingMilestone = milestones.FirstOrDefault(m => "M"+m.Id == milestone.Nickname);
             if (correspondingMilestone != null)
             {
                 // Create dependencies for each dependency in the Milestone
                 return correspondingMilestone.Dependencies!.Select(dependency =>
                     // Create dependency with milestone as dependent task and dependency as depends on task
-                    new DO.Dependency(0, milestone.id, dependency.Id)
+                    new DO.Dependency(0, milestone.ID, dependency.ID)
                 );
             }
             return Enumerable.Empty<DO.Dependency>();
@@ -75,40 +75,40 @@ internal class MilestoneImplementation : IMilestone
         groupedDependencies.Select(dependency =>
         {
             //IDs of tasks which the milestone depends on
-            IEnumerable<int> idOfTasks = dependency.Select(t => t.id);
+            IEnumerable<int> idOfTasks = dependency.Select(t => t.ID);
             //The corresponding milestone which has in its Dependencies list, a TaskInList with id corresponding to each ID in _idOfTasks 
-            BO.Milestone? correspondingMilestone = milestones.FirstOrDefault(m => idOfTasks.All(taskId => m.Dependencies!.Any(task => task.Id == taskId)));
+            BO.Milestone? correspondingMilestone = milestones.FirstOrDefault(m => idOfTasks.All(taskId => m.Dependencies!.Any(task => task.ID == taskId)));
             if (correspondingMilestone != null)
             {
                 //Get the Task id which represents this milestone
-                int taskId = _dal.Task.Read(t => t.nickname == "M" + correspondingMilestone.Id).id;
-                return new DO.Dependency(0, dependency.Key.id, taskId);
+                int taskId = _dal.Task.Read(t => t.Nickname == "M" + correspondingMilestone.Id).ID;
+                return new DO.Dependency(0, dependency.Key.ID, taskId);
             }
             return null;
         }).Where(d => d != null).ToList().ForEach(d => _dal.Dependency.Create(d!));
 
         //Create starting Milestone in database (as Task)
-        int startMilestoneTaskId = _dal.Task.Create(new(0, true, nickname: "Start"));
+        int startMilestoneTaskId = _dal.Task.Create(new(0, true, Nickname: "Start"));
         //Get all Tasks with no dependencies
-        IEnumerable<DO.Task> tasksWithoutDependencies = _dal.Task.ReadAll(t => oldDependencies.All(d => d.dependentTask != t.id));
+        IEnumerable<DO.Task> tasksWithoutDependencies = _dal.Task.ReadAll(t => oldDependencies.All(d => d.DependentTask != t.ID));
         //Create a dependency for every Task with no dependencies on the Start Milestone
         tasksWithoutDependencies.Select(task =>
         {
-            return new DO.Dependency(0, task.id, startMilestoneTaskId);
+            return new DO.Dependency(0, task.ID, startMilestoneTaskId);
         }).Where(d => d != null).ToList().ForEach(d => _dal.Dependency.Create(d!));
 
         //Create end Milestone in database (as Task)
-        int endMilestoneTaskId = _dal.Task.Create(new(0, true, nickname: "End"));
+        int endMilestoneTaskId = _dal.Task.Create(new(0, true, Nickname: "End"));
         //Get all Tasks which are not depended on
-        IEnumerable<DO.Task> tasksNotDependedOn = _dal.Task.ReadAll(t => oldDependencies.All(d => d.dependsOnTask != t.id));
+        IEnumerable<DO.Task> tasksNotDependedOn = _dal.Task.ReadAll(t => oldDependencies.All(d => d.DependsOnTask != t.ID));
         //Create a dependency for the End Milestone on all last tasks which are not depended on by other tasks
         tasksNotDependedOn.Select(task =>
         {
-            return new DO.Dependency(0, task.id, endMilestoneTaskId);
+            return new DO.Dependency(0, task.ID, endMilestoneTaskId);
         }).Where(d => d != null).ToList().ForEach(d => _dal.Dependency.Create(d!));
 
         //Clear all old dependencies
-        oldDependencies.ToList().ForEach(d => _dal.Dependency.Delete(d.id));
+        oldDependencies.ToList().ForEach(d => _dal.Dependency.Delete(d.ID));
     }
 
     public void CreateProjectSchedule()
@@ -122,7 +122,7 @@ internal class MilestoneImplementation : IMilestone
             DateTime? projectStartDate = _dal.Config.GetStartDate();
             DateTime? projectEndDate = _dal.Config.GetEndDate();
             IEnumerable<DO.Task> tasks = _dal.Task.ReadAll();
-            IEnumerable<DO.Task> milestones = _dal.Task.ReadAll(t => t.isMilestone);
+            IEnumerable<DO.Task> milestones = _dal.Task.ReadAll(t => t.IsMilestone);
             IEnumerable<DO.Dependency> dependencies = _dal.Dependency.ReadAll();
 
             //Check for nulls - error
@@ -131,7 +131,7 @@ internal class MilestoneImplementation : IMilestone
             //Use a breadth-first style algorithm to go through the the tasks based on their dependencies, backwards, starting from the "End" milestone
             Queue<DO.Task> taskQueue = new Queue<DO.Task>();
             // Add the "End" milestone as the starting point
-            taskQueue.Enqueue(milestones.Single(m => m.nickname == "End"));
+            taskQueue.Enqueue(milestones.Single(m => m.Nickname == "End"));
             // Perform breadth-first traversal
             breadthFirstTraversal(taskQueue);
 
@@ -173,25 +173,25 @@ internal class MilestoneImplementation : IMilestone
 
         // Get the tasks which the current task depends on
         IEnumerable<DO.Task> dependentTasks = _dal.Dependency
-            .ReadAll(d => d.dependentTask == currentTask.id)
-            .Select(d => _dal.Task.Read(d.dependsOnTask));
+            .ReadAll(d => d.DependentTask == currentTask.ID)
+            .Select(d => _dal.Task.Read(d.DependsOnTask));
 
         // Calculate the latest possible completion date (LPCD) based on the instructions
-        TimeSpan? duration = currentTask.duration;
-        DateTime? lpcd = duration is not null ? currentTask.deadline - duration.Value : currentTask.deadline is not null ? currentTask.deadline : _dal.Config.GetEndDate();
+        TimeSpan? duration = currentTask.Duration;
+        DateTime? lpcd = duration is not null ? currentTask.Deadline - duration.Value : currentTask.Deadline is not null ? currentTask.Deadline : _dal.Config.GetEndDate();
 
         // Check if deadline already exists which is later
         if (lpcd is not null)
         {
             dependentTasks.ToList().ForEach(dependentTask =>
             {
-                if (dependentTask.deadline is not null)
-                    lpcd = lpcd < dependentTask.deadline ? lpcd : dependentTask.deadline;
+                if (dependentTask.Deadline is not null)
+                    lpcd = lpcd < dependentTask.Deadline ? lpcd : dependentTask.Deadline;
             });
         }
 
         // Update the task's deadline in the database
-        _dal.Task.Update(currentTask with { deadline = lpcd });
+        _dal.Task.Update(currentTask with { Deadline = lpcd });
 
         // Add dependent tasks to the queue for further processing
         dependentTasks.ToList().ForEach(task => queue.Enqueue(task));

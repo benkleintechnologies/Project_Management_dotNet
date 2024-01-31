@@ -111,10 +111,10 @@ public static class Initialization
         Task?[] tasks = s_dal!.Task.ReadAll().ToArray();
 
         //Create cases of multiple dependencies, and where two different tasks have the same dependencies
-        int dependentTask1 = tasks[0]!.id;
-        int dependentTask2 = tasks[1]!.id;
-        int dependsOnTask1 = tasks[2]!.id;
-        int dependsOnTask2 = tasks[3]!.id;
+        int dependentTask1 = tasks[0]!.ID;
+        int dependentTask2 = tasks[1]!.ID;
+        int dependsOnTask1 = tasks[2]!.ID;
+        int dependsOnTask2 = tasks[3]!.ID;
         Dependency dependency1 = new(0, dependentTask1, dependsOnTask1);
         Dependency dependency2 = new(0, dependentTask1, dependsOnTask2);
         Dependency dependency3 = new(0, dependentTask2, dependsOnTask1);
@@ -129,13 +129,13 @@ public static class Initialization
         { 
            
             //Choose random tasks to be dependent on each other
-            int dependentTask = tasks[s_rand.Next(0, tasks.Length)]!.id;
-            int dependsOnTask = tasks[s_rand.Next(0, tasks.Length)]!.id;
+            int dependentTask = tasks[s_rand.Next(0, tasks.Length)]!.ID;
+            int dependsOnTask = tasks[s_rand.Next(0, tasks.Length)]!.ID;
 
             //Make sure the dependency we are creating does not create a circular dependency
             while (createsCircularDependency(dependentTask, dependsOnTask))
             {
-                dependsOnTask = tasks[s_rand.Next(0, tasks.Length)]!.id;
+                dependsOnTask = tasks[s_rand.Next(0, tasks.Length)]!.ID;
             }
 
             Dependency newDependency = new(0, dependentTask, dependsOnTask);
@@ -145,7 +145,7 @@ public static class Initialization
             bool existsAlready = false;
             foreach(Dependency dependency in dependencies)
             {
-                if (dependency.dependentTask == dependentTask && dependency.dependsOnTask == dependsOnTask) 
+                if (dependency.DependentTask == dependentTask && dependency.DependsOnTask == dependsOnTask) 
                 {
                     existsAlready = true;
                     break;
@@ -187,11 +187,11 @@ public static class Initialization
 
         visitedTasks.Add(currentTask);
 
-        Dependency[] dependencies = s_dal!.Dependency.ReadAll().Where(d => d.dependentTask == currentTask).ToArray();
+        Dependency[] dependencies = s_dal!.Dependency.ReadAll().Where(d => d.DependentTask == currentTask).ToArray();
 
         foreach (Dependency dependency in dependencies)
         {
-            if (dependency.dependsOnTask == targetTask || isIndirectlyDependent(targetTask, dependency.dependsOnTask, visitedTasks))
+            if (dependency.DependsOnTask == targetTask || isIndirectlyDependent(targetTask, dependency.DependsOnTask, visitedTasks))
             {
                 return true;
             }
