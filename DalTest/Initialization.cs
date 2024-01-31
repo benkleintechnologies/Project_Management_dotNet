@@ -28,37 +28,37 @@ public static class Initialization
     /// </summary>
     private static void createConfig()
     {
-        DateTime _startDate = DateTime.Now.AddDays(s_rand.Next(1,28));
-        DateTime _endDate = DateTime.Now.AddMonths(s_rand.Next(6,12));
-        s_dal!.Config.setStartDate(_startDate);
-        s_dal!.Config.setEndDate(_endDate);
+        DateTime startDate = DateTime.Now.AddDays(s_rand.Next(1,28));
+        DateTime endDate = DateTime.Now.AddMonths(s_rand.Next(6,12));
+        s_dal!.Config.SetStartDate(startDate);
+        s_dal!.Config.SetEndDate(endDate);
     }
 
     /// <summary>
-    /// Create 5 engineers "randomally"
+    /// Create 5 engineers "randomly"
     /// </summary>
     private static void createEngineers()
     {
-        String[] _engineerNames = {
+        String[] engineerNames = {
             "Moishe Goldstein", "Shloimy Rosenberg", "Yitzy Schwartz", "Shmuly Cohen", "Dovid Greenbaum"
         };
 
-        string[] _engineerEmails = {
+        string[] engineerEmails = {
             "moishe.goldstein@example.com", "shloimy.rosenberg@example.com", "yitzy.schwartz@example.com",
             "shmuly.cohen@example.com", "dovid.greenbaum@example.com"
         };
 
 
-        for (int i=0; i < _engineerNames.Length; i++)
+        for (int i=0; i < engineerNames.Length; i++)
         {
             //Pick unused Engineer ID
-            int _id = s_rand.Next(200000000, 400000000); 
+            int id = s_rand.Next(200000000, 400000000); 
             while (true)
             {
                 try
                 {
-                    s_dal!.Engineer.Read(_id); //Try to read Engineer with _id. Will throw error if it doesn't exist
-                    _id = s_rand.Next(200000000, 400000000);
+                    s_dal!.Engineer.Read(id); //Try to read Engineer with _id. Will throw error if it doesn't exist
+                    id = s_rand.Next(200000000, 400000000);
                 }
                 catch (Exception ex)
                 {
@@ -68,136 +68,136 @@ public static class Initialization
             }
 
             //randomly choose experience level
-            var _values = Enum.GetValues(typeof(EngineerExperience));
-            int _randomIndex = s_rand.Next(_values.Length);
-            EngineerExperience _engineerExperience = (EngineerExperience)_values.GetValue(_randomIndex);
+            var values = Enum.GetValues(typeof(EngineerExperience));
+            int randomIndex = s_rand.Next(values.Length);
+            EngineerExperience engineerExperience = (EngineerExperience)values.GetValue(randomIndex);
             
-            Engineer _newEng = new(_id, _engineerNames[i], _engineerEmails[i], s_rand.Next(80000, 200000), _engineerExperience);
-            s_dal!.Engineer.Create(_newEng);
+            Engineer newEng = new(id, engineerNames[i], engineerEmails[i], s_rand.Next(80000, 200000), engineerExperience);
+            s_dal!.Engineer.Create(newEng);
         }
 
     }
 
     /// <summary>
-    /// Create 20 Tasks "radomally" between the start and end date of the project
+    /// Create 20 Tasks "randomly" between the start and end date of the project
     /// </summary>
     private static void createTasks()
     {
         for (int i = 0; i<20; i++)
         {
-            //randomaly choose difficulty level
-            var _values = Enum.GetValues(typeof(EngineerExperience));
-            int _randomIndex = s_rand.Next(_values.Length);
-            EngineerExperience _difficultyLevel = (EngineerExperience)_values.GetValue(_randomIndex);
+            //randomly choose difficulty level
+            var values = Enum.GetValues(typeof(EngineerExperience));
+            int randomIndex = s_rand.Next(values.Length);
+            EngineerExperience _difficultyLevel = (EngineerExperience)values.GetValue(randomIndex);
             
             //Making each task a random length
-            TimeSpan _toSubtract = TimeSpan.FromDays(s_rand.Next(1,28));
-            DateTime _dateCreated = DateTime.Now - _toSubtract;
-            DateTime _projectedStartDate = DateTime.Now.AddMonths(s_rand.Next(1, 5)).AddDays(s_rand.Next(0,28));
-            DateTime _deadline = _projectedStartDate.AddMonths(s_rand.Next(1, 5)).AddDays(s_rand.Next(0, 28));
-            TimeSpan _duration = _deadline.Subtract(_projectedStartDate);
+            TimeSpan toSubtract = TimeSpan.FromDays(s_rand.Next(1,28));
+            DateTime dateCreated = DateTime.Now - toSubtract;
+            DateTime projectedStartDate = DateTime.Now.AddMonths(s_rand.Next(1, 5)).AddDays(s_rand.Next(0,28));
+            DateTime deadline = projectedStartDate.AddMonths(s_rand.Next(1, 5)).AddDays(s_rand.Next(0, 28));
+            TimeSpan duration = deadline.Subtract(projectedStartDate);
 
-            Task _newTask = new(0, false, _difficultyLevel, null, null, null, null, null, _dateCreated, _projectedStartDate, null, _duration, _deadline, null);
-            s_dal!.Task.Create(_newTask);
+            Task newTask = new(0, false, _difficultyLevel, null, null, null, null, null, dateCreated, projectedStartDate, null, duration, deadline, null);
+            s_dal!.Task.Create(newTask);
         }
     }
 
     /// <summary>
-    /// Create 40 "radom" dependencies including some with multiple dependencies, 
+    /// Create 40 "random" dependencies including some with multiple dependencies, 
     /// avoiding duplicates and circular dependencies
     /// </summary>
     private static void createDependencies()
     {
-        Task?[] _tasks = s_dal!.Task.ReadAll().ToArray();
+        Task?[] tasks = s_dal!.Task.ReadAll().ToArray();
 
         //Create cases of multiple dependencies, and where two different tasks have the same dependencies
-        int _dependentTask1 = _tasks[0].id;
-        int _dependentTask2 = _tasks[1].id;
-        int _dependsOnTask1 = _tasks[2].id;
-        int _dependsOnTask2 = _tasks[3].id;
-        Dependency _dependency1 = new(0, _dependentTask1, _dependsOnTask1);
-        Dependency _dependency2 = new(0, _dependentTask1, _dependsOnTask2);
-        Dependency _dependency3 = new(0, _dependentTask2, _dependsOnTask1);
-        Dependency _dependency4 = new(0, _dependentTask2, _dependsOnTask2);
-        s_dal!.Dependency.Create(_dependency1);
-        s_dal!.Dependency.Create(_dependency2);
-        s_dal!.Dependency.Create(_dependency3);
-        s_dal!.Dependency.Create(_dependency4);
+        int dependentTask1 = tasks[0]!.ID;
+        int dependentTask2 = tasks[1]!.ID;
+        int dependsOnTask1 = tasks[2]!.ID;
+        int dependsOnTask2 = tasks[3]!.ID;
+        Dependency dependency1 = new(0, dependentTask1, dependsOnTask1);
+        Dependency dependency2 = new(0, dependentTask1, dependsOnTask2);
+        Dependency dependency3 = new(0, dependentTask2, dependsOnTask1);
+        Dependency dependency4 = new(0, dependentTask2, dependsOnTask2);
+        s_dal!.Dependency.Create(dependency1);
+        s_dal!.Dependency.Create(dependency2);
+        s_dal!.Dependency.Create(dependency3);
+        s_dal!.Dependency.Create(dependency4);
 
         //Generate random dependencies
         for (int i = 0; i <= 36; i++) 
         { 
            
             //Choose random tasks to be dependent on each other
-            int _dependentTask = _tasks[s_rand.Next(0, _tasks.Length)].id;
-            int _dependsOnTask = _tasks[s_rand.Next(0, _tasks.Length)].id;
+            int dependentTask = tasks[s_rand.Next(0, tasks.Length)]!.ID;
+            int dependsOnTask = tasks[s_rand.Next(0, tasks.Length)]!.ID;
 
             //Make sure the dependency we are creating does not create a circular dependency
-            while (createsCircularDependency(_dependentTask, _dependsOnTask))
+            while (createsCircularDependency(dependentTask, dependsOnTask))
             {
-                _dependsOnTask = _tasks[s_rand.Next(0, _tasks.Length)].id;
+                dependsOnTask = tasks[s_rand.Next(0, tasks.Length)]!.ID;
             }
 
-            Dependency _newDependency = new(0, _dependentTask, _dependsOnTask);
+            Dependency newDependency = new(0, dependentTask, dependsOnTask);
 
             //Make sure a dependency doesn't exist in s_dalDependency with the same dependentTask and dependsOnTask
-            Dependency[] _dependencies = s_dal!.Dependency.ReadAll().ToArray();
-            bool _existsAlready = false;
-            foreach(Dependency _dependency in _dependencies)
+            Dependency[] dependencies = s_dal!.Dependency.ReadAll().ToArray();
+            bool existsAlready = false;
+            foreach(Dependency dependency in dependencies)
             {
-                if (_dependency.dependentTask == _dependentTask && _dependency.dependsOnTask == _dependsOnTask) 
+                if (dependency.DependentTask == dependentTask && dependency.DependsOnTask == dependsOnTask) 
                 {
-                    _existsAlready = true;
+                    existsAlready = true;
                     break;
                 }
             }
-            if (!_existsAlready)
+            if (!existsAlready)
             {
-                s_dal!.Dependency.Create(_newDependency);
+                s_dal!.Dependency.Create(newDependency);
             }
         }
     }
 
     /// <summary>
-    /// Figure out if the dependentTask and DependsOnTask will create a ciircular dependency 
+    /// Figure out if the dependentTask and DependsOnTask will create a circular dependency 
     /// </summary>
-    /// <param name="_dependentTask"></param>
-    /// <param name="_dependsOnTask"></param>
+    /// <param name="dependentTask"></param>
+    /// <param name="dependsOnTask"></param>
     /// <returns>If the dependency is circular</returns>
-    private static bool createsCircularDependency(int _dependentTask, int _dependsOnTask)
+    private static bool createsCircularDependency(int dependentTask, int dependsOnTask)
     {
         // Check if dependsOnTask is directly or indirectly dependent on dependentTask
-        return isIndirectlyDependent(_dependentTask, _dependsOnTask, new List<int>());
+        return isIndirectlyDependent(dependentTask, dependsOnTask, new List<int>());
     }
 
     /// <summary>
     /// Recursively check if there is a direct or indirect circular dependency
     /// </summary>
-    /// <param name="_targetTask"></param>
-    /// <param name="_currentTask"></param>
-    /// <param name="_visitedTasks"></param>
+    /// <param name="targetTask"></param>
+    /// <param name="currentTask"></param>
+    /// <param name="visitedTasks"></param>
     /// <returns>True if circular dependency found</returns>
-    private static bool isIndirectlyDependent(int _targetTask, int _currentTask, List<int> _visitedTasks)
+    private static bool isIndirectlyDependent(int targetTask, int currentTask, List<int> visitedTasks)
     {
-        if (_visitedTasks.Contains(_currentTask))
+        if (visitedTasks.Contains(currentTask))
         {
             // We've encountered a task we've already visited in this recursion branch, indicating a circular dependency
             return true;
         }
 
-        _visitedTasks.Add(_currentTask);
+        visitedTasks.Add(currentTask);
 
-        Dependency[] _dependencies = s_dal!.Dependency.ReadAll().Where(d => d.dependentTask == _currentTask).ToArray();
+        Dependency[] dependencies = s_dal!.Dependency.ReadAll().Where(d => d.DependentTask == currentTask).ToArray();
 
-        foreach (Dependency _dependency in _dependencies)
+        foreach (Dependency dependency in dependencies)
         {
-            if (_dependency.dependsOnTask == _targetTask || isIndirectlyDependent(_targetTask, _dependency.dependsOnTask, _visitedTasks))
+            if (dependency.DependsOnTask == targetTask || isIndirectlyDependent(targetTask, dependency.DependsOnTask, visitedTasks))
             {
                 return true;
             }
         }
 
-        _visitedTasks.Remove(_currentTask); // Backtrack when moving to the next task
+        visitedTasks.Remove(currentTask); // Backtrack when moving to the next task
         return false;
     }
 }

@@ -15,10 +15,10 @@ internal class DependencyImplementation : IDependency
     /// <returns>id of the Dependency</returns>
     public int Create(Dependency item)
     {
-        int _id = DataSource.Config.NextDependencyId;
-        Dependency _dependency = item with { id = _id };
-        DataSource.Dependencies.Add(_dependency);
-        return _id;
+        int id = DataSource.Config.NextDependencyId;
+        Dependency dependency = item with { ID = id };
+        DataSource.Dependencies.Add(dependency);
+        return id;
     }
 
     /// <summary>
@@ -27,10 +27,10 @@ internal class DependencyImplementation : IDependency
     /// <param name="id">the id of the Dependency to delete</param>
     public void Delete(int id)
     {
-        Dependency _dependency = Read(id); //Check that this item exists
-        DataSource.Dependencies.Remove(_dependency);
-        Dependency _newDependency = _dependency with { active = false };
-        DataSource.Dependencies.Add(_newDependency);
+        Dependency dependency = Read(id); //Check that this item exists
+        DataSource.Dependencies.Remove(dependency);
+        Dependency newDependency = dependency with { Active = false };
+        DataSource.Dependencies.Add(newDependency);
     }
 
     /// <summary>
@@ -41,12 +41,12 @@ internal class DependencyImplementation : IDependency
     /// <exception cref="DalDoesNotExistException">Dependency doesn't exist</exception>
     public Dependency Read(int id)
     {
-        Dependency? _dependency = DataSource.Dependencies.FirstOrDefault(item => item.id == id && item.active);
-        if (_dependency == null)
+        Dependency? dependency = DataSource.Dependencies.FirstOrDefault(item => item.ID == id && item.Active);
+        if (dependency == null)
         {
             throw new DalDoesNotExistException($"Object of type Dependency with identifier {id} does not exist");
         }
-        return _dependency;
+        return dependency;
     }
 
     /// <summary>
@@ -57,12 +57,12 @@ internal class DependencyImplementation : IDependency
     /// <exception cref="DalDoesNotExistException">Dependency doesn't exist with this filter</exception>
     public Dependency Read(Func<Dependency, bool> filter) 
     {
-        Dependency? _dependency = DataSource.Dependencies.Where(item => item.active).FirstOrDefault(filter);
-        if (_dependency == null)
+        Dependency? dependency = DataSource.Dependencies.Where(item => item.Active).FirstOrDefault(filter);
+        if (dependency == null)
         {
             throw new DalDoesNotExistException($"Object of type Dependency with this filter does not exist");
         }
-        return _dependency;
+        return dependency;
 
     }
 
@@ -74,22 +74,22 @@ internal class DependencyImplementation : IDependency
     /// <exception cref="DalDoesNotExistException">No Dependencies match the filter (or none exist if filter is null)</exception>
     public IEnumerable<Dependency> ReadAll(Func<Dependency, bool>? filter = null)
     {
-        IEnumerable<Dependency> _activeDependencies = DataSource.Dependencies.Where(item => item.active);
-        if (_activeDependencies.Count() == 0)
+        IEnumerable<Dependency> activeDependencies = DataSource.Dependencies.Where(item => item.Active);
+        if (activeDependencies.Count() == 0)
         {
             throw new DalDoesNotExistException($"No Object of type Dependency exists");
         }
         if (filter == null)
         {
-            return _activeDependencies;
+            return activeDependencies;
         }
 
-        IEnumerable<Dependency> _filteredDependencies = _activeDependencies.Where(filter);
-        if (_filteredDependencies.Count() == 0)
+        IEnumerable<Dependency> filteredDependencies = activeDependencies.Where(filter);
+        if (filteredDependencies.Count() == 0)
         {
             throw new DalDoesNotExistException($"No Object of type Dependency exists");
         }
-        return _filteredDependencies;
+        return filteredDependencies;
     }
 
     /// <summary>
@@ -98,8 +98,8 @@ internal class DependencyImplementation : IDependency
     /// <param name="item">Dependency to update</param>
     public void Update(Dependency item)
     {
-        Dependency _old = Read(item.id);
-        DataSource.Dependencies.Remove(_old);
+        Dependency old = Read(item.ID);
+        DataSource.Dependencies.Remove(old);
         DataSource.Dependencies.Add(item);
     }
 

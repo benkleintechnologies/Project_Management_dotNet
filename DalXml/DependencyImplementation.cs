@@ -20,23 +20,23 @@ internal class DependencyImplementation : IDependency
     /// <returns>The ID of the Dependency</returns>
     public int Create(Dependency item)
     {
-        int _id = Config.NextDependencyId;
+        int id = Config.NextDependencyId;
         //Create Dependency with auto-incrementing ID
-        Dependency _dependency = item with { id = _id };
+        Dependency dependency = item with { ID = id };
         //Load XML data of Dependencies
-        XElement _dependencies = XMLTools.LoadListFromXMLElement(s_dependencies_xml);
+        XElement dependencies = XMLTools.LoadListFromXMLElement(s_dependencies_xml);
         // Convert Dependency object to XElement
-        XElement _dependencyElement = new XElement("Dependency",
-            new XElement("id", _dependency.id),
-            new XElement("dependentTask", _dependency.dependentTask),
-            new XElement("dependsOnTask", _dependency.dependsOnTask),
-            new XElement("active", _dependency.active)
+        XElement dependencyElement = new XElement("Dependency",
+            new XElement("ID", dependency.ID),
+            new XElement("DependentTask", dependency.DependentTask),
+            new XElement("DependsOnTask", dependency.DependsOnTask),
+            new XElement("Active", dependency.Active)
         );
         //Add Dependency to the data loaded from XML
-        _dependencies.Add(_dependencyElement);
+        dependencies.Add(dependencyElement);
         //Save back to the XML
-        XMLTools.SaveListToXMLElement(_dependencies, s_dependencies_xml);
-        return _id;
+        XMLTools.SaveListToXMLElement(dependencies, s_dependencies_xml);
+        return id;
     }
 
     /// <summary>
@@ -45,15 +45,15 @@ internal class DependencyImplementation : IDependency
     /// <param name="id">ID of the Dependency to delete</param>
     public void Delete(int id)
     {
-        Dependency? _dependency = Read(id);
+        Dependency? dependency = Read(id);
         
         //Get list of dependencies
-        XElement _dependencies = XMLTools.LoadListFromXMLElement(s_dependencies_xml);
+        XElement dependencies = XMLTools.LoadListFromXMLElement(s_dependencies_xml);
         //Find the dependency with id
-        XElement _dependencyElement = _dependencies.Elements("Dependency").FirstOrDefault(e => (int)e.Element("id")! == id)!;
+        XElement dependencyElement = dependencies.Elements("Dependency").FirstOrDefault(e => (int)e.Element("ID")! == id)!;
         //Set it as deleted
-        _dependencyElement.Element("active")?.SetValue(false);
-            XMLTools.SaveListToXMLElement(_dependencies, s_dependencies_xml);
+        dependencyElement.Element("Active")?.SetValue(false);
+            XMLTools.SaveListToXMLElement(dependencies, s_dependencies_xml);
     }
 
     /// <summary>
@@ -64,25 +64,25 @@ internal class DependencyImplementation : IDependency
     /// <exception cref="DalDoesNotExistException">Thrown if no Dependency with this ID and filter exists</exception>
     public Dependency? Read(int id)
     {
-        XElement _dependencies = XMLTools.LoadListFromXMLElement(s_dependencies_xml);
+        XElement dependencies = XMLTools.LoadListFromXMLElement(s_dependencies_xml);
         //Get enumerable of all active dependencies in XML
-        IEnumerable<XElement> _dependencyElements = _dependencies.Elements("Dependency")
-        .Where(e => (bool)e.Element("active")!);
+        IEnumerable<XElement> dependencyElements = dependencies.Elements("Dependency")
+        .Where(e => (bool)e.Element("Active")!);
 
         //Find the Dependency (after converting each Element to Dependency) with the correct ID if it exists
-        Dependency? _result = _dependencyElements
-            .Select(_dependencyElement => new Dependency(
-                id: int.Parse(_dependencyElement.Element("id")!.Value),
-                dependentTask: int.Parse(_dependencyElement.Element("dependentTask")!.Value),
-                dependsOnTask: int.Parse(_dependencyElement.Element("dependsOnTask")!.Value),
-                active: bool.Parse(_dependencyElement.Element("active")!.Value)
+        Dependency? result = dependencyElements
+            .Select(dependencyElement => new Dependency(
+                ID: int.Parse(dependencyElement.Element("ID")!.Value),
+                DependentTask: int.Parse(dependencyElement.Element("DependentTask")!.Value),
+                DependsOnTask: int.Parse(dependencyElement.Element("DependsOnTask")!.Value),
+                Active: bool.Parse(dependencyElement.Element("Active")!.Value)
                 ))
-            .FirstOrDefault(d => d.id == id);
+            .FirstOrDefault(d => d.ID == id);
 
-        if (_result is null)
+        if (result is null)
             throw new DalDoesNotExistException($"Object of type Dependency with identifier {id} does not exist");
 
-        return _result;
+        return result;
     }
 
     /// <summary>
@@ -93,24 +93,24 @@ internal class DependencyImplementation : IDependency
     /// <exception cref="DalDoesNotExistException">Thrown if no Dependency with this ID exists</exception>
     public Dependency? Read(Func<Dependency, bool> filter)
     {
-        XElement _dependencies = XMLTools.LoadListFromXMLElement(s_dependencies_xml);
+        XElement dependencies = XMLTools.LoadListFromXMLElement(s_dependencies_xml);
         
-        IEnumerable<XElement> _dependencyElements = _dependencies.Elements("Dependency")
-        .Where(e => (bool)e.Element("active")!);
+        IEnumerable<XElement> dependencyElements = dependencies.Elements("Dependency")
+        .Where(e => (bool)e.Element("Active")!);
 
-        Dependency? _result = _dependencyElements
-            .Select(_dependencyElement => new Dependency(
-                id: int.Parse(_dependencyElement.Element("id")!.Value),
-                dependentTask: int.Parse(_dependencyElement.Element("dependentTask")!.Value),
-                dependsOnTask: int.Parse(_dependencyElement.Element("dependsOnTask")!.Value),
-                active: bool.Parse(_dependencyElement.Element("active")!.Value)
+        Dependency? result = dependencyElements
+            .Select(dependencyElement => new Dependency(
+                ID: int.Parse(dependencyElement.Element("ID")!.Value),
+                DependentTask: int.Parse(dependencyElement.Element("DependentTask")!.Value),
+                DependsOnTask: int.Parse(dependencyElement.Element("DependsOnTask")!.Value),
+                Active: bool.Parse(dependencyElement.Element("Active")!.Value)
                 ))
             .FirstOrDefault(filter);
 
-        if (_result is null)
+        if (result is null)
             throw new DalDoesNotExistException($"Object of type Dependency with given filter does not exist");
 
-        return _result;
+        return result;
     }
 
     /// <summary>
@@ -122,30 +122,30 @@ internal class DependencyImplementation : IDependency
     public IEnumerable<Dependency?> ReadAll(Func<Dependency, bool>? filter = null)
     {
         //Get list of dependencies
-        XElement _dependenciesElement = XMLTools.LoadListFromXMLElement(s_dependencies_xml);
+        XElement dependenciesElement = XMLTools.LoadListFromXMLElement(s_dependencies_xml);
 
-        IEnumerable<Dependency> _dependencies = _dependenciesElement.Elements("Dependency").Select(elem => new Dependency(
-            id: int.Parse(elem.Element("id")!.Value),
-            dependentTask: int.Parse(elem.Element("dependentTask")!.Value),
-            dependsOnTask: int.Parse(elem.Element("dependsOnTask")!.Value),
-            active: bool.Parse(elem.Element("active")!.Value)
+        IEnumerable<Dependency> dependencies = dependenciesElement.Elements("Dependency").Select(elem => new Dependency(
+            ID: int.Parse(elem.Element("ID")!.Value),
+            DependentTask: int.Parse(elem.Element("DependentTask")!.Value),
+            DependsOnTask: int.Parse(elem.Element("DependsOnTask")!.Value),
+            Active: bool.Parse(elem.Element("Active")!.Value)
             ));
-        IEnumerable<Dependency> _activeDependencies = _dependencies.Where(item => item.active);
-        if (_activeDependencies.Count() == 0)
+        IEnumerable<Dependency> activeDependencies = dependencies.Where(item => item.Active);
+        if (activeDependencies.Count() == 0)
         {
             throw new DalDoesNotExistException($"No Object of type Dependency exists");
         }
 
         if (filter == null)
         {
-            return _activeDependencies;
+            return activeDependencies;
         }
-        IEnumerable<Dependency> _filteredDependencies = _activeDependencies.Where(filter);
-        if (_filteredDependencies.Count() == 0)
+        IEnumerable<Dependency> filteredDependencies = activeDependencies.Where(filter);
+        if (filteredDependencies.Count() == 0)
         {
             throw new DalDoesNotExistException($"No Object of type Dependency exists");
         }
-        return _filteredDependencies;
+        return filteredDependencies;
     }
 
     /// <summary>
@@ -153,9 +153,9 @@ internal class DependencyImplementation : IDependency
     /// </summary>
     public void Reset()
     {
-        XElement _dependencies = XMLTools.LoadListFromXMLElement(s_dependencies_xml);
-        _dependencies.RemoveAll();
-        XMLTools.SaveListToXMLElement(_dependencies, s_dependencies_xml);
+        XElement dependencies = XMLTools.LoadListFromXMLElement(s_dependencies_xml);
+        dependencies.RemoveAll();
+        XMLTools.SaveListToXMLElement(dependencies, s_dependencies_xml);
     }
 
     /// <summary>
@@ -166,22 +166,22 @@ internal class DependencyImplementation : IDependency
     public void Update(Dependency item)
     {
         //Get list of dependencies
-        XElement _dependencies = XMLTools.LoadListFromXMLElement(s_dependencies_xml);
+        XElement dependencies = XMLTools.LoadListFromXMLElement(s_dependencies_xml);
         //Find the dependency with id
-        XElement _dependencyElement = _dependencies.Elements("Dependency").FirstOrDefault(e => (int)e.Element("id")! == item.id)!;
+        XElement dependencyElement = dependencies.Elements("Dependency").FirstOrDefault(e => (int)e.Element("id")! == item.ID)!;
 
         //Update values of the Element
-        if (_dependencyElement is not null)
+        if (dependencyElement is not null)
         {
-            _dependencyElement!.SetElementValue("dependentTask", item.dependentTask);
-            _dependencyElement.SetElementValue("dependsOnTask", item.dependsOnTask);
-            _dependencyElement.SetElementValue("active", item.active);
+            dependencyElement!.SetElementValue("DependentTask", item.DependentTask);
+            dependencyElement.SetElementValue("DependsOnTask", item.DependsOnTask);
+            dependencyElement.SetElementValue("Active", item.Active);
 
-            XMLTools.SaveListToXMLElement(_dependencies, s_dependencies_xml);
+            XMLTools.SaveListToXMLElement(dependencies, s_dependencies_xml);
         }
         else
         {
-            throw new DalDoesNotExistException($"Object of type Dependency with identifier {item.id} does not exist");
+            throw new DalDoesNotExistException($"Object of type Dependency with identifier {item.ID} does not exist");
         }
     }
 }

@@ -16,7 +16,7 @@ internal class MilestoneImplementation : IMilestone
     private int CreateMilestoneTaskAndGetId()
     {
         // Create a task for the milestone
-        DO.Task _milestoneTask = new DO.Task(0, true, nickname: "M" + NextMilestoneId);
+        DO.Task _milestoneTask = new DO.Task(0, true, Nickname: "M" + NextMilestoneId);
         // Add the milestone task to the database and return its ID
         return _dal.Task.Create(_milestoneTask);
     }
@@ -88,7 +88,7 @@ internal class MilestoneImplementation : IMilestone
         }).Where(d => d != null).ToList().ForEach(d => _dal.Dependency.Create(d!));
 
         //Create starting Milestone in database (as Task)
-        int _startMilestoneTaskId = _dal.Task.Create(new(0, true, nickname: "Start"));
+        int _startMilestoneTaskId = _dal.Task.Create(new(0, true, Nickname: "Start"));
         //Get all Tasks with no dependencies
         IEnumerable<DO.Task> _tasksWithoutDependencies = _dal.Task.ReadAll(t => _oldDependencies.All(d => d.dependentTask != t.id));
         //Create a dependency for every Task with no dependencies on the Start Milestone
@@ -98,7 +98,7 @@ internal class MilestoneImplementation : IMilestone
         }).Where(d => d != null).ToList().ForEach(d => _dal.Dependency.Create(d!));
 
         //Create end Milestone in database (as Task)
-        int _endMilestoneTaskId = _dal.Task.Create(new(0, true, nickname: "End"));
+        int _endMilestoneTaskId = _dal.Task.Create(new(0, true, Nickname: "End"));
         //Get all Tasks which are not depended on
         IEnumerable<DO.Task> _tasksNotDependedOn = _dal.Task.ReadAll(t => _oldDependencies.All(d => d.dependsOnTask != t.id));
         //Create a dependency for the End Milestone on all last tasks which are not depended on by other tasks
@@ -119,8 +119,8 @@ internal class MilestoneImplementation : IMilestone
             calculateMilestones();
 
             //Get initial data
-            DateTime? _projectStartDate = _dal.Config.getStartDate();
-            DateTime? _projectEndDate = _dal.Config.getEndDate();
+            DateTime? _projectStartDate = _dal.Config.GetStartDate();
+            DateTime? _projectEndDate = _dal.Config.GetEndDate();
             IEnumerable<DO.Task> _tasks = _dal.Task.ReadAll();
             IEnumerable<DO.Task> _milestones = _dal.Task.ReadAll(t => t.isMilestone);
             IEnumerable<DO.Dependency> _dependencies = _dal.Dependency.ReadAll();
@@ -178,7 +178,7 @@ internal class MilestoneImplementation : IMilestone
 
         // Calculate the latest possible completion date (LPCD) based on the instructions
         TimeSpan? duration = currentTask.duration;
-        DateTime? lpcd = duration is not null ? currentTask.deadline - duration.Value : currentTask.deadline is not null ? currentTask.deadline : _dal.Config.getEndDate();
+        DateTime? lpcd = duration is not null ? currentTask.deadline - duration.Value : currentTask.deadline is not null ? currentTask.deadline : _dal.Config.GetEndDate();
 
         // Check if deadline already exists which is later
         if (lpcd is not null)

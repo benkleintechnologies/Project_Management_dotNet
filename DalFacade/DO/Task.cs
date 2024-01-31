@@ -3,37 +3,37 @@
 /// <summary>
 /// Task Entity (PDS)
 /// </summary>
-/// <param name="id"></param>
-/// <param name="assignedEngineerId"></param>
-/// <param name="isMilestone"></param>
-/// <param name="degreeOfDifficulty"></param>
-/// <param name="nickname"></param>
-/// <param name="description"></param>
-/// <param name="deliverables"></param>
-/// <param name="notes"></param>
-/// <param name="dateCreated"></param>
-/// <param name="projectedStartDate"></param>
-/// <param name="actualStartDate"></param>
-/// <param name="duration"></param>
-/// <param name="deadline"></param>
-/// <param name="actualEndDate"></param>
+/// <param name="ID"></param>
+/// <param name="AssignedEngineerId"></param>
+/// <param name="IsMilestone"></param>
+/// <param name="DegreeOfDifficulty"></param>
+/// <param name="Nickname"></param>
+/// <param name="Description"></param>
+/// <param name="Deliverables"></param>
+/// <param name="Notes"></param>
+/// <param name="DateCreated"></param>
+/// <param name="ProjectedStartDate"></param>
+/// <param name="ActualStartDate"></param>
+/// <param name="Duration"></param>
+/// <param name="Deadline"></param>
+/// <param name="ActualEndDate"></param>
 public record Task
 (
-    int id,
-    bool isMilestone = false,
-    EngineerExperience degreeOfDifficulty = EngineerExperience.Beginner,
-    int? assignedEngineerId = null,
-    String? nickname = null,
-    String? description = null,
-    String? deliverables = null,
-    String? notes = null,
-    DateTime? dateCreated = null,
-    DateTime? projectedStartDate = null,
-    DateTime? actualStartDate = null,
-    TimeSpan? duration = null,
-    DateTime? deadline = null,
-    DateTime? actualEndDate = null,
-    bool active = true
+    int ID,
+    bool IsMilestone = false,
+    EngineerExperience DegreeOfDifficulty = EngineerExperience.Beginner,
+    int? AssignedEngineerId = null,
+    String? Nickname = null,
+    String? Description = null,
+    String? Deliverables = null,
+    String? Notes = null,
+    DateTime? DateCreated = null,
+    DateTime? ProjectedStartDate = null,
+    DateTime? ActualStartDate = null,
+    TimeSpan? Duration = null,
+    DateTime? Deadline = null,
+    DateTime? ActualEndDate = null,
+    bool Active = true
 )
 {
     public Task() : this(0) { } // empty ctor for stage 3

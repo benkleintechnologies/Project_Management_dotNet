@@ -9,27 +9,27 @@ internal static class DataSource
 	/// Internal Config class which stores project start and end dates, as well as auto-generating values for IDs
 	/// </summary>
 	internal static class Config {
-		internal static DateTime? _startDate { get; set; } = null;
-		internal static DateTime? _endDate { get; set; } = null;
+		internal static DateTime? startDate { get; set; } = null;
+		internal static DateTime? endDate { get; set; } = null;
 
-		internal const int _startTaskId = 0;
-		private static int _nextTaskId = _startTaskId;
-		internal static int NextTaskId { get => _nextTaskId++;  }
+		internal const int startTaskId = 0;
+		private static int nextTaskId = startTaskId;
+		internal static int NextTaskId { get => nextTaskId++;  }
 
-        internal const int _startDependencyId = 1000;
-        private static int _nextDependencyId = _startDependencyId;
-        internal static int NextDependencyId { get => _nextDependencyId++; }
+        internal const int startDependencyId = 1000;
+        private static int nextDependencyId = startDependencyId;
+        internal static int NextDependencyId { get => nextDependencyId++; }
 
         // Method to reset the nextTaskId
         internal static void resetTaskId()
         {
-            _nextTaskId = _startTaskId;
+            nextTaskId = startTaskId;
         }
 
         // Method to reset the nextDependencyId
         internal static void resetDependencyId()
         {
-            _nextDependencyId = _startDependencyId;
+            nextDependencyId = startDependencyId;
         }
     }
 

@@ -7,9 +7,9 @@ using DalApi;
 sealed internal class DalList : IDal
 {
     // Lazy<DalList> ensures lazy initialization and thread safety
-    private static readonly Lazy<DalList> lazyInstance = new Lazy<DalList>(() => new DalList());
+    private static readonly Lazy<DalList> _lazyInstance = new Lazy<DalList>(() => new DalList());
     // Public property to access the singleton instance
-    public static IDal Instance => lazyInstance.Value;
+    public static IDal Instance => _lazyInstance.Value;
     private DalList() { }
     public IConfig Config => new ConfigImplementation();
 

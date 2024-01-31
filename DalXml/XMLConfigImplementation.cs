@@ -8,12 +8,12 @@ using System;
 /// </summary>
 public class XMLConfigImplementation : IConfig
 {
-    public DateTime? getEndDate()
+    public DateTime? GetEndDate()
     {
         return Config.EndDate;
     }
 
-    public DateTime? getStartDate()
+    public DateTime? GetStartDate()
     {
         return Config.StartDate;
     }
@@ -28,7 +28,7 @@ public class XMLConfigImplementation : IConfig
     /// </summary>
     /// <param name="endDate"></param>
     /// <exception cref="DateCannotBeChangedException">Thrown if trying to set the end date while there is still data in the XML files</exception>
-    public void setEndDate(DateTime endDate)
+    public void SetEndDate(DateTime endDate)
     {
         if (xmlFilesReset())
         {
@@ -45,7 +45,7 @@ public class XMLConfigImplementation : IConfig
     /// </summary>
     /// <param name="startDate"></param>
     /// <exception cref="DateCannotBeChangedException">Thrown if trying to set the start date while there is still data in the XML files</exception>
-    public void setStartDate(DateTime startDate)
+    public void SetStartDate(DateTime startDate)
     {
         if (xmlFilesReset())
         {

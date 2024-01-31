@@ -8,14 +8,14 @@ using DO;
 /// </summary>
 public class ConfigImplementation : IConfig
 {
-    public DateTime? getEndDate()
+    public DateTime? GetEndDate()
     {
-        return DataSource.Config._endDate;
+        return DataSource.Config.endDate;
     }
 
-    public DateTime? getStartDate()
+    public DateTime? GetStartDate()
     {
-        return DataSource.Config._startDate;
+        return DataSource.Config.startDate;
     }
 
     /// <summary>
@@ -26,8 +26,8 @@ public class ConfigImplementation : IConfig
         DataSource.Engineers.Clear();
         DataSource.Tasks.Clear();
         DataSource.Dependencies.Clear();
-        DataSource.Config._startDate = null;
-        DataSource.Config._endDate = null;
+        DataSource.Config.startDate = null;
+        DataSource.Config.endDate = null;
         DataSource.Config.resetDependencyId();
         DataSource.Config.resetTaskId();
     }
@@ -36,11 +36,11 @@ public class ConfigImplementation : IConfig
     /// Set the end date - *Only if the rest of the system has been reset or uninitialized*
     /// </summary>
     /// <param name="endDate"></param>
-    public void setEndDate(DateTime endDate)
+    public void SetEndDate(DateTime endDate)
     {
         if (DataSource.Engineers.Count == 0 && DataSource.Tasks.Count == 0 && DataSource.Dependencies.Count == 0)
         {
-            DataSource.Config._endDate = endDate;
+            DataSource.Config.endDate = endDate;
         }
         else
         {
@@ -52,11 +52,11 @@ public class ConfigImplementation : IConfig
     /// Set the start date - *Only if the rest of the system has been reset or uninitialized*
     /// </summary>
     /// <param name="startDate"></param>
-    public void setStartDate(DateTime startDate)
+    public void SetStartDate(DateTime startDate)
     {
         if (DataSource.Engineers.Count == 0 && DataSource.Tasks.Count == 0 && DataSource.Dependencies.Count == 0)
         {
-            DataSource.Config._startDate = startDate;
+            DataSource.Config.startDate = startDate;
         }
         else
         {

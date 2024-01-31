@@ -16,12 +16,12 @@ internal class EngineerImplementation: IEngineer
     /// <exception cref="DalAlreadyExistsException">Thrown when an Engineer with this ID is already in the database</exception>
     public int Create(Engineer item)
     {
-        if (InternalRead(item.id) is not null)
+        if (InternalRead(item.ID) is not null)
         {
-            throw new DalAlreadyExistsException($"An object of type Engineer with id {item.id} already exists");
+            throw new DalAlreadyExistsException($"An object of type Engineer with id {item.ID} already exists");
         }
         DataSource.Engineers.Add(item);
-        return item.id;
+        return item.ID;
     }
 
     /// <summary>
@@ -30,10 +30,10 @@ internal class EngineerImplementation: IEngineer
     /// <param name="id">ID of the Engineer to delete</param>
     public void Delete(int id)
     {
-        Engineer _engineer = Read(id); //Check that this item exists
-        DataSource.Engineers.Remove(_engineer);
-        Engineer _newEngineer = _engineer with { active = false };
-        DataSource.Engineers.Add(_newEngineer);
+        Engineer engineer = Read(id); //Check that this item exists
+        DataSource.Engineers.Remove(engineer);
+        Engineer newEngineer = engineer with { Active = false };
+        DataSource.Engineers.Add(newEngineer);
     }
 
     /// <summary>
@@ -44,12 +44,12 @@ internal class EngineerImplementation: IEngineer
     /// <exception cref="DalDoesNotExistException">Thrown if there is no Engineer with this ID</exception>
     public Engineer Read(int id)
     {
-        Engineer? _engineer = InternalRead(id);
-        if (_engineer == null)
+        Engineer? engineer = InternalRead(id);
+        if (engineer == null)
         {
             throw new DalDoesNotExistException($"Object of type Engineer with identifier {id} does not exist");
         }
-        return _engineer;
+        return engineer;
     }
 
     /// <summary>
@@ -60,12 +60,12 @@ internal class EngineerImplementation: IEngineer
     /// <exception cref="DalDoesNotExistException">Thrown if there is no Engineer which matches this filter</exception>
     public Engineer Read(Func<Engineer, bool> filter)
     {
-        Engineer? _engineer = DataSource.Engineers.Where(item => item.active).FirstOrDefault(filter);
-        if (_engineer == null)
+        Engineer? engineer = DataSource.Engineers.Where(item => item.Active).FirstOrDefault(filter);
+        if (engineer == null)
         {
             throw new DalDoesNotExistException($"Object of type Engineer with this filter does not exist");
         }
-        return _engineer;
+        return engineer;
     }
 
     /// <summary>
@@ -76,23 +76,23 @@ internal class EngineerImplementation: IEngineer
     /// <exception cref="DalDoesNotExistException">Thrown if there is no Engineer which matches this filter (or none at all if the filter is null)</exception>
     public IEnumerable<Engineer> ReadAll(Func<Engineer, bool>? filter = null)
     {
-        IEnumerable<Engineer> _activeEngineers = DataSource.Engineers.Where(item => item.active);
+        IEnumerable<Engineer> activeEngineers = DataSource.Engineers.Where(item => item.Active);
 
-        if (_activeEngineers.Count() == 0)
+        if (activeEngineers.Count() == 0)
         {
             throw new DalDoesNotExistException($"No Object of type Engineer exists");
         }
         if (filter == null)
         {
-            return _activeEngineers;
+            return activeEngineers;
         }
 
-        IEnumerable<Engineer> _filteredEngineers = _activeEngineers.Where(filter);
-        if (_filteredEngineers.Count() == 0)
+        IEnumerable<Engineer> filteredEngineers = activeEngineers.Where(filter);
+        if (filteredEngineers.Count() == 0)
         {
             throw new DalDoesNotExistException($"No Object of type Engineer exists");
         }
-        return _filteredEngineers;
+        return filteredEngineers;
     }
 
     /// <summary>
@@ -101,8 +101,8 @@ internal class EngineerImplementation: IEngineer
     /// <param name="item">New Engineer information</param>
     public void Update(Engineer item)
     {
-        Engineer? _old = Read(item.id);
-        DataSource.Engineers.Remove(_old);
+        Engineer? old = Read(item.ID);
+        DataSource.Engineers.Remove(old);
         DataSource.Engineers.Add(item);
     }
 
@@ -116,6 +116,6 @@ internal class EngineerImplementation: IEngineer
 
     private Engineer? InternalRead(int id)
     {
-        return DataSource.Engineers.FirstOrDefault(item => item.id == id && item.active);
+        return DataSource.Engineers.FirstOrDefault(item => item.id == id && item.Active);
     }
 }

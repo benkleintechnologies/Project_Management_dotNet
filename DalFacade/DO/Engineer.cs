@@ -3,19 +3,19 @@
 /// <summary>
 /// Engineer Entity (PDS)
 /// </summary>
-/// <param name="id"></param>
-/// <param name="name"></param>
-/// <param name="email"></param>
-/// <param name="cost"></param>
-/// <param name="level"></param>
+/// <param name="ID"></param>
+/// <param name="Name"></param>
+/// <param name="Email"></param>
+/// <param name="Cost"></param>
+/// <param name="Level"></param>
 public record Engineer
 (
-	int id,
-    String name,
-    String email,
-	double cost,
-	EngineerExperience level = EngineerExperience.Beginner,
-	bool active = true
+	int ID,
+    String Name,
+    String Email,
+	double Cost,
+	EngineerExperience Level = EngineerExperience.Beginner,
+	bool Active = true
 )
 {
     public Engineer() : this(0, "", "", 0) { } // empty ctor for stage 3
