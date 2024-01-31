@@ -1,6 +1,5 @@
 ﻿namespace BlImplementation;
 using BlApi;
-using System.Text.RegularExpressions;
 
 internal class MilestoneImplementation : IMilestone
 {
@@ -8,6 +7,7 @@ internal class MilestoneImplementation : IMilestone
     internal const int StartMilestoneId = 1;
     private static int _nextMilestoneId = StartMilestoneId;
     internal static int NextMilestoneId { get => _nextMilestoneId++; }
+    private BO.Status getStatusForTask(DO.Task t) => t.ProjectedStartDate is not null ? BO.Status.Scheduled : BO.Status.Unscheduled;
 
     /// <summary>
     /// Creates a Tas which represents a Milestone with an auto-incrementing ID
@@ -126,7 +126,10 @@ internal class MilestoneImplementation : IMilestone
             IEnumerable<DO.Dependency> dependencies = _dal.Dependency.ReadAll();
 
             //Check for nulls - error
-            //TODO: Make sure to catch errors and throw necessary exceptions
+            if (projectStartDate is null || projectEndDate is null)
+                throw new BO.BlNullPropertyException("Cannot create project schedule because the Project's start and end date have not been set.");
+            if (!tasks.Any() || !milestones.Any() || !dependencies.Any())
+                throw new BO.BlNullPropertyException("Cannot create project schedule because there are no milestones, tasks, or dependencies.");
 
             //Use a breadth-first style algorithm to go through the the tasks based on their dependencies, backwards, starting from the "End" milestone
             Queue<DO.Task> taskQueue = new Queue<DO.Task>();
@@ -164,14 +167,68 @@ internal class MilestoneImplementation : IMilestone
 
     public BO.Milestone GetMilestone(int id)
     {
-        throw new NotImplementedException();
+        try
+        {
+            //Check for invalid data
+            if (id < 0)
+            {
+                throw new BO.BlInvalidInputException($"The id {id} was invalid");
+            }
+            // Get the Task from the Data Layer
+            DO.Task milestoneTask = _dal.Task.Read(t => t.ID == id && t.IsMilestone);
+            // Get all dependencies of this milestone
+            IEnumerable<DO.Task> dependentTasks = _dal.Dependency.ReadAll(d => d.DependentTask == id).Select(d => _dal.Task.Read(d.DependsOnTask));
+            //Create a TaskInList for all dependencies
+            IEnumerable<BO.TaskInList> dependenciesList = dependentTasks.Select(t => new BO.TaskInList(t.ID, t.Nickname, t.Description, getStatusForTask(t)));
+            //Create Milestone object (and calculate Business layer fields)
+            return new BO.Milestone(milestoneTask.ID, milestoneTask.Nickname, milestoneTask.Description, milestoneTask.DateCreated, getStatusForTask(milestoneTask), milestoneTask.ProjectedStartDate, milestoneTask.Deadline, milestoneTask.ActualEndDate, 0, milestoneTask.Notes, dependenciesList);
+        }
+        catch (DO.DalDoesNotExistException exc)
+        {
+            throw new BO.BlDoesNotExistException(exc.Message);
+        }
     }
 
     public BO.Milestone UpdateMilestone(int id, string? nickname, string? description, string? notes)
     {
-        throw new NotImplementedException();
+        try
+        {
+            //Check for invalid data
+            if (id < 0)
+            {
+                throw new BO.BlInvalidInputException($"The id {id} was invalid");
+            }
+            // Get the Task from the Data Layer
+            DO.Task milestoneTask = _dal.Task.Read(t => t.ID == id && t.IsMilestone);
+
+            //Update the relevant fields
+            if (nickname is not null)
+                milestoneTask = milestoneTask with { Nickname = nickname };
+            if (description is not null)
+                milestoneTask = milestoneTask with { Description = description };
+            if (notes is not null)
+                milestoneTask = milestoneTask with { Notes = notes };
+
+            //Update in database
+            _dal.Task.Update(milestoneTask);
+
+            // Get all dependencies of this milestone
+            IEnumerable<DO.Task> dependentTasks = _dal.Dependency.ReadAll(d => d.DependentTask == id).Select(d => _dal.Task.Read(d.DependsOnTask));
+            //Create a TaskInList for all dependencies
+            IEnumerable<BO.TaskInList> dependenciesList = dependentTasks.Select(t => new BO.TaskInList(t.ID, t.Nickname, t.Description, getStatusForTask(t)));
+            //Create Milestone object (and calculate Business layer fields)
+            return new BO.Milestone(milestoneTask.ID, milestoneTask.Nickname, milestoneTask.Description, milestoneTask.DateCreated, getStatusForTask(milestoneTask), milestoneTask.ProjectedStartDate, milestoneTask.Deadline, milestoneTask.ActualEndDate, 0, milestoneTask.Notes, dependenciesList);
+        }
+        catch (DO.DalDoesNotExistException exc)
+        {
+            throw new BO.BlDoesNotExistException(exc.Message);
+        }
     }
 
+    /// <summary>
+    /// Recursive method to go through the queue of tasks from end to beginning and set the deadlines for each
+    /// </summary>
+    /// <param name="queue">of tasks</param>
     void BreadthFirstTraversalBackwards(Queue<DO.Task> queue)
     {
         if (queue.Count == 0)
@@ -225,9 +282,7 @@ internal class MilestoneImplementation : IMilestone
             }
             else
             {
-                // Handle edge case: no dependent task, dependent task without deadline or duration
-                // You can decide how to handle this case (e.g., use project end date or throw an exception)
-                // lpcd = ...; // Implement your logic here
+                throw new BO.BlUnableToCreateScheduleException("Project schedule was not able to be automatically generated because there was an error setting the deadlines");
             }
         }
 
@@ -244,6 +299,10 @@ internal class MilestoneImplementation : IMilestone
         BreadthFirstTraversalBackwards(queue);
     }
 
+    /// <summary>
+    /// Recursive method to go through the queue of tasks from beginning to end and set the start date for each
+    /// </summary>
+    /// <param name="queue">of Tasks</param>
     void BreadthFirstTraversalForward(Queue<DO.Task> queue)
     {
         if (queue.Count == 0)
@@ -297,9 +356,7 @@ internal class MilestoneImplementation : IMilestone
             }
             else
             {
-                // Handle edge case: no dependent task, dependent task without PSD or deadline
-                // You can decide how to handle this case (e.g., use project start date or throw an exception)
-                // psd = ...; // Implement your logic here
+                throw new BO.BlUnableToCreateScheduleException("Project schedule was not able to be automatically generated because there was an error setting the start dates");
             }
         }
 

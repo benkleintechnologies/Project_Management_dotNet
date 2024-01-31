@@ -17,6 +17,7 @@ public interface IMilestone
     /// </summary>
     /// <param name="id">of the Milestone</param>
     /// <returns>The Milestone object</returns>
+    /// <exception cref="BO.BlInvalidInputException">Thrown when the ID is invalid</exception>
     /// <exception cref="BO.BlDoesNotExistException">Thrown when there is no Milestone with this ID in the DAL</exception>
     public BO.Milestone GetMilestone(int id);
 
@@ -28,5 +29,7 @@ public interface IMilestone
     /// <param name="description">(Optional) new description</param>
     /// <param name="notes">(Optional) new notes</param>
     /// <returns>The updated Milestone Object</returns>
+    /// <exception cref="BO.BlInvalidInputException">Thrown when the ID is invalid</exception>
+    /// <exception cref="BO.BlDoesNotExistException">Thrown when there is no Milestone with this ID in the DAL</exception>
     public BO.Milestone UpdateMilestone(int id, string? nickname, string? description, string? notes);
 }
