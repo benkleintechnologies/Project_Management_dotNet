@@ -12,7 +12,7 @@ internal class TaskImplementation : ITask
     /// <param name="task"></param>
     /// <exception cref="BO.BlInvalidInputException"></exception>
     /// <exception cref="BO.BlAlreadyExistsException"></exception>
-    public void addTask(BO.Task task)
+    public void AddTask(BO.Task task)
     {
         try
         {
@@ -23,18 +23,18 @@ internal class TaskImplementation : ITask
             }
 
             // Getting all previous tasks to add into Dependencies
-            IEnumerable<DO.Task> _previousTasks = _dal.Task.ReadAll(t => t.projectedStartDate < task.ProjectedStartDate); 
+            IEnumerable<DO.Task> previousTasks = _dal.Task.ReadAll(t => t.projectedStartDate < task.ProjectedStartDate); 
 
             // Make the new task dependent on all previous tasks
-            IEnumerable<DO.Dependency> _dependencies = from t in _previousTasks 
+            IEnumerable<DO.Dependency> dependencies = from t in previousTasks 
                                                   select new DO.Dependency(0, task.Id, t.id);
-            _dependencies.ToList().ForEach(d => _dal.Dependency.Create(d));
+            dependencies.ToList().ForEach(d => _dal.Dependency.Create(d));
 
 
             //Try to add the Task to the data layer
-            DO.Task _newTask = new(task.Id, false,(DO.EngineerExperience)task.Complexity, task.Engineer?.Id, task.Name, task.Description, task.Deliverables, task.Notes, task.CreatedAtDate, task.ProjectedStartDate, task.ActualStartDate, task.RequiredEffortTime, task.Deadline, task.ActualEndDate);
+            DO.Task newTask = new(task.Id, false,(DO.EngineerExperience)task.Complexity, task.Engineer?.Id, task.Name, task.Description, task.Deliverables, task.Notes, task.CreatedAtDate, task.ProjectedStartDate, task.ActualStartDate, task.RequiredEffortTime, task.Deadline, task.ActualEndDate);
 
-            _dal.Task.Create(_newTask);
+            _dal.Task.Create(newTask);
         }
         catch (DO.DalAlreadyExistsException exc)
         {
@@ -48,7 +48,7 @@ internal class TaskImplementation : ITask
     /// <param name="id"></param>
     /// <exception cref="BO.BlCannotBeDeletedException"></exception>
     /// <exception cref="BO.BlDoesNotExistException"></exception>
-    public void deleteTask(int id)
+    public void DeleteTask(int id)
     {
         try
         {
@@ -73,16 +73,16 @@ internal class TaskImplementation : ITask
     /// <param name="filter"></param>
     /// <returns></returns>
     /// <exception cref="BO.BlDoesNotExistException"></exception>
-    public IEnumerable<BO.Task> getListOfTasks(Func<BO.Task, bool>? filter = null)
+    public IEnumerable<BO.Task> GetListOfTasks(Func<BO.Task, bool>? filter = null)
     {
         try
         {
             //Get all Tasks from the DL
-            IEnumerable<DO.Task> _tasks = _dal.Task.ReadAll();
+            IEnumerable<DO.Task> tasks = _dal.Task.ReadAll();
             //Filter the DL objects based on the filter
-            IEnumerable<DO.Task> _filteredDlTasks = filter != null ? _tasks.Where(e => filter(toBlTask(e))) : _tasks;
+            IEnumerable<DO.Task> filteredDlTasks = filter != null ? tasks.Where(e => filter(toBlTask(e))) : tasks;
             //Return the list of BL type Tasks
-            return _filteredDlTasks.Select(toBlTask);
+            return filteredDlTasks.Select(toBlTask);
         }
         catch (DO.DalDoesNotExistException exc)
         {
@@ -97,7 +97,7 @@ internal class TaskImplementation : ITask
     /// <returns></returns>
     /// <exception cref="BO.BlInvalidInputException"></exception>
     /// <exception cref="BO.BlDoesNotExistException"></exception>
-    public BO.Task getTask(int id)
+    public BO.Task GetTask(int id)
     {
         try
         {
@@ -121,26 +121,26 @@ internal class TaskImplementation : ITask
     /// <param name="task"></param>
     /// <exception cref="BO.BlInvalidInputException"></exception>
     /// <exception cref="BO.BlDoesNotExistException"></exception>
-    public void updateTask(BO.Task task)
+    public void UpdateTask(BO.Task task)
     {
         try
         {
-            DO.Task _dlTask = _dal.Task.Read(task.Id);
+            DO.Task dlTask = _dal.Task.Read(task.Id);
             
             // Check if task exists in the DL and that name is nonempty
-            if (_dlTask is not null || task.Name == "")
+            if (dlTask is not null || task.Name == "")
             {
                 throw new BO.BlInvalidInputException($"One of the fields of the Task with id {task.Id} was invalid");
             }
             
             // Create the updated task to update the existing task in the Data Layer with
-            DO.Task _newTask = new(task.Id, false, (DO.EngineerExperience)task.Complexity, task.Engineer?.Id, task.Name, task.Description, task.Deliverables, task.Notes, task.CreatedAtDate, task.ProjectedStartDate, task.ActualStartDate, task.RequiredEffortTime, task.Deadline, task.ActualEndDate);
+            DO.Task newTask = new(task.Id, false, (DO.EngineerExperience)task.Complexity, task.Engineer?.Id, task.Name, task.Description, task.Deliverables, task.Notes, task.CreatedAtDate, task.ProjectedStartDate, task.ActualStartDate, task.RequiredEffortTime, task.Deadline, task.ActualEndDate);
 
             // After creating a schedule, it is possible to modify the
             // textual fields and the assigned engineer for the task
             // Not sure what this wants... what is the textual field, and do we just randomly change the engineer?
 
-            _dal.Task.Update(_newTask);
+            _dal.Task.Update(newTask);
         }
         catch (DO.DalDoesNotExistException exc)
         {
@@ -156,30 +156,30 @@ internal class TaskImplementation : ITask
     /// <exception cref="BO.BlNullPropertyException"></exception>
     /// <exception cref="BO.BlInvalidInputException"></exception>
     /// <exception cref="BO.BlDoesNotExistException"></exception>
-    public void updateTaskStartDate(int id, DateTime startDate)
+    public void UpdateTaskStartDate(int id, DateTime startDate)
     {
         try
         {
-            DO.Task _task = _dal.Task.Read(id);
+            DO.Task task = _dal.Task.Read(id);
 
             // Getting all previous tasks on which _task depends directly or indirectly
-            IEnumerable<DO.Task> _dependentTasks = GetDependentTasks(_task.id);
+            IEnumerable<DO.Task> dependentTasks = getDependentTasks(task.id);
 
             // Check if all the projected start dates of the previous tasks are already updated (exist)
-            if (_dependentTasks.Any(t => t.projectedStartDate == null))
+            if (dependentTasks.Any(t => t.projectedStartDate == null))
             {
                 throw new BO.BlNullPropertyException("One or more of the previous tasks projected start date is null");
             }
 
             // Ensure that startDate isn't earlier than any of the projected end dates of previous tasks
-            if (_dependentTasks.Any(t => startDate < t.deadline))
+            if (dependentTasks.Any(t => startDate < t.deadline))
             {
                 throw new BO.BlInvalidInputException("Cannot make a new task start date before the previous ones finish");
             }
 
             // Add the updated task -- with the startDate as the projectedStartDate
-            DO.Task _updatedTask = new(_task.id, false, _task.degreeOfDifficulty, _task.assignedEngineerId, _task.nickname, _task.description, _task.deliverables, _task.notes, _task.dateCreated, startDate, _task.actualStartDate, _task.duration, _task.deadline, _task.actualEndDate);
-            _dal.Task.Update(_updatedTask);
+            DO.Task updatedTask = new(task.id, false, task.degreeOfDifficulty, task.assignedEngineerId, task.nickname, task.description, task.deliverables, task.notes, task.dateCreated, startDate, task.actualStartDate, task.duration, task.deadline, task.actualEndDate);
+            _dal.Task.Update(updatedTask);
         }
         catch (DO.DalDoesNotExistException exc)
         {
@@ -191,48 +191,48 @@ internal class TaskImplementation : ITask
     private BO.Task toBlTask(DO.Task task)
     {
         //Calculate status - may need to update in the future
-        BO.Status GetStatusForTask(DO.Task t) => t.projectedStartDate is not null ? BO.Status.Scheduled : BO.Status.Unscheduled;
+        BO.Status getStatusForTask(DO.Task t) => t.projectedStartDate is not null ? BO.Status.Scheduled : BO.Status.Unscheduled;
 
         //Get Dependencies
-        IEnumerable<DO.Dependency>? _dependencies = _dal.Dependency.ReadAll(d => d.dependentTask == task.id);
-        IEnumerable<BO.TaskInList>? _dependentTasks = _dependencies.Select(dep =>
+        IEnumerable<DO.Dependency>? dependencies = _dal.Dependency.ReadAll(d => d.dependentTask == task.id);
+        IEnumerable<BO.TaskInList>? dependentTasks = dependencies.Select(dep =>
         {
-            DO.Task _dependsOnTask = _dal.Task.Read(dep.dependsOnTask);
+            DO.Task dependsOnTask = _dal.Task.Read(dep.dependsOnTask);
 
             return new BO.TaskInList(
                 id: dep.dependsOnTask,
-                name: _dependsOnTask.nickname,
-                description: _dependsOnTask.description,
-                status: GetStatusForTask(_dependsOnTask)
+                name: dependsOnTask.nickname,
+                description: dependsOnTask.description,
+                status: getStatusForTask(dependsOnTask)
             );
         });
 
 
         //Find the connected Milestone
-        BO.MilestoneInTask? _milestone = null;
+        BO.MilestoneInTask? milestone = null;
         //TODO
 
         //Calculate Projected End Date based on max of projectedStartDate and actualStartDate plus the duration
-        DateTime? _projectedEndDate = null;
+        DateTime? projectedEndDate = null;
         if (task.projectedStartDate is not null && task.duration is not null)
         {
             if (task.actualStartDate is not null)
             {
-                _projectedEndDate = (task.actualStartDate > task.projectedStartDate) ? task.actualStartDate.Value.Add(task.duration.Value) : task.projectedStartDate.Value.Add(task.duration.Value);
+                projectedEndDate = (task.actualStartDate > task.projectedStartDate) ? task.actualStartDate.Value.Add(task.duration.Value) : task.projectedStartDate.Value.Add(task.duration.Value);
             }
             else
             {
-                _projectedEndDate = task.projectedStartDate.Value.Add(task.duration.Value);
+                projectedEndDate = task.projectedStartDate.Value.Add(task.duration.Value);
             }
         }
 
         //Create engineerInTask
-        BO.EngineerInTask? _assignedEngineer = task.assignedEngineerId is not null ? new BO.EngineerInTask(task.assignedEngineerId.Value, _dal.Engineer.Read(task.assignedEngineerId.Value).name) : null;
+        BO.EngineerInTask? assignedEngineer = task.assignedEngineerId is not null ? new BO.EngineerInTask(task.assignedEngineerId.Value, _dal.Engineer.Read(task.assignedEngineerId.Value).name) : null;
 
         //Make a BL type Task
-        BO.Task _blTask = new(task.id, task.nickname, task.description, GetStatusForTask(task), _dependentTasks, _milestone, task.dateCreated, task.projectedStartDate, task.actualStartDate, _projectedEndDate, task.deadline, task.actualEndDate, task.duration, task.deliverables, task.notes, _assignedEngineer, (BO.EngineerExperience)task.degreeOfDifficulty);
+        BO.Task blTask = new(task.id, task.nickname, task.description, getStatusForTask(task), dependentTasks, milestone, task.dateCreated, task.projectedStartDate, task.actualStartDate, projectedEndDate, task.deadline, task.actualEndDate, task.duration, task.deliverables, task.notes, assignedEngineer, (BO.EngineerExperience)task.degreeOfDifficulty);
 
-        return _blTask;
+        return blTask;
     }
 
     /// <summary>
@@ -240,18 +240,18 @@ internal class TaskImplementation : ITask
     /// </summary>
     /// <param name="taskId">The ID of the task to find its dependencies</param>
     /// <returns>A collection of the tasks it depends on</returns>
-    private IEnumerable<DO.Task> GetDependentTasks(int taskId)
+    private IEnumerable<DO.Task> getDependentTasks(int taskId)
     {
         // Get direct dependencies of the current task
-        IEnumerable<int> _directDependencyIds = _dal.Dependency
+        IEnumerable<int> directDependencyIds = _dal.Dependency
             .ReadAll(d => d.dependentTask == taskId)
             .Select(dependency => dependency.dependsOnTask);
 
         // Recursively get dependent tasks of direct dependencies
-        IEnumerable<DO.Task> _indirectDependentTasks = _directDependencyIds
-            .SelectMany(GetDependentTasks);
+        IEnumerable<DO.Task> indirectDependentTasks = directDependencyIds
+            .SelectMany(getDependentTasks);
 
         // Combine direct and indirect dependent tasks
-        return _dal.Task.ReadAll(t => _directDependencyIds.Contains(t.id)).Concat(_indirectDependentTasks);
+        return _dal.Task.ReadAll(t => directDependencyIds.Contains(t.id)).Concat(indirectDependentTasks);
     }
 }

@@ -10,7 +10,7 @@ public interface IMilestone
     /// </summary>
     /// <exception cref="BO.BlDoesNotExistException">Thrown when trying to access an item which does not exist in the DAL</exception>
     /// <exception cref="BO.BlCannotBeDeletedException">Thrown when trying to delete an item which cannot be deleted in the DAL</exception>
-    public void createProjectSchedule();
+    public void CreateProjectSchedule();
 
     /// <summary>
     /// Get a Milestone object by ID
@@ -18,7 +18,7 @@ public interface IMilestone
     /// <param name="id">of the Milestone</param>
     /// <returns>The Milestone object</returns>
     /// <exception cref="BO.BlDoesNotExistException">Thrown when there is no Milestone with this ID in the DAL</exception>
-    public BO.Milestone getMilestone(int id);
+    public BO.Milestone GetMilestone(int id);
 
     /// <summary>
     /// Updates certain fields of a Milestone object
@@ -28,5 +28,5 @@ public interface IMilestone
     /// <param name="description">(Optional) new description</param>
     /// <param name="notes">(Optional) new notes</param>
     /// <returns>The updated Milestone Object</returns>
-    public BO.Milestone updateMilestone(int id, string? nickname, string? description, string? notes);
+    public BO.Milestone UpdateMilestone(int id, string? nickname, string? description, string? notes);
 }
