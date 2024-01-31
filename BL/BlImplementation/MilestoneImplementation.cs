@@ -132,16 +132,25 @@ internal class MilestoneImplementation : IMilestone
             Queue<DO.Task> taskQueue = new Queue<DO.Task>();
             // Add the "End" milestone as the starting point
             taskQueue.Enqueue(milestones.Single(m => m.Nickname == "End"));
-            // Perform breadth-first traversal
-            breadthFirstTraversal(taskQueue);
+            // Perform breadth-first traversal backward
+            BreadthFirstTraversalBackwards(taskQueue);
 
-            //Check that we've succeeded so far
-            //TODO
+            //Check that we've succeeded so far - deadline of Start milestone should be at or later than start date
+            if (milestones.Single(m => m.Nickname == "Start").Deadline < projectStartDate)
+            {
+                throw new BO.BlUnableToCreateScheduleException("The calculation of deadlines starting from the end goes past the start date of the project");
+            }
 
             //Reverse Process (i.e. forward breadth first search) to set start dates
+            taskQueue.Enqueue(milestones.Single(m => m.Nickname == "Start"));
+            // Perform breadth-first traversal forward
+            BreadthFirstTraversalForward(taskQueue);
 
-            //Check that we've succeeded
-
+            //Check that we've succeeded - projected start of End milestone should be at or before end date
+            if (milestones.Single(m => m.Nickname == "End").ProjectedStartDate > projectStartDate)
+            {
+                throw new BO.BlUnableToCreateScheduleException("The calculation of start dates starting from the beginning goes past the end date of the project");
+            }
         }
         catch (DO.DalDoesNotExistException exc) 
         {
@@ -163,7 +172,7 @@ internal class MilestoneImplementation : IMilestone
         throw new NotImplementedException();
     }
 
-    private void breadthFirstTraversal(Queue<DO.Task> queue)
+    void BreadthFirstTraversalBackwards(Queue<DO.Task> queue)
     {
         if (queue.Count == 0)
             return;
@@ -171,32 +180,140 @@ internal class MilestoneImplementation : IMilestone
         // Dequeue the next task from the queue
         DO.Task currentTask = queue.Dequeue();
 
-        // Get the tasks which the current task depends on
-        IEnumerable<DO.Task> dependentTasks = _dal.Dependency
-            .ReadAll(d => d.DependentTask == currentTask.ID)
-            .Select(d => _dal.Task.Read(d.DependsOnTask));
+        // Calculate the latest possible completion date (LPCD) based on dependencies
+        DateTime? lpcd = null;
 
-        // Calculate the latest possible completion date (LPCD) based on the instructions
-        TimeSpan? duration = currentTask.Duration;
-        DateTime? lpcd = duration is not null ? currentTask.Deadline - duration.Value : currentTask.Deadline is not null ? currentTask.Deadline : _dal.Config.GetEndDate();
-
-        // Check if deadline already exists which is later
-        if (lpcd is not null)
+        // Handle first task separately (no dependencies)
+        if (currentTask.IsMilestone && currentTask.Nickname == "End")
         {
-            dependentTasks.ToList().ForEach(dependentTask =>
+            // Set LPCD to project end date as it has no dependencies
+            lpcd = _dal.Config.GetEndDate();
+        }
+        else
+        {
+            // Find dependent task (the one which depends on the current task, with the longest duration, or earliest deadline if they're milestones)
+            IEnumerable<DO.Task> dependentTasks = _dal.Dependency
+                .ReadAll(d => d.DependsOnTask == currentTask.ID)
+                .Select(d => _dal.Task.Read(d.DependentTask));
+            DO.Task? dependentTask = null;
+            if (dependentTasks.Any())
             {
-                if (dependentTask.Deadline is not null)
-                    lpcd = lpcd < dependentTask.Deadline ? lpcd : dependentTask.Deadline;
-            });
+                // If any dependent task has a duration, use the one with the maximum duration
+                if (dependentTasks.Any(t => t.Duration is not null))
+                {
+                    dependentTask = dependentTasks.MaxBy(t => t.Duration);
+                }
+                else
+                {
+                    // Otherwise, use the one with the minimum deadline
+                    dependentTask = dependentTasks.MinBy(t => t.Deadline);
+                }
+            }
+
+            // Consider dependent task's deadline or duration
+            if (dependentTask is not null)
+            {
+                if (dependentTask.Duration is not null) //Task
+                {
+                    // Use duration to calculate LPCD based on dependent task's end date
+                    lpcd = dependentTask.Deadline.HasValue ? dependentTask.Deadline.Value.Subtract(dependentTask.Duration.Value) : null;
+                }
+                else if (dependentTask.Deadline is not null) //Milestone
+                {
+                    lpcd = dependentTask.Deadline;
+                }
+            }
+            else
+            {
+                // Handle edge case: no dependent task, dependent task without deadline or duration
+                // You can decide how to handle this case (e.g., use project end date or throw an exception)
+                // lpcd = ...; // Implement your logic here
+            }
         }
 
         // Update the task's deadline in the database
         _dal.Task.Update(currentTask with { Deadline = lpcd });
 
-        // Add dependent tasks to the queue for further processing
-        dependentTasks.ToList().ForEach(task => queue.Enqueue(task));
+        // Add the tasks which this task depends on to the queue for further processing (backward traversal)
+        IEnumerable<DO.Task> dependsOnTasks = _dal.Dependency
+            .ReadAll(d => d.DependentTask == currentTask.ID)
+            .Select(d => _dal.Task.Read(d.DependsOnTask));
+        dependsOnTasks.ToList().ForEach(queue.Enqueue);
 
         // Recursive call for the next iteration
-        breadthFirstTraversal(queue);
+        BreadthFirstTraversalBackwards(queue);
     }
+
+    void BreadthFirstTraversalForward(Queue<DO.Task> queue)
+    {
+        if (queue.Count == 0)
+            return;
+
+        // Dequeue the next task from the queue
+        DO.Task currentTask = queue.Dequeue();
+
+        // Calculate the projected start date (PSD) based on dependencies and project start date
+        DateTime? psd = null;
+
+        // Handle first milestone separately
+        if (currentTask.IsMilestone && currentTask.Nickname == "Start")
+        {
+            psd = _dal.Config.GetStartDate();
+        }
+        else
+        {
+            // Find the depends on tasks (the ones this task depends on)
+            IEnumerable<DO.Task> dependsOnTasks = _dal.Dependency
+            .ReadAll(d => d.DependentTask == currentTask.ID)
+            .Select(d => _dal.Task.Read(d.DependsOnTask));
+
+            // Find the dependsOn task with the latest start date or longest duration
+            DO.Task? dependsOnTask = null;
+            if (dependsOnTasks.Any())
+            {
+                // If any dependsOn task has a duration, use the one with the maximum duration
+                if (dependsOnTasks.Any(t => t.Duration is not null))
+                {
+                    dependsOnTask = dependsOnTasks.MaxBy(t => t.Duration);
+                }
+                else
+                {
+                    // Otherwise, use the one with the latest start date
+                    dependsOnTask = dependsOnTasks.MaxBy(t => t.ProjectedStartDate);
+                }
+            }
+
+            // Calculate PSD based on dependsOn task's projected start date or deadline
+            if (dependsOnTask is not null)
+            {
+                if (dependsOnTask.ProjectedStartDate.HasValue && dependsOnTask.Duration.HasValue) // Task
+                {
+                    psd = dependsOnTask.ProjectedStartDate.Value + dependsOnTask.Duration.Value;
+                }
+                else if (dependsOnTask.ProjectedStartDate.HasValue) // Milestone with only a PSD
+                {
+                    psd = dependsOnTask.ProjectedStartDate.Value;
+                }
+            }
+            else
+            {
+                // Handle edge case: no dependent task, dependent task without PSD or deadline
+                // You can decide how to handle this case (e.g., use project start date or throw an exception)
+                // psd = ...; // Implement your logic here
+            }
+        }
+
+        // Update the task's projected start date in the database
+        _dal.Task.Update(currentTask with { ProjectedStartDate = psd });
+
+        // Add dependent tasks to the queue for further processing (forward traversal)
+        IEnumerable<DO.Task> dependentTasks = _dal.Dependency
+            .ReadAll(d => d.DependsOnTask == currentTask.ID)
+            .Select(d => _dal.Task.Read(d.DependentTask));
+        dependentTasks.ToList().ForEach(queue.Enqueue);
+
+        // Recursive call for the next iteration
+        BreadthFirstTraversalForward(queue);
+    }
+
 }

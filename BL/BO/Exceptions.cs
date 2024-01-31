@@ -25,3 +25,8 @@ public class BlNullPropertyException : Exception
 {
     public BlNullPropertyException(string? message) : base(message) { }
 }
+
+public class BlUnableToCreateScheduleException : Exception
+{
+    public BlUnableToCreateScheduleException(string? message) : base(message) { }
+}
