@@ -119,8 +119,8 @@ internal class MilestoneImplementation : IMilestone
             calculateMilestones();
 
             //Get initial data
-            DateTime? projectStartDate = _dal.Config.getStartDate();
-            DateTime? projectEndDate = _dal.Config.getEndDate();
+            DateTime? projectStartDate = _dal.Config.GetStartDate();
+            DateTime? projectEndDate = _dal.Config.GetEndDate();
             IEnumerable<DO.Task> tasks = _dal.Task.ReadAll();
             IEnumerable<DO.Task> milestones = _dal.Task.ReadAll(t => t.isMilestone);
             IEnumerable<DO.Dependency> dependencies = _dal.Dependency.ReadAll();

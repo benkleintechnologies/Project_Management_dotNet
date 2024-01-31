@@ -20,7 +20,7 @@ internal class TaskImplementation : ITask
     public int Create(Task item)
     {
         int id = Config.NextTaskId;
-        Task task = item with { ID = id };
+        Task task = item with { id = id };
         List<Task> tasks = XMLTools.LoadListFromXMLSerializer<Task>(s_tasks_xml);
         tasks.Add(task);
         XMLTools.SaveListToXMLSerializer<Task>(tasks, s_tasks_xml);
@@ -38,7 +38,7 @@ internal class TaskImplementation : ITask
         {
             List<Task> tasks = XMLTools.LoadListFromXMLSerializer<Task>(s_tasks_xml);
             tasks.Remove(task);
-            Task newTask = task with { Active = false };
+            Task newTask = task with { active = false };
             tasks.Add(newTask);
             XMLTools.SaveListToXMLSerializer<Task>(tasks, s_tasks_xml);
         }
@@ -53,7 +53,7 @@ internal class TaskImplementation : ITask
     public Task Read(int id)
     {
         List<Task> tasks = XMLTools.LoadListFromXMLSerializer<Task>(s_tasks_xml);
-        Task? task = tasks.FirstOrDefault(item => item.ID == id && item.Active);
+        Task? task = tasks.FirstOrDefault(item => item.id == id && item.active);
         if (task == null)
         {
             throw new DalDoesNotExistException($"Object of type Task with identifier {id} does not exist");
@@ -70,7 +70,7 @@ internal class TaskImplementation : ITask
     public Task Read(Func<Task, bool> filter)
     {
         List<Task> tasks = XMLTools.LoadListFromXMLSerializer<Task>(s_tasks_xml);
-        Task? task = tasks.Where(item => item.Active).FirstOrDefault(filter);
+        Task? task = tasks.Where(item => item.active).FirstOrDefault(filter);
         if (task == null)
         {
             throw new DalDoesNotExistException($"Object of type Task with given filter does not exist");
@@ -84,10 +84,10 @@ internal class TaskImplementation : ITask
     /// <param name="filter">Optional filter to limit list</param>
     /// <returns>Requested Enumerable of Tasks</returns>
     /// <exception cref="DalDoesNotExistException">Thrown if no Tasks with this filter exist</exception>
-    public IEnumerable<Task?> ReadAll(Func<Task, bool>? filter = null)
+    public IEnumerable<Task> ReadAll(Func<Task, bool>? filter = null)
     {
         IEnumerable<Task> tasks = XMLTools.LoadListFromXMLSerializer<Task>(s_tasks_xml);
-        IEnumerable<Task> activeTasks = tasks.Where(item => item.Active);
+        IEnumerable<Task> activeTasks = tasks.Where(item => item.active);
         if (activeTasks.Count() == 0)
         {
             throw new DalDoesNotExistException($"No Object of type Task exists");
@@ -119,7 +119,7 @@ internal class TaskImplementation : ITask
     /// <param name="item">New Task information</param>
     public void Update(Task item)
     {
-        Task old = Read(item.ID);
+        Task old = Read(item.id);
         List<Task> tasks = XMLTools.LoadListFromXMLSerializer<Task>(s_tasks_xml);
         tasks.Remove(old);
         tasks.Add(item);
