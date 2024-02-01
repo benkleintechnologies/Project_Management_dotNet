@@ -10,6 +10,7 @@ public interface IEngineer
     /// </summary>
     /// <param name="filter">e.g. by the level of experience</param>
     /// <returns>the list object of the engineers found</returns>
+    /// <exception cref="BO.BlDoesNotExistException">Thrown when there is no Engineer which matches this filter in the DAL</exception>
     public IEnumerable<BO.Engineer> GetListOfEngineers(Func<BO.Engineer, bool>? filter = null);
 
     /// <summary>

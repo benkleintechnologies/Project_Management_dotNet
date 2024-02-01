@@ -9,12 +9,6 @@ internal class EngineerImplementation : IEngineer
 {
     private DalApi.IDal _dal = DalApi.Factory.Get;
     
-    /// <summary>
-    /// -- Uses nothing
-    /// </summary>
-    /// <param name="engineer"></param>
-    /// <exception cref="BO.BlInvalidInputException"></exception>
-    /// <exception cref="BO.BlAlreadyExistsException"></exception>
     public void AddEngineer(BO.Engineer engineer)
     {
         try
@@ -36,12 +30,6 @@ internal class EngineerImplementation : IEngineer
         }   
     }
 
-    /// <summary>
-    /// -- Uses nothing
-    /// </summary>
-    /// <param name="Id"></param>
-    /// <exception cref="BO.BlCannotBeDeletedException"></exception>
-    /// <exception cref="BO.BlDoesNotExistException"></exception>
     public void DeleteEngineer(int Id)
     {
         try
@@ -60,12 +48,6 @@ internal class EngineerImplementation : IEngineer
         }
     }
 
-    /// <summary>
-    /// -- Uses nothing
-    /// </summary>
-    /// <param name="id"></param>
-    /// <returns></returns>
-    /// <exception cref="BO.BlDoesNotExistException"></exception>
     public BO.Engineer GetEngineer(int id)
     {
         try
@@ -81,12 +63,6 @@ internal class EngineerImplementation : IEngineer
         }
     }
 
-    /// <summary>
-    /// -- Uses Linq, let, and sort
-    /// </summary>
-    /// <param name="filter"></param>
-    /// <returns></returns>
-    /// <exception cref="BO.BlDoesNotExistException"></exception>
     public IEnumerable<BO.Engineer> GetListOfEngineers(Func<BO.Engineer, bool>? filter = null)
     {
         try
@@ -105,12 +81,6 @@ internal class EngineerImplementation : IEngineer
         }
     }
 
-    /// <summary>
-    /// -- Uses nothing
-    /// </summary>
-    /// <param name="engineer"></param>
-    /// <exception cref="BO.BlInvalidInputException"></exception>
-    /// <exception cref="BO.BlDoesNotExistException"></exception>
     public void UpdateEngineer(BO.Engineer engineer)
     {
         try
@@ -159,8 +129,7 @@ internal class EngineerImplementation : IEngineer
             throw new BO.BlDoesNotExistException(exc.Message);
         }
     }
-
-    static private bool isValidEmail(string email)
+    private static bool isValidEmail(string email)
     {
         // Define a regular expression pattern for a simple email validation
         string pattern = @"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$";

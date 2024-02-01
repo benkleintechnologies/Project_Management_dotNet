@@ -6,12 +6,7 @@ using BlApi;
 internal class TaskImplementation : ITask
 {
     private DalApi.IDal _dal = DalApi.Factory.Get;
-    /// <summary>
-    ///  -- uses Linq and select new
-    /// </summary>
-    /// <param name="task"></param>
-    /// <exception cref="BO.BlInvalidInputException"></exception>
-    /// <exception cref="BO.BlAlreadyExistsException"></exception>
+
     public void AddTask(BO.Task task)
     {
         try
@@ -42,12 +37,6 @@ internal class TaskImplementation : ITask
         }
     }
 
-    /// <summary>
-    /// -- Uses nothing
-    /// </summary>
-    /// <param name="id"></param>
-    /// <exception cref="BO.BlCannotBeDeletedException"></exception>
-    /// <exception cref="BO.BlDoesNotExistException"></exception>
     public void DeleteTask(int id)
     {
         try
@@ -67,12 +56,6 @@ internal class TaskImplementation : ITask
         }
     }
 
-    /// <summary>
-    /// -- Uses extension
-    /// </summary>
-    /// <param name="filter"></param>
-    /// <returns></returns>
-    /// <exception cref="BO.BlDoesNotExistException"></exception>
     public IEnumerable<BO.Task> GetListOfTasks(Func<BO.Task, bool>? filter = null)
     {
         try
@@ -90,13 +73,6 @@ internal class TaskImplementation : ITask
         }
     }
 
-    /// <summary>
-    /// -- Uses nothing
-    /// </summary>
-    /// <param name="id"></param>
-    /// <returns></returns>
-    /// <exception cref="BO.BlInvalidInputException"></exception>
-    /// <exception cref="BO.BlDoesNotExistException"></exception>
     public BO.Task GetTask(int id)
     {
         try
@@ -115,12 +91,6 @@ internal class TaskImplementation : ITask
         }
     }
 
-    /// <summary>
-    /// -- Uses nothing
-    /// </summary>
-    /// <param name="task"></param>
-    /// <exception cref="BO.BlInvalidInputException"></exception>
-    /// <exception cref="BO.BlDoesNotExistException"></exception>
     public void UpdateTask(BO.Task task)
     {
         try
@@ -148,14 +118,6 @@ internal class TaskImplementation : ITask
         }
     }
 
-    /// <summary>
-    /// -- Uses extension
-    /// </summary>
-    /// <param name="id"></param>
-    /// <param name="startDate"></param>
-    /// <exception cref="BO.BlNullPropertyException"></exception>
-    /// <exception cref="BO.BlInvalidInputException"></exception>
-    /// <exception cref="BO.BlDoesNotExistException"></exception>
     public void UpdateTaskStartDate(int id, DateTime startDate)
     {
         try
@@ -187,12 +149,13 @@ internal class TaskImplementation : ITask
         }
     }
 
-    //--uses extension
+    /// <summary>
+    /// Convert Data Layer Task to a Business Layer Task and calculate all necessary fields
+    /// </summary>
+    /// <param name="task"></param>
+    /// <returns></returns>
     private BO.Task toBlTask(DO.Task task)
     {
-        //Calculate status - may need to update in the future
-        BO.Status getStatusForTask(DO.Task t) => t.ProjectedStartDate is not null ? BO.Status.Scheduled : BO.Status.Unscheduled;
-
         //Get Dependencies
         IEnumerable<DO.Dependency>? dependencies = _dal.Dependency.ReadAll(d => d.DependentTask == task.ID);
         IEnumerable<BO.TaskInList>? dependentTasks = dependencies.Select(dep =>
@@ -233,6 +196,38 @@ internal class TaskImplementation : ITask
         BO.Task blTask = new(task.ID, task.Nickname, task.Description, getStatusForTask(task), dependentTasks, milestone, task.DateCreated, task.ProjectedStartDate, task.ActualStartDate, projectedEndDate, task.Deadline, task.ActualEndDate, task.Duration, task.Deliverables, task.Notes, assignedEngineer, (BO.EngineerExperience)task.DegreeOfDifficulty);
 
         return blTask;
+    }
+
+    /// <summary>
+    /// Calculates the status of the Task based on the dates set in the DO.Task
+    /// </summary>
+    /// <param name="t">The DO.Task object</param>
+    /// <returns>The Status of the Task</returns>
+    private BO.Status getStatusForTask(DO.Task t)
+    {
+        if (t.ActualEndDate.HasValue)
+        {
+            return BO.Status.Done;
+        }
+        else if (t.ActualStartDate.HasValue)
+        {
+            if (t.Deadline.HasValue && DateTime.Now > t.Deadline)
+            {
+                return BO.Status.InJeopardy;
+            }
+            else
+            {
+                return BO.Status.OnTrack;
+            }
+        }
+        else if (t.ProjectedStartDate.HasValue)
+        {
+            return BO.Status.Scheduled;
+        }
+        else
+        {
+            return BO.Status.Unscheduled;
+        }
     }
 
     /// <summary>

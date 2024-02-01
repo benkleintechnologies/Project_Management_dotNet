@@ -7,7 +7,6 @@ internal class MilestoneImplementation : IMilestone
     internal const int StartMilestoneId = 1;
     private static int _nextMilestoneId = StartMilestoneId;
     internal static int NextMilestoneId { get => _nextMilestoneId++; }
-    private BO.Status getStatusForTask(DO.Task t) => t.ProjectedStartDate is not null ? BO.Status.Scheduled : BO.Status.Unscheduled;
 
     /// <summary>
     /// Creates a Tas which represents a Milestone with an auto-incrementing ID
@@ -43,7 +42,7 @@ internal class MilestoneImplementation : IMilestone
                             task.ID,
                             task.Nickname,
                             task.Description,
-                            task.ProjectedStartDate is not null ? BO.Status.Scheduled : BO.Status.Unscheduled)
+                            getStatusForTask(task))
                     ).ToList()
                 )
             );
@@ -136,7 +135,7 @@ internal class MilestoneImplementation : IMilestone
             // Add the "End" milestone as the starting point
             taskQueue.Enqueue(milestones.Single(m => m.Nickname == "End"));
             // Perform breadth-first traversal backward
-            BreadthFirstTraversalBackwards(taskQueue);
+            breadthFirstTraversalBackwards(taskQueue);
 
             //Check that we've succeeded so far - deadline of Start milestone should be at or later than start date
             if (milestones.Single(m => m.Nickname == "Start").Deadline < projectStartDate)
@@ -147,7 +146,7 @@ internal class MilestoneImplementation : IMilestone
             //Reverse Process (i.e. forward breadth first search) to set start dates
             taskQueue.Enqueue(milestones.Single(m => m.Nickname == "Start"));
             // Perform breadth-first traversal forward
-            BreadthFirstTraversalForward(taskQueue);
+            breadthFirstTraversalForward(taskQueue);
 
             //Check that we've succeeded - projected start of End milestone should be at or before end date
             if (milestones.Single(m => m.Nickname == "End").ProjectedStartDate > projectStartDate)
@@ -180,8 +179,10 @@ internal class MilestoneImplementation : IMilestone
             IEnumerable<DO.Task> dependentTasks = _dal.Dependency.ReadAll(d => d.DependentTask == id).Select(d => _dal.Task.Read(d.DependsOnTask));
             //Create a TaskInList for all dependencies
             IEnumerable<BO.TaskInList> dependenciesList = dependentTasks.Select(t => new BO.TaskInList(t.ID, t.Nickname, t.Description, getStatusForTask(t)));
+            //Calculate completion percentage
+            double completedPercentage = dependenciesList.Where(t => t.Status == BO.Status.Done).Count() / dependenciesList.Count();
             //Create Milestone object (and calculate Business layer fields)
-            return new BO.Milestone(milestoneTask.ID, milestoneTask.Nickname, milestoneTask.Description, milestoneTask.DateCreated, getStatusForTask(milestoneTask), milestoneTask.ProjectedStartDate, milestoneTask.Deadline, milestoneTask.ActualEndDate, 0, milestoneTask.Notes, dependenciesList);
+            return new BO.Milestone(milestoneTask.ID, milestoneTask.Nickname, milestoneTask.Description, milestoneTask.DateCreated, getStatusForTask(milestoneTask), milestoneTask.ProjectedStartDate, milestoneTask.Deadline, milestoneTask.ActualEndDate, completedPercentage, milestoneTask.Notes, dependenciesList);
         }
         catch (DO.DalDoesNotExistException exc)
         {
@@ -216,8 +217,10 @@ internal class MilestoneImplementation : IMilestone
             IEnumerable<DO.Task> dependentTasks = _dal.Dependency.ReadAll(d => d.DependentTask == id).Select(d => _dal.Task.Read(d.DependsOnTask));
             //Create a TaskInList for all dependencies
             IEnumerable<BO.TaskInList> dependenciesList = dependentTasks.Select(t => new BO.TaskInList(t.ID, t.Nickname, t.Description, getStatusForTask(t)));
+            //Calculate completion percentage
+            double completedPercentage = dependenciesList.Where(t => t.Status == BO.Status.Done).Count() / dependenciesList.Count();
             //Create Milestone object (and calculate Business layer fields)
-            return new BO.Milestone(milestoneTask.ID, milestoneTask.Nickname, milestoneTask.Description, milestoneTask.DateCreated, getStatusForTask(milestoneTask), milestoneTask.ProjectedStartDate, milestoneTask.Deadline, milestoneTask.ActualEndDate, 0, milestoneTask.Notes, dependenciesList);
+            return new BO.Milestone(milestoneTask.ID, milestoneTask.Nickname, milestoneTask.Description, milestoneTask.DateCreated, getStatusForTask(milestoneTask), milestoneTask.ProjectedStartDate, milestoneTask.Deadline, milestoneTask.ActualEndDate, completedPercentage, milestoneTask.Notes, dependenciesList);
         }
         catch (DO.DalDoesNotExistException exc)
         {
@@ -226,10 +229,42 @@ internal class MilestoneImplementation : IMilestone
     }
 
     /// <summary>
+    /// Calculates the status of the Task based on the dates set in the DO.Task
+    /// </summary>
+    /// <param name="t">The DO.Task object</param>
+    /// <returns>The Status of the Task</returns>
+    private BO.Status getStatusForTask(DO.Task t)
+    {
+        if (t.ActualEndDate.HasValue)
+        {
+            return BO.Status.Done;
+        }
+        else if (t.ActualStartDate.HasValue)
+        {
+            if (t.Deadline.HasValue && DateTime.Now > t.Deadline)
+            {
+                return BO.Status.InJeopardy;
+            }
+            else
+            {
+                return BO.Status.OnTrack;
+            }
+        }
+        else if (t.ProjectedStartDate.HasValue)
+        {
+            return BO.Status.Scheduled;
+        }
+        else
+        {
+            return BO.Status.Unscheduled;
+        }
+    }
+
+    /// <summary>
     /// Recursive method to go through the queue of tasks from end to beginning and set the deadlines for each
     /// </summary>
     /// <param name="queue">of tasks</param>
-    void BreadthFirstTraversalBackwards(Queue<DO.Task> queue)
+    private void breadthFirstTraversalBackwards(Queue<DO.Task> queue)
     {
         if (queue.Count == 0)
             return;
@@ -296,14 +331,14 @@ internal class MilestoneImplementation : IMilestone
         dependsOnTasks.ToList().ForEach(queue.Enqueue);
 
         // Recursive call for the next iteration
-        BreadthFirstTraversalBackwards(queue);
+        breadthFirstTraversalBackwards(queue);
     }
 
     /// <summary>
     /// Recursive method to go through the queue of tasks from beginning to end and set the start date for each
     /// </summary>
     /// <param name="queue">of Tasks</param>
-    void BreadthFirstTraversalForward(Queue<DO.Task> queue)
+    private void breadthFirstTraversalForward(Queue<DO.Task> queue)
     {
         if (queue.Count == 0)
             return;
@@ -370,7 +405,7 @@ internal class MilestoneImplementation : IMilestone
         dependentTasks.ToList().ForEach(queue.Enqueue);
 
         // Recursive call for the next iteration
-        BreadthFirstTraversalForward(queue);
+        breadthFirstTraversalForward(queue);
     }
 
 }

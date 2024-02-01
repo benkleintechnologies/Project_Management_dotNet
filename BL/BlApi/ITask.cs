@@ -10,6 +10,7 @@ public interface ITask
     /// </summary>
     /// <param name="filter">optional filter</param>
     /// <returns>list of Tasks</returns>
+    /// <exception cref="BO.BlDoesNotExistException">when no Task matching the filter is not found in the DAL<exception>
     public IEnumerable<BO.Task> GetListOfTasks(Func<BO.Task, bool>? filter = null);
 
     /// <summary>
@@ -18,6 +19,7 @@ public interface ITask
     /// <param name="id">id of the desired Task</param>
     /// <returns>the Task instance</returns>
     /// <exception cref="BO.BlDoesNotExistException">when a Task id is not found in the DAL<exception>
+    /// <exception cref="BO.BlInvalidInputException">when the ID given is invalid</exception>
     public BO.Task GetTask(int id);
 
     /// <summary>
@@ -51,5 +53,6 @@ public interface ITask
     /// <param name="startDate">New start date</param>
     /// <exception cref="BO.BlDoesNotExistException">when a Task id is not found in the DAL<exception>
     /// <exception cref="BO.BlInvalidInputException">when invalid input for Task<exception>
+    /// <exception cref="BO.BlNullPropertyException">when one or more of the previous tasks projected start date is null</exception>
     public void UpdateTaskStartDate(int id, DateTime startDate);
 }
