@@ -170,10 +170,9 @@ internal class TaskImplementation : ITask
             );
         });
 
-
         //Find the connected Milestone
-        BO.MilestoneInTask? milestone = null;
-        //TODO
+        DO.Task milestoneTask = _dal.Task.Read(_dal.Dependency.Read(d => d.DependsOnTask == task.ID).DependentTask);
+        BO.MilestoneInTask? milestone = new(milestoneTask.ID, milestoneTask.Nickname);
 
         //Calculate Projected End Date based on max of projectedStartDate and actualStartDate plus the duration
         DateTime? projectedEndDate = null;
