@@ -28,6 +28,7 @@ public interface ITask
     /// <param name="task"></param>
     /// <exception cref="BO.BlAlreadyExistsException">when a Task already exists in the DAL<exception>
     /// <exception cref="BO.BlInvalidInputException">when invalid input for Task<exception>
+    /// <exception cref="BO.BlUnableToPerformActionInProductionException">when trying to add task during production<exception>
     public void AddTask(BO.Task task);
 
     /// <summary>

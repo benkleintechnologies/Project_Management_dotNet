@@ -5,7 +5,7 @@
 /// </summary>
 public class Engineer
 {
-    public int Id { get; init; }
+    public int ID { get; init; }
     public string Name { get; set; }
     public string Email { get; set; }
     public EngineerExperience Experience { get; set; }
@@ -23,7 +23,7 @@ public class Engineer
     /// <param name="task">The task assigned to the engineer (can be null).</param>
     public Engineer(int id, string name, string email, EngineerExperience experience, double cost, TaskInEngineer? task)
     {
-        Id = id;
+        ID = id;
         Name = name;
         Email = email;
         Experience = experience;

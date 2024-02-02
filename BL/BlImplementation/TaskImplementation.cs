@@ -11,10 +11,14 @@ internal class TaskImplementation : ITask
     {
         try
         {
-            //Check for invalid data
-            if (task.Id <= 0 || task.Name == "")
+            if (_dal.Config.GetStartDate().HasValue)
             {
-                throw new BO.BlInvalidInputException($"One of the fields of the Task with id {task.Id} was invalid");
+                throw new BO.BlUnableToPerformActionInProductionException("Cannot add task while in production");
+            }
+            //Check for invalid data
+            if (task.ID <= 0 || task.Name == "")
+            {
+                throw new BO.BlInvalidInputException($"One of the fields of the Task with id {task.ID} was invalid");
             }
 
             // Getting all previous tasks to add into Dependencies
@@ -22,12 +26,12 @@ internal class TaskImplementation : ITask
 
             // Make the new task dependent on all previous tasks
             IEnumerable<DO.Dependency> dependencies = from t in previousTasks 
-                                                  select new DO.Dependency(0, task.Id, t.ID);
+                                                  select new DO.Dependency(0, task.ID, t.ID);
             dependencies.ToList().ForEach(d => _dal.Dependency.Create(d));
 
 
             //Try to add the Task to the data layer
-            DO.Task newTask = new(task.Id, false,(DO.EngineerExperience)task.Complexity, task.Engineer?.Id, task.Name, task.Description, task.Deliverables, task.Notes, task.CreatedAtDate, task.ProjectedStartDate, task.ActualStartDate, task.RequiredEffortTime, task.Deadline, task.ActualEndDate);
+            DO.Task newTask = new(task.ID, false,(DO.EngineerExperience)task.Complexity, task.Engineer?.ID, task.Name, task.Description, task.Deliverables, task.Notes, task.CreatedAtDate, task.ProjectedStartDate, task.ActualStartDate, task.RequiredEffortTime, task.Deadline, task.ActualEndDate);
 
             _dal.Task.Create(newTask);
         }
@@ -95,20 +99,29 @@ internal class TaskImplementation : ITask
     {
         try
         {
-            DO.Task dlTask = _dal.Task.Read(task.Id);
+            DO.Task dlTask = _dal.Task.Read(task.ID);
             
             // Check if task exists in the DL and that name is nonempty
             if (dlTask is not null || task.Name == "")
             {
-                throw new BO.BlInvalidInputException($"One of the fields of the Task with id {task.Id} was invalid");
+                throw new BO.BlInvalidInputException($"One of the fields of the Task with id {task.ID} was invalid");
             }
-            
-            // Create the updated task to update the existing task in the Data Layer with
-            DO.Task newTask = new(task.Id, false, (DO.EngineerExperience)task.Complexity, task.Engineer?.Id, task.Name, task.Description, task.Deliverables, task.Notes, task.CreatedAtDate, task.ProjectedStartDate, task.ActualStartDate, task.RequiredEffortTime, task.Deadline, task.ActualEndDate);
 
-            // After creating a schedule, it is possible to modify the
-            // textual fields and the assigned engineer for the task
-            // Not sure what this wants... what is the textual field, and do we just randomly change the engineer?
+            DO.Task? newTask = null;
+
+            // Check which phase of the project we are in
+            if (_dal.Config.GetStartDate().HasValue && _dal.Task.ReadAll(t => t.ProjectedStartDate.HasValue).Count() == _dal.Task.ReadAll().Count()) // Production phase
+            {
+                newTask = new(task.ID, dlTask.IsMilestone, (DO.EngineerExperience)task.Complexity, task.Engineer?.ID, task.Name, task.Description, task.Deliverables, task.Notes, dlTask.DateCreated, dlTask.ProjectedStartDate, task.ActualStartDate, dlTask.Duration, dlTask.Deadline, task.ActualEndDate);
+            }
+            else if (!_dal.Config.GetStartDate().HasValue) // Planning stage
+            {
+                newTask = new(task.ID, dlTask.IsMilestone, (DO.EngineerExperience)task.Complexity, dlTask.AssignedEngineerId, task.Name, task.Description, task.Deliverables, task.Notes, dlTask.DateCreated, dlTask.ProjectedStartDate, dlTask.ActualStartDate, dlTask.Duration, dlTask.Deadline, dlTask.ActualEndDate);
+            }
+            else // Has a project start date, but no other planned dates yet
+            {
+                newTask = new(task.ID, dlTask.IsMilestone, (DO.EngineerExperience)task.Complexity, dlTask.AssignedEngineerId, task.Name, task.Description, task.Deliverables, task.Notes, dlTask.DateCreated, task.ProjectedStartDate, dlTask.ActualStartDate, task.RequiredEffortTime, task.Deadline, dlTask.ActualEndDate);
+            }
 
             _dal.Task.Update(newTask);
         }

@@ -5,7 +5,7 @@
 /// </summary>
 public class MilestoneInTask
 {
-    public int Id { get; init; }
+    public int ID { get; init; }
     public string? Alias { get; set; }
 
     /// <summary>
@@ -15,7 +15,7 @@ public class MilestoneInTask
     /// <param name="alias">The alias for the milestone in the task (can be null).</param>
     public MilestoneInTask(int id, string? alias)
     {
-        Id = id;
+        ID = id;
         Alias = alias;
     }
     public override string ToString() => this.ToStringProperty();

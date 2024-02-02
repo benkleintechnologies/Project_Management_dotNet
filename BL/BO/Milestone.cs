@@ -5,7 +5,7 @@
 /// </summary>
 public class Milestone
 {
-    public int Id { get; init; }
+    public int ID { get; init; }
     public string? Name { get; set; }
     public string? Description { get; set; }
     public DateTime? CreatedAtDate { get; init; }

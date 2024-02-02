@@ -30,3 +30,7 @@ public class BlUnableToCreateScheduleException : Exception
 {
     public BlUnableToCreateScheduleException(string? message) : base(message) { }
 }
+public class BlUnableToPerformActionInProductionException : Exception
+{
+    public BlUnableToPerformActionInProductionException(string? message) : base(message) { }
+}

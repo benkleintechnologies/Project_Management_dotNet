@@ -5,7 +5,7 @@
 /// </summary>
 public class EngineerInTask
 {
-    public int Id { get; init; }
+    public int ID { get; init; }
     public string? Name { get; set; }
 
     /// <summary>
@@ -15,7 +15,7 @@ public class EngineerInTask
     /// <param name="name">The name of the engineer in the task (can be null).</param>
     public EngineerInTask(int id, string? name)
     {
-        Id = id;
+        ID = id;
         Name = name;
     }
     public override string ToString() => this.ToStringProperty();

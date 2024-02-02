@@ -9,7 +9,7 @@ internal class MilestoneImplementation : IMilestone
     internal static int NextMilestoneId { get => _nextMilestoneId++; }
 
     /// <summary>
-    /// Creates a Tas which represents a Milestone with an auto-incrementing ID
+    /// Creates a Task which represents a Milestone with an auto-incrementing ID
     /// </summary>
     /// <returns>The ID of the Task created</returns>
     private int createMilestoneTaskAndGetId()
@@ -114,19 +114,23 @@ internal class MilestoneImplementation : IMilestone
     {
         try
         {
-            //First create Milestones
-            calculateMilestones();
-
             //Get initial data
             DateTime? projectStartDate = _dal.Config.GetStartDate();
             DateTime? projectEndDate = _dal.Config.GetEndDate();
+
+            if (projectStartDate is null || projectEndDate is null)
+                throw new BO.BlNullPropertyException("Cannot create project schedule because the Project's start and end date have not been set.");
+
+            if (_dal.Task.ReadAll(t => t.ProjectedStartDate.HasValue).Count() == _dal.Task.ReadAll().Count())
+                throw new BO.BlUnableToPerformActionInProductionException("Cannot create milestones and schedule because dates have already been set.");
+
+            //First create Milestones
+            calculateMilestones();
+
             IEnumerable<DO.Task> tasks = _dal.Task.ReadAll();
             IEnumerable<DO.Task> milestones = _dal.Task.ReadAll(t => t.IsMilestone);
             IEnumerable<DO.Dependency> dependencies = _dal.Dependency.ReadAll();
-
-            //Check for nulls - error
-            if (projectStartDate is null || projectEndDate is null)
-                throw new BO.BlNullPropertyException("Cannot create project schedule because the Project's start and end date have not been set.");
+            
             if (!tasks.Any() || !milestones.Any() || !dependencies.Any())
                 throw new BO.BlNullPropertyException("Cannot create project schedule because there are no milestones, tasks, or dependencies.");
 

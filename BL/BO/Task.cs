@@ -5,7 +5,7 @@
 /// </summary>
 public class Task
 {
-    public int Id { get; init; }
+    public int ID { get; init; }
     public string? Name { get; set; }
     public string? Description { get; set; }
     public Status Status { get; set; }
@@ -62,7 +62,7 @@ public class Task
         EngineerInTask? engineer,
         EngineerExperience complexity)
     {
-        Id = id;
+        ID = id;
         Name = name;
         Description = description;
         Status = status;

@@ -14,13 +14,13 @@ internal class EngineerImplementation : IEngineer
         try
         {
             //Check for invalid data
-            if (engineer.Id <= 0 || engineer.Name == "" || engineer.Cost <= 0 || !isValidEmail(engineer.Email))
+            if (engineer.ID <= 0 || engineer.Name == "" || engineer.Cost <= 0 || !isValidEmail(engineer.Email))
             {
-                throw new BO.BlInvalidInputException($"One of the fields of the Engineer with id {engineer.Id} was invalid");
+                throw new BO.BlInvalidInputException($"One of the fields of the Engineer with id {engineer.ID} was invalid");
             }
 
             //Try to add the Engineer to the data layer
-            DO.Engineer newEngineer = new(engineer.Id, engineer.Name, engineer.Email, engineer.Cost, (DO.EngineerExperience)engineer.Experience, true);
+            DO.Engineer newEngineer = new(engineer.ID, engineer.Name, engineer.Email, engineer.Cost, (DO.EngineerExperience)engineer.Experience, true);
 
             _dal.Engineer.Create(newEngineer);
         } 
@@ -30,17 +30,17 @@ internal class EngineerImplementation : IEngineer
         }   
     }
 
-    public void DeleteEngineer(int Id)
+    public void DeleteEngineer(int id)
     {
         try
         {
             //Make sure the engineer is not assigned to a task
-            if (_dal.Task.Read(t => t.AssignedEngineerId == Id) is null)
+            if (_dal.Task.Read(t => t.AssignedEngineerId == id) is null)
             {
-                throw new BO.BlCannotBeDeletedException($"This engineer with ID {Id} could not be deleted because they are assigned to a Task.");
+                throw new BO.BlCannotBeDeletedException($"This engineer with ID {id} could not be deleted because they are assigned to a Task.");
             }
             //try to delete the engineer from the DAL
-            _dal.Engineer.Delete(Id);
+            _dal.Engineer.Delete(id);
         }
         catch (DO.DalDoesNotExistException exc)
         {
@@ -86,29 +86,29 @@ internal class EngineerImplementation : IEngineer
         try
         {
             //Check for invalid data
-            if (engineer.Id <= 0 || engineer.Name == "" || engineer.Cost <= 0 || !isValidEmail(engineer.Email))
+            if (engineer.ID <= 0 || engineer.Name == "" || engineer.Cost <= 0 || !isValidEmail(engineer.Email))
             {
-                throw new BO.BlInvalidInputException($"One of the fields of the Engineer with id {engineer.Id} was invalid");
+                throw new BO.BlInvalidInputException($"One of the fields of the Engineer with id {engineer.ID} was invalid");
             }
 
             //Get Engineer from DAL
-            DO.Engineer dlEngineer = _dal.Engineer.Read(engineer.Id);
+            DO.Engineer dlEngineer = _dal.Engineer.Read(engineer.ID);
 
             //Check the Experience level is the same or higher and only change it if it is
             DO.EngineerExperience engineerExperience = (DO.EngineerExperience)engineer.Experience >= dlEngineer.Level ? (DO.EngineerExperience)engineer.Experience : dlEngineer.Level;
 
             //Make update DL type Engineer
-            DO.Engineer newEngineer = new(engineer.Id, engineer.Name, engineer.Email, engineer.Cost, engineerExperience, true);
+            DO.Engineer newEngineer = new(engineer.ID, engineer.Name, engineer.Email, engineer.Cost, engineerExperience, true);
 
             //Call update on DL
             _dal.Engineer.Update(newEngineer);
 
             //Update the Task the Engineer is assigned to.
             //Find the task the engineer is currently assigned to
-            DO.Task assignedTask = _dal.Task.Read(t => t.AssignedEngineerId == engineer.Id);
+            DO.Task assignedTask = _dal.Task.Read(t => t.AssignedEngineerId == engineer.ID);
 
             // Unassign the engineer from the old task if there was a change in assignment
-            if (engineer.Task?.Id != assignedTask?.ID && assignedTask is not null)
+            if (engineer.Task?.ID != assignedTask?.ID && assignedTask is not null)
             {
                 _dal.Task.Update(assignedTask with { AssignedEngineerId = null });
             }
@@ -116,11 +116,11 @@ internal class EngineerImplementation : IEngineer
             // If the engineer is assigned to a new task, update the task with the engineer's ID
             if (engineer.Task is not null)
             {
-                DO.Task toAssignTask = _dal.Task.Read(engineer.Task.Id);
+                DO.Task toAssignTask = _dal.Task.Read(engineer.Task.ID);
 
                 if (toAssignTask is not null)
                 {
-                    _dal.Task.Update(toAssignTask with { AssignedEngineerId = engineer.Id });
+                    _dal.Task.Update(toAssignTask with { AssignedEngineerId = engineer.ID });
                 }
             }
         }
