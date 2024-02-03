@@ -58,7 +58,7 @@ internal class MilestoneImplementation : IMilestone
         milestoneTasks.SelectMany(milestone =>
         {
             // Find the corresponding milestone in _milestones
-            BO.Milestone? correspondingMilestone = milestones.FirstOrDefault(m => "M"+m.Id == milestone.Nickname);
+            BO.Milestone? correspondingMilestone = milestones.FirstOrDefault(m => "M"+m.ID == milestone.Nickname);
             if (correspondingMilestone != null)
             {
                 // Create dependencies for each dependency in the Milestone
@@ -80,7 +80,7 @@ internal class MilestoneImplementation : IMilestone
             if (correspondingMilestone != null)
             {
                 //Get the Task id which represents this milestone
-                int taskId = _dal.Task.Read(t => t.Nickname == "M" + correspondingMilestone.Id).ID;
+                int taskId = _dal.Task.Read(t => t.Nickname == "M" + correspondingMilestone.ID).ID;
                 return new DO.Dependency(0, dependency.Key.ID, taskId);
             }
             return null;
@@ -230,6 +230,12 @@ internal class MilestoneImplementation : IMilestone
         {
             throw new BO.BlDoesNotExistException(exc.Message);
         }
+    }
+
+    public void Reset()
+    {
+        _nextMilestoneId = StartMilestoneId;
+        _dal.Dependency.Reset();
     }
 
     /// <summary>

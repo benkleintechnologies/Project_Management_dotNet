@@ -405,7 +405,7 @@ internal class Program
     }
 
     /// <summary>
-    /// Receives input from user for all feilds of Dependency
+    /// Receives input from user for all fields of Dependency
     /// </summary>
     /// <returns>Dependency object based on user input</returns>
     static Dependency ParseDependency()

@@ -46,5 +46,10 @@ public interface IEngineer
     /// <exception cref="BO.BlInvalidInputException"> thrown when engineer information is invalid or missing</exception>
     public void UpdateEngineer(BO.Engineer engineer);
 
+    /// <summary>
+    /// Reset all engineers - i.e. Reset Engineers in Database
+    /// </summary>
+    public void Reset();
+
 
 }

@@ -5,6 +5,8 @@
 /// </summary>
 public interface IConfig
 {
-    public void SetProjectStartDate(DateTime startDate);
-    public void SetProjectEndDate(DateTime endDate);
+    void SetProjectStartDate(DateTime startDate);
+    void SetProjectEndDate(DateTime endDate);
+    void Reset();
+
 }

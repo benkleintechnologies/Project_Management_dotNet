@@ -32,4 +32,9 @@ public interface IMilestone
     /// <exception cref="BO.BlInvalidInputException">Thrown when the ID is invalid</exception>
     /// <exception cref="BO.BlDoesNotExistException">Thrown when there is no Milestone with this ID in the DAL</exception>
     public BO.Milestone UpdateMilestone(int id, string? nickname, string? description, string? notes);
+
+    /// <summary>
+    /// Reset Milestones - i.e. Reset Dependencies in Database, and Reset Milestone counter
+    /// </summary>
+    public void Reset();
 }

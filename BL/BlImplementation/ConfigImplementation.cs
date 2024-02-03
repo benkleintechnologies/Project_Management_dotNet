@@ -15,4 +15,9 @@ internal class ConfigImplementation : IConfig
     {
         _dal.Config.SetStartDate(startDate);
     }
+
+    public void Reset()
+    {
+        _dal.Config.Reset();
+    }
 }

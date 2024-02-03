@@ -162,6 +162,11 @@ internal class TaskImplementation : ITask
         }
     }
 
+    public void Reset()
+    {
+        _dal.Task.Reset();
+    }
+
     /// <summary>
     /// Convert Data Layer Task to a Business Layer Task and calculate all necessary fields
     /// </summary>
@@ -170,8 +175,18 @@ internal class TaskImplementation : ITask
     private BO.Task toBlTask(DO.Task task)
     {
         //Get Dependencies
-        IEnumerable<DO.Dependency>? dependencies = _dal.Dependency.ReadAll(d => d.DependentTask == task.ID);
-        IEnumerable<BO.TaskInList>? dependentTasks = dependencies.Select(dep =>
+        IEnumerable<DO.Dependency>? dependencies = null;
+
+        try
+        {
+            dependencies = _dal.Dependency.ReadAll(d => d.DependentTask == task.ID);
+        }
+        catch(DO.DalDoesNotExistException)
+        {
+            //There are no dependencies for this task. Not an error
+        }
+
+        IEnumerable<BO.TaskInList>? dependentTasks = dependencies?.Select(dep =>
         {
             DO.Task dependsOnTask = _dal.Task.Read(dep.DependsOnTask);
 
@@ -184,8 +199,17 @@ internal class TaskImplementation : ITask
         });
 
         //Find the connected Milestone
-        DO.Task milestoneTask = _dal.Task.Read(_dal.Dependency.Read(d => d.DependsOnTask == task.ID).DependentTask);
-        BO.MilestoneInTask? milestone = new(milestoneTask.ID, milestoneTask.Nickname);
+        BO.MilestoneInTask? milestone = null;
+        try
+        {
+            DO.Task milestoneTask = _dal.Task.Read(_dal.Dependency.Read(d => d.DependsOnTask == task.ID).DependentTask);
+            milestone = new(milestoneTask.ID, milestoneTask.Nickname);
+        }
+        catch (DO.DalDoesNotExistException)
+        {
+            //There is no connected milestone, not an error 
+        }
+        
 
         //Calculate Projected End Date based on max of projectedStartDate and actualStartDate plus the duration
         DateTime? projectedEndDate = null;

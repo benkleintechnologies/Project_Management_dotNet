@@ -8,4 +8,6 @@ internal class Bl : IBl
     public ITask Task => new TaskImplementation();
 
     public IMilestone Milestone => new MilestoneImplementation();
+
+    public IConfig Config => new ConfigImplementation();
 }

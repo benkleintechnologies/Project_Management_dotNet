@@ -43,7 +43,7 @@ public class Milestone
         string? notes,
         IEnumerable<TaskInList>? dependencies)
     {
-        Id = id;
+        ID = id;
         Name = name;
         Description = description;
         CreatedAtDate = createdAtDate;

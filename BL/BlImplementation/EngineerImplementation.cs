@@ -129,6 +129,12 @@ internal class EngineerImplementation : IEngineer
             throw new BO.BlDoesNotExistException(exc.Message);
         }
     }
+
+    public void Reset()
+    {
+        _dal.Engineer.Reset();
+    }
+
     private static bool isValidEmail(string email)
     {
         // Define a regular expression pattern for a simple email validation
@@ -158,5 +164,4 @@ internal class EngineerImplementation : IEngineer
 
         return blEngineer;
     }
-
 }

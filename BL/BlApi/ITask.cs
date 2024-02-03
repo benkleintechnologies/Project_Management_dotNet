@@ -56,4 +56,9 @@ public interface ITask
     /// <exception cref="BO.BlInvalidInputException">when invalid input for Task<exception>
     /// <exception cref="BO.BlNullPropertyException">when one or more of the previous tasks projected start date is null</exception>
     public void UpdateTaskStartDate(int id, DateTime startDate);
+
+    /// <summary>
+    /// Reset Tasks - i.e. Reset Tasks in Database
+    /// </summary>
+    public void Reset();
 }
