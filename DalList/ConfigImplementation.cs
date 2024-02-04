@@ -38,14 +38,7 @@ public class ConfigImplementation : IConfig
     /// <param name="endDate"></param>
     public void SetEndDate(DateTime endDate)
     {
-        if (DataSource.Engineers.Count == 0 && DataSource.Tasks.Count == 0 && DataSource.Dependencies.Count == 0)
-        {
-            DataSource.Config.endDate = endDate;
-        }
-        else
-        {
-            throw new DateCannotBeChangedException("End date can only be changed if the rest of the system has been reset or uninitialized");
-        }
+        DataSource.Config.endDate = endDate;
     }
 
     /// <summary>
@@ -54,14 +47,7 @@ public class ConfigImplementation : IConfig
     /// <param name="startDate"></param>
     public void SetStartDate(DateTime startDate)
     {
-        if (DataSource.Engineers.Count == 0 && DataSource.Tasks.Count == 0 && DataSource.Dependencies.Count == 0)
-        {
-            DataSource.Config.startDate = startDate;
-        }
-        else
-        {
-            throw new DateCannotBeChangedException("Start date can only be changed if the rest of the system has been reset or uninitialized");
-        }
+        DataSource.Config.startDate = startDate;
     }
     
 }

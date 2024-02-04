@@ -45,7 +45,7 @@ internal class Program
                             s_dal.Task.Reset();
                             s_dal.Config.Reset();
                             //Initialization.Do(s_dal); // stage 2
-                            Initialization.Do(); // stage 4
+                            Initialization.DoWithDates(); // stage 4
                         }
                         break;
                     case 2:

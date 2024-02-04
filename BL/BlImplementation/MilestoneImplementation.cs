@@ -5,8 +5,8 @@ internal class MilestoneImplementation : IMilestone
 {
     private DalApi.IDal _dal = DalApi.Factory.Get;
     internal const int StartMilestoneId = 1;
-    private static int _nextMilestoneId = StartMilestoneId;
-    internal static int NextMilestoneId { get => _nextMilestoneId++; }
+    private int _nextMilestoneId = StartMilestoneId;
+    internal int NextMilestoneId { get => _nextMilestoneId++; }
 
     /// <summary>
     /// Creates a Task which represents a Milestone with an auto-incrementing ID
@@ -25,12 +25,15 @@ internal class MilestoneImplementation : IMilestone
     /// </summary>
     private void calculateMilestones()
     {
+        //Reset Milestone ID
+        _nextMilestoneId = StartMilestoneId;
+
         IEnumerable<DO.Dependency> oldDependencies = _dal.Dependency.ReadAll();
 
         //Create a list of tasks and their dependencies, grouped
         IEnumerable<IGrouping<DO.Task, DO.Task>> groupedDependencies = oldDependencies.GroupBy(d => _dal.Task.Read(d.DependentTask), d => _dal.Task.Read(d.DependsOnTask));
         //Sort the list by Dependent Task
-        groupedDependencies = groupedDependencies.OrderBy(group => group.Key);
+        groupedDependencies = groupedDependencies.OrderBy(group => group.Key.ID);
         //Filter the list using distinct (to remove items which have the same dependencies)
         IEnumerable<IGrouping<DO.Task, DO.Task>> filteredDependencies = groupedDependencies.Distinct();
         //Create Milestones for every item left in the filtered list
@@ -121,8 +124,15 @@ internal class MilestoneImplementation : IMilestone
             if (projectStartDate is null || projectEndDate is null)
                 throw new BO.BlNullPropertyException("Cannot create project schedule because the Project's start and end date have not been set.");
 
-            if (_dal.Task.ReadAll(t => t.ProjectedStartDate.HasValue).Count() == _dal.Task.ReadAll().Count())
-                throw new BO.BlUnableToPerformActionInProductionException("Cannot create milestones and schedule because dates have already been set.");
+            try
+            {
+                if (_dal.Task.ReadAll(t => t.ProjectedStartDate.HasValue).Count() == _dal.Task.ReadAll().Count())
+                    throw new BO.BlUnableToPerformActionInProductionException("Cannot create milestones and schedule because dates have already been set.");
+            }
+            catch (DO.DalDoesNotExistException)
+            {
+                //This means none of the tasks have projected start dates, which is what we want.
+            }
 
             //First create Milestones
             calculateMilestones();

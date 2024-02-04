@@ -155,10 +155,19 @@ internal class EngineerImplementation : IEngineer
     /// <returns>The Business Layer Engineer Object</returns>
     private BO.Engineer toBlEngineer(DO.Engineer engineer)
     {
-        //Get task assigned to engineer
-        DO.Task taskAssigned = _dal.Task.Read(t => t.AssignedEngineerId == engineer.ID);
-        //Create TaskInEngineer
-        BO.TaskInEngineer taskInEngineer = new(taskAssigned.ID, taskAssigned.Nickname);
+        BO.TaskInEngineer? taskInEngineer = null;
+        try
+        {
+            //Get task assigned to engineer
+            DO.Task taskAssigned = _dal.Task.Read(t => t.AssignedEngineerId == engineer.ID);
+            //Create TaskInEngineer
+            taskInEngineer = new(taskAssigned.ID, taskAssigned.Nickname);
+        }
+        catch (DO.DalDoesNotExistException exc)
+        {
+            //This engineer isn't assigned to a task. Not an error...
+        }
+        
         //Make a BL type Engineer
         BO.Engineer blEngineer = new(engineer.ID, engineer.Name, engineer.Email, (BO.EngineerExperience)engineer.Level, engineer.Cost, taskInEngineer);
 

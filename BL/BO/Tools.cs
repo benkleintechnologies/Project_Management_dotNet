@@ -31,7 +31,7 @@ public static class Tools
             result.Append($"{property.Name}: ");
 
             // Check if the property is a collection type (implementing IEnumerable)
-            if (property.PropertyType.GetInterface(nameof(IEnumerable)) != null)
+            if (property.PropertyType != typeof(string) && property.PropertyType.GetInterface(nameof(IEnumerable)) != null)
             {
                 IEnumerable? collection = (IEnumerable?)property.GetValue(obj);
 

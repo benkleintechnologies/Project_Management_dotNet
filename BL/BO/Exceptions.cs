@@ -34,3 +34,8 @@ public class BlUnableToPerformActionInProductionException : Exception
 {
     public BlUnableToPerformActionInProductionException(string? message) : base(message) { }
 }
+
+public class BlCannotChangeDateException : Exception
+{
+    public BlCannotChangeDateException(string? message) : base(message) { }
+}

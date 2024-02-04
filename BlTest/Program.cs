@@ -28,18 +28,7 @@ internal class Program
                         exit = true;
                         break;
                     case 1:
-                        Console.WriteLine("Enter desired project start date");
-                        DateTime startDate;
-                        bool startDateConverted = DateTime.TryParse(Console.ReadLine(), out DateTime startDateValue);
-                        startDate = startDateConverted ? startDateValue : DateTime.Now;
-                        if (startDateConverted) 
-                            s_bl.Config.SetProjectStartDate(startDate);
-                        Console.WriteLine("Enter desired project end date");
-                        DateTime endDate;
-                        bool endDateConverted = DateTime.TryParse(Console.ReadLine(), out DateTime endDateValue);
-                        endDate = endDateConverted ? endDateValue : DateTime.Now;
-                        if (endDateConverted)
-                            s_bl.Config.SetProjectEndDate(endDate);
+                        SetProjectTimeSpan();
                         break;
                     case 2: //Tasks
                         TaskOptionsPrint();
@@ -107,6 +96,11 @@ internal class Program
             //Exception because this action cannot be performed once the system is in production mode
             Console.WriteLine(ex.ToString());
         }
+        catch (BlCannotChangeDateException ex)
+        {
+            //Exception because the start and end dates cannot be changed once they're set
+            Console.WriteLine(ex.ToString());
+        }
     }
 
     static void EngineerOptionsPrint()
@@ -142,6 +136,31 @@ internal class Program
                             "c) Get Milestone\n" +
                             "d) Update Milestone\n" +
                             "e) Reset Milestones\n");
+    }
+
+    static void SetProjectTimeSpan()
+    {
+        try
+        {
+            Console.WriteLine("Enter desired project start date");
+            DateTime startDate;
+            bool startDateConverted = DateTime.TryParse(Console.ReadLine(), out DateTime startDateValue);
+            startDate = startDateConverted ? startDateValue : DateTime.Now;
+            if (startDateConverted)
+                s_bl.Config.SetProjectStartDate(startDate);
+            Console.WriteLine("Enter desired project end date");
+            DateTime endDate;
+            bool endDateConverted = DateTime.TryParse(Console.ReadLine(), out DateTime endDateValue);
+            endDate = endDateConverted ? endDateValue : DateTime.Now;
+            if (endDateConverted)
+                s_bl.Config.SetProjectEndDate(endDate);
+        }
+        catch (BlCannotChangeDateException ex)
+        {
+            //Exception because start and end date cannot be changed once set
+            Console.WriteLine(ex.Message +"\n");
+        }
+        
     }
 
     /// <summary>
@@ -361,6 +380,11 @@ internal class Program
         catch (BlInvalidInputException ex)
         {
             //Exception because invalid input was given
+            Console.WriteLine(ex.ToString());
+        }
+        catch (BlNullPropertyException ex)
+        {
+            //Exception because a necessary property was null
             Console.WriteLine(ex.ToString());
         }
     }

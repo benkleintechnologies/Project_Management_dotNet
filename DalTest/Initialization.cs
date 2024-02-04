@@ -13,13 +13,20 @@ public static class Initialization
 
     private static readonly Random s_rand = new();
 
-    public static void Do() 
+    public static void DoWithDates() 
     {
-        //s_dal = dal ?? throw new NullReferenceException("Dal cannot be null!");
         s_dal = DalApi.Factory.Get;
         createConfig();
         createEngineers();
-        createTasks();
+        createTasks(true);
+        createDependencies();
+    }
+
+    public static void Do()
+    {
+        s_dal = DalApi.Factory.Get;
+        createEngineers();
+        createTasks(false);
         createDependencies();
     }
 
@@ -39,7 +46,7 @@ public static class Initialization
     /// </summary>
     private static void createEngineers()
     {
-        String[] engineerNames = {
+        string[] engineerNames = {
             "Moishe Goldstein", "Shloimy Rosenberg", "Yitzy Schwartz", "Shmuly Cohen", "Dovid Greenbaum"
         };
 
@@ -79,9 +86,10 @@ public static class Initialization
     }
 
     /// <summary>
-    /// Create 20 Tasks "randomly" between the start and end date of the project
+    /// Create 20 Tasks "randomly" (between the start and end date of the project - if addDates is true)
     /// </summary>
-    private static void createTasks()
+    /// <param name="addDates">Boolean value to determine whether to add dates to the tasks</param>
+    private static void createTasks(bool addDates)
     {
         for (int i = 0; i<20; i++)
         {
@@ -97,7 +105,17 @@ public static class Initialization
             DateTime deadline = projectedStartDate.AddMonths(s_rand.Next(1, 5)).AddDays(s_rand.Next(0, 28));
             TimeSpan duration = deadline.Subtract(projectedStartDate);
 
-            Task newTask = new(0, false, _difficultyLevel, null, null, null, null, null, dateCreated, projectedStartDate, null, duration, deadline, null);
+            //Make Task with or without assigned dates
+            Task newTask;
+            if (addDates)
+            {
+                newTask = new(0, false, _difficultyLevel, null, null, null, null, null, dateCreated, projectedStartDate, null, duration, deadline, null);
+            }
+            else
+            {
+                newTask = new(0, false, _difficultyLevel, null, null, null, null, null, dateCreated, null, null, duration, null, null);
+            }
+            
             s_dal!.Task.Create(newTask);
         }
     }
