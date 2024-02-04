@@ -7,7 +7,7 @@ internal class Program
 
     static void Main(string[] args)
     {
-        Console.Write("Would you like to create Initial data? (Y/N)");
+        Console.Write("Would you like to create Initial data? (Y/N) ");
         string? ans = Console.ReadLine() ?? throw new FormatException("Wrong input");
         if (ans == "Y")
             DalTest.Initialization.Do();
@@ -64,42 +64,42 @@ internal class Program
         catch (BlDoesNotExistException ex)
         {
             //Exception because Entity does not exists
-            Console.WriteLine(ex.ToString());
+            Console.WriteLine(ex.Message);
         }
         catch (BlAlreadyExistsException ex)
         {
             //Exception because Entity already exists
-            Console.WriteLine(ex.ToString());
+            Console.WriteLine(ex.Message);
         }
         catch (BlCannotBeDeletedException ex)
         {
             //Exception because deletion is impossible
-            Console.WriteLine(ex.ToString());
+            Console.WriteLine(ex.Message);
         }
         catch (BlInvalidInputException ex)
         {
             //Exception because invalid input was given
-            Console.WriteLine(ex.ToString());
+            Console.WriteLine(ex.Message);
         }
         catch (BlNullPropertyException ex)
         {
             //Exception because a necessary property was null
-            Console.WriteLine(ex.ToString());
+            Console.WriteLine(ex.Message);
         }
         catch (BlUnableToCreateScheduleException ex)
         {
             //Exception because the schedule could not be created for some reason
-            Console.WriteLine(ex.ToString());
+            Console.WriteLine(ex.Message);
         }
         catch (BlUnableToPerformActionInProductionException ex)
         {
             //Exception because this action cannot be performed once the system is in production mode
-            Console.WriteLine(ex.ToString());
+            Console.WriteLine(ex.Message);
         }
         catch (BlCannotChangeDateException ex)
         {
             //Exception because the start and end dates cannot be changed once they're set
-            Console.WriteLine(ex.ToString());
+            Console.WriteLine(ex.Message);
         }
     }
 
@@ -221,22 +221,22 @@ internal class Program
         catch (BlDoesNotExistException ex)
         {
             //Exception because Entity does not exists
-            Console.WriteLine(ex.ToString());
+            Console.WriteLine(ex.Message);
         }
         catch (BlAlreadyExistsException ex)
         {
             //Exception because Entity already exists
-            Console.WriteLine(ex.ToString());
+            Console.WriteLine(ex.Message);
         }
         catch (BlCannotBeDeletedException ex)
         {
             //Exception because deletion is impossible
-            Console.WriteLine(ex.ToString());
+            Console.WriteLine(ex.Message);
         }
         catch (BlInvalidInputException ex)
         {
             //Exception because invalid input was given
-            Console.WriteLine(ex.ToString());
+            Console.WriteLine(ex.Message);
         }
     }
 
@@ -297,32 +297,32 @@ internal class Program
         catch (BlDoesNotExistException ex)
         {
             //Exception because Entity does not exists
-            Console.WriteLine(ex.ToString());
+            Console.WriteLine(ex.Message);
         }
         catch (BlAlreadyExistsException ex)
         {
             //Exception because Entity already exists
-            Console.WriteLine(ex.ToString());
+            Console.WriteLine(ex.Message);
         }
         catch (BlCannotBeDeletedException ex)
         {
             //Exception because deletion is impossible
-            Console.WriteLine(ex.ToString());
+            Console.WriteLine(ex.Message);
         }
         catch (BlInvalidInputException ex)
         {
             //Exception because invalid input was given
-            Console.WriteLine(ex.ToString());
+            Console.WriteLine(ex.Message);
         }
         catch (BlUnableToPerformActionInProductionException ex)
         {
             //Exception because this action cannot be performed once the system is in production mode
-            Console.WriteLine(ex.ToString());
+            Console.WriteLine(ex.Message);
         }
         catch (BlNullPropertyException ex)
         {
             //Exception because a necessary property was null
-            Console.WriteLine(ex.ToString());
+            Console.WriteLine(ex.Message);
         }
     }
 
@@ -370,22 +370,22 @@ internal class Program
         catch (BlDoesNotExistException ex)
         {
             //Exception because Entity does not exists
-            Console.WriteLine(ex.ToString());
+            Console.WriteLine(ex.Message);
         }
         catch (BlCannotBeDeletedException ex)
         {
             //Exception because deletion is impossible
-            Console.WriteLine(ex.ToString());
+            Console.WriteLine(ex.Message);
         }
         catch (BlInvalidInputException ex)
         {
             //Exception because invalid input was given
-            Console.WriteLine(ex.ToString());
+            Console.WriteLine(ex.Message);
         }
         catch (BlNullPropertyException ex)
         {
             //Exception because a necessary property was null
-            Console.WriteLine(ex.ToString());
+            Console.WriteLine(ex.Message);
         }
     }
 
