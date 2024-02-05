@@ -281,7 +281,7 @@ internal class Program
                     s_bl.Task.UpdateTask(newTask);
                     break;
                 case "f": //Update Task Start Date
-                    Console.WriteLine("Enter the id of the task you would like to delete:\n");
+                    Console.WriteLine("Enter the id of the task you would like to update:\n");
                     int.TryParse(Console.ReadLine(), out id);
                     Console.WriteLine("Enter the new start date of the Task:\n");
                     DateTime.TryParse(Console.ReadLine(), out DateTime startDateValue);

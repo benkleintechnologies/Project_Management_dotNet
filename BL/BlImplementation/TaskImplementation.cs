@@ -200,16 +200,18 @@ internal class TaskImplementation : ITask
 
         //Find the connected Milestone
         BO.MilestoneInTask? milestone = null;
-        try
+        if (!task.IsMilestone) //Only if this task isn't a milestone
         {
-            DO.Task milestoneTask = _dal.Task.Read(_dal.Dependency.Read(d => d.DependsOnTask == task.ID).DependentTask);
-            milestone = new(milestoneTask.ID, milestoneTask.Nickname);
+            try
+            {
+                DO.Task milestoneTask = _dal.Task.Read(t => t.ID == _dal.Dependency.Read(d => d.DependsOnTask == task.ID).DependentTask && t.IsMilestone);
+                milestone = new(milestoneTask.ID, milestoneTask.Nickname);
+            }
+            catch (DO.DalDoesNotExistException)
+            {
+                //There is no connected milestone, not an error 
+            }
         }
-        catch (DO.DalDoesNotExistException)
-        {
-            //There is no connected milestone, not an error 
-        }
-        
 
         //Calculate Projected End Date based on max of projectedStartDate and actualStartDate plus the duration
         DateTime? projectedEndDate = null;
