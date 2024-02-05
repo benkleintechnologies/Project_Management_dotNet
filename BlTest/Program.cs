@@ -280,13 +280,20 @@ internal class Program
                     newTask = ParseTask();
                     s_bl.Task.UpdateTask(newTask);
                     break;
-                case "f": //Delete Task
+                case "f": //Update Task Start Date
+                    Console.WriteLine("Enter the id of the task you would like to delete:\n");
+                    int.TryParse(Console.ReadLine(), out id);
+                    Console.WriteLine("Enter the new start date of the Task:\n");
+                    DateTime.TryParse(Console.ReadLine(), out DateTime startDateValue);
+                    s_bl.Task.UpdateTaskStartDate(id, startDateValue);
+                    break;
+                case "g": //Delete Task
                     Console.WriteLine("Enter the id of the task you would like to delete:\n");
                     int.TryParse(Console.ReadLine(), out id);
                     Console.WriteLine();
                     s_bl.Task.DeleteTask(id);
                     break;
-                case "g": //Reset Tasks
+                case "h": //Reset Tasks
                     s_bl.Task.Reset();
                     break;
                 default:
@@ -385,6 +392,11 @@ internal class Program
         catch (BlNullPropertyException ex)
         {
             //Exception because a necessary property was null
+            Console.WriteLine(ex.Message);
+        }
+        catch (BlUnableToCreateScheduleException ex)
+        {
+            //Exception because the schedule could not be created for some reason
             Console.WriteLine(ex.Message);
         }
     }

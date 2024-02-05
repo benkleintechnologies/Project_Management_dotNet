@@ -185,6 +185,10 @@ public static class Initialization
     private static bool createsCircularDependency(int dependentTask, int dependsOnTask)
     {
         // Check if dependsOnTask is directly or indirectly dependent on dependentTask
+        if (dependentTask == dependsOnTask)
+        {
+            return true;
+        }
         return isIndirectlyDependent(dependentTask, dependsOnTask, new List<int>());
     }
 

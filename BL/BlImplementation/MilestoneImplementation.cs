@@ -31,11 +31,11 @@ internal class MilestoneImplementation : IMilestone
         IEnumerable<DO.Dependency> oldDependencies = _dal.Dependency.ReadAll().ToList();
 
         //Create a list of tasks and their dependencies, grouped
-        IEnumerable<IGrouping<DO.Task, DO.Task>> groupedDependencies = oldDependencies.GroupBy(d => _dal.Task.Read(d.DependentTask), d => _dal.Task.Read(d.DependsOnTask));
+        IEnumerable<IGrouping<DO.Task, DO.Task>> groupedDependencies = oldDependencies.GroupBy(d => _dal.Task.Read(d.DependentTask), d => _dal.Task.Read(d.DependsOnTask)).ToList();
         //Sort the list by Dependent Task
         groupedDependencies = groupedDependencies.OrderBy(group => group.Key.ID);
         //Filter the list using distinct (to remove items which have the same dependencies)
-        IEnumerable<IGrouping<DO.Task, DO.Task>> filteredDependencies = groupedDependencies.Distinct();
+        IEnumerable<IGrouping<DO.Task, DO.Task>> filteredDependencies = groupedDependencies.Distinct(new TaskGroupEqualityComparer());
         //Create Milestones for every item left in the filtered list
         IEnumerable<BO.Milestone> milestones = filteredDependencies
             .Select(dependency =>
@@ -61,7 +61,7 @@ internal class MilestoneImplementation : IMilestone
         milestoneTasks.SelectMany(milestone =>
         {
             // Find the corresponding milestone in _milestones
-            BO.Milestone? correspondingMilestone = milestones.FirstOrDefault(m => m.Name == milestone.Nickname);
+            BO.Milestone? correspondingMilestone = milestones.FirstOrDefault(m => "M"+m.ID == milestone.Nickname);
             if (correspondingMilestone != null)
             {
                 // Create dependencies for each dependency in the Milestone
@@ -83,7 +83,7 @@ internal class MilestoneImplementation : IMilestone
             if (correspondingMilestone != null)
             {
                 //Get the Task id which represents this milestone
-                int taskId = _dal.Task.Read(t => t.Nickname == correspondingMilestone.Name).ID;
+                int taskId = _dal.Task.Read(t => t.Nickname == "M" + correspondingMilestone.ID).ID;
                 return new DO.Dependency(0, dependency.Key.ID, taskId);
             }
             return null;
@@ -146,10 +146,11 @@ internal class MilestoneImplementation : IMilestone
 
             //Use a breadth-first style algorithm to go through the the tasks based on their dependencies, backwards, starting from the "End" milestone
             Queue<DO.Task> taskQueue = new Queue<DO.Task>();
+            HashSet<int> processedTasks = new HashSet<int>();
             // Add the "End" milestone as the starting point
             taskQueue.Enqueue(milestones.Single(m => m.Nickname == "End"));
             // Perform breadth-first traversal backward
-            breadthFirstTraversalBackwards(taskQueue);
+            breadthFirstTraversalBackwards(taskQueue, processedTasks);
 
             //Check that we've succeeded so far - deadline of Start milestone should be at or later than start date
             if (milestones.Single(m => m.Nickname == "Start").Deadline < projectStartDate)
@@ -160,10 +161,11 @@ internal class MilestoneImplementation : IMilestone
             //Reverse Process (i.e. forward breadth first search) to set start dates
             taskQueue.Enqueue(milestones.Single(m => m.Nickname == "Start"));
             // Perform breadth-first traversal forward
-            breadthFirstTraversalForward(taskQueue);
+            processedTasks = new HashSet<int>();
+            breadthFirstTraversalForward(taskQueue, processedTasks);
 
             //Check that we've succeeded - projected start of End milestone should be at or before end date
-            if (milestones.Single(m => m.Nickname == "End").ProjectedStartDate > projectStartDate)
+            if (milestones.Single(m => m.Nickname == "End").ProjectedStartDate > projectEndDate)
             {
                 throw new BO.BlUnableToCreateScheduleException("The calculation of start dates starting from the beginning goes past the end date of the project");
             }
@@ -284,13 +286,24 @@ internal class MilestoneImplementation : IMilestone
     /// Recursive method to go through the queue of tasks from end to beginning and set the deadlines for each
     /// </summary>
     /// <param name="queue">of tasks</param>
-    private void breadthFirstTraversalBackwards(Queue<DO.Task> queue)
+    private void breadthFirstTraversalBackwards(Queue<DO.Task> queue, HashSet<int> processedTasks)
     {
         if (queue.Count == 0)
             return;
 
         // Dequeue the next task from the queue
         DO.Task currentTask = queue.Dequeue();
+
+        // Check if the task has already been processed
+        if (processedTasks.Contains(currentTask.ID))
+        {
+            // If the task has already been processed, skip it and move to the next iteration
+            breadthFirstTraversalBackwards(queue, processedTasks);
+            return;
+        }
+
+        // Mark the task as processed
+        processedTasks.Add(currentTask.ID);
 
         // Calculate the latest possible completion date (LPCD) based on dependencies
         DateTime? lpcd = null;
@@ -350,7 +363,8 @@ internal class MilestoneImplementation : IMilestone
         {
             dependsOnTasks = _dal.Dependency
             .ReadAll(d => d.DependentTask == currentTask.ID)
-            .Select(d => _dal.Task.Read(d.DependsOnTask));
+            .Select(d => _dal.Task.Read(d.DependsOnTask))
+            .Where(t => !t.Deadline.HasValue && !processedTasks.Contains(t.ID));
         }
         catch (DO.DalDoesNotExistException)
         {
@@ -360,20 +374,31 @@ internal class MilestoneImplementation : IMilestone
         dependsOnTasks.ToList().ForEach(queue.Enqueue);
 
         // Recursive call for the next iteration
-        breadthFirstTraversalBackwards(queue);
+        breadthFirstTraversalBackwards(queue, processedTasks);
     }
 
     /// <summary>
     /// Recursive method to go through the queue of tasks from beginning to end and set the start date for each
     /// </summary>
     /// <param name="queue">of Tasks</param>
-    private void breadthFirstTraversalForward(Queue<DO.Task> queue)
+    private void breadthFirstTraversalForward(Queue<DO.Task> queue, HashSet<int> processedTasks)
     {
         if (queue.Count == 0)
             return;
 
         // Dequeue the next task from the queue
         DO.Task currentTask = queue.Dequeue();
+
+        // Check if the task has already been processed
+        if (processedTasks.Contains(currentTask.ID))
+        {
+            // If the task has already been processed, skip it and move to the next iteration
+            breadthFirstTraversalForward(queue, processedTasks);
+            return;
+        }
+
+        // Mark the task as processed
+        processedTasks.Add(currentTask.ID);
 
         // Calculate the projected start date (PSD) based on dependencies and project start date
         DateTime? psd = null;
@@ -433,7 +458,8 @@ internal class MilestoneImplementation : IMilestone
         {
             dependentTasks = _dal.Dependency
             .ReadAll(d => d.DependsOnTask == currentTask.ID)
-            .Select(d => _dal.Task.Read(d.DependentTask));
+            .Select(d => _dal.Task.Read(d.DependentTask))
+            .Where(t => !t.ProjectedStartDate.HasValue && !processedTasks.Contains(t.ID));
         }
         catch (DO.DalDoesNotExistException)
         {
@@ -442,7 +468,33 @@ internal class MilestoneImplementation : IMilestone
         dependentTasks.ToList().ForEach(queue.Enqueue);
 
         // Recursive call for the next iteration
-        breadthFirstTraversalForward(queue);
+        breadthFirstTraversalForward(queue, processedTasks);
     }
 
 }
+
+public class TaskGroupEqualityComparer : IEqualityComparer<IGrouping<DO.Task, DO.Task>>
+{
+    public bool Equals(IGrouping<DO.Task, DO.Task> x, IGrouping<DO.Task, DO.Task> y)
+    {
+        // Compare the key of the group
+        if (!x.Key.Equals(y.Key))
+            return false;
+
+        // Compare the items in the group
+        return x.OrderBy(task => task.ID).SequenceEqual(y.OrderBy(task => task.ID));
+    }
+
+    public int GetHashCode(IGrouping<DO.Task, DO.Task> obj)
+    {
+        // Generate a hash code based on the key and the items in the group
+        int hash = 17;
+        hash = hash * 23 + obj.Key.GetHashCode();
+        foreach (var item in obj.OrderBy(task => task.ID))
+        {
+            hash = hash * 23 + item.GetHashCode();
+        }
+        return hash;
+    }
+}
+
