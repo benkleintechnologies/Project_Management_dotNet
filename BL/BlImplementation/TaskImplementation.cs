@@ -31,7 +31,7 @@ internal class TaskImplementation : ITask
 
 
             //Try to add the Task to the data layer
-            DO.Task newTask = new(task.ID, false,(DO.EngineerExperience)task.Complexity, task.Engineer?.ID, task.Name, task.Description, task.Deliverables, task.Notes, task.CreatedAtDate, task.ProjectedStartDate, task.ActualStartDate, task.RequiredEffortTime, task.Deadline, task.ActualEndDate);
+            DO.Task newTask = new(task.ID, task.Name, false, (DO.EngineerExperience)task.Complexity, task.Engineer?.ID, task.Description, task.Deliverables, task.Notes, task.CreatedAtDate, task.ProjectedStartDate, task.ActualStartDate, task.RequiredEffortTime, task.Deadline, task.ActualEndDate);
 
             _dal.Task.Create(newTask);
         }
@@ -112,15 +112,15 @@ internal class TaskImplementation : ITask
             // Check which phase of the project we are in
             if (_dal.Config.GetStartDate().HasValue && _dal.Task.ReadAll(t => t.ProjectedStartDate.HasValue).Count() == _dal.Task.ReadAll().Count()) // Production phase
             {
-                newTask = new(task.ID, dlTask.IsMilestone, (DO.EngineerExperience)task.Complexity, task.Engineer?.ID, task.Name, task.Description, task.Deliverables, task.Notes, dlTask.DateCreated, dlTask.ProjectedStartDate, task.ActualStartDate, dlTask.Duration, dlTask.Deadline, task.ActualEndDate);
+                newTask = new(task.ID, task.Name, dlTask.IsMilestone, (DO.EngineerExperience)task.Complexity, task.Engineer?.ID, task.Description, task.Deliverables, task.Notes, dlTask.DateCreated, dlTask.ProjectedStartDate, task.ActualStartDate, dlTask.Duration, dlTask.Deadline, task.ActualEndDate);
             }
             else if (!_dal.Config.GetStartDate().HasValue) // Planning stage
             {
-                newTask = new(task.ID, dlTask.IsMilestone, (DO.EngineerExperience)task.Complexity, dlTask.AssignedEngineerId, task.Name, task.Description, task.Deliverables, task.Notes, dlTask.DateCreated, dlTask.ProjectedStartDate, dlTask.ActualStartDate, dlTask.Duration, dlTask.Deadline, dlTask.ActualEndDate);
+                newTask = new(task.ID, task.Name, dlTask.IsMilestone, (DO.EngineerExperience)task.Complexity, dlTask.AssignedEngineerId, task.Description, task.Deliverables, task.Notes, dlTask.DateCreated, dlTask.ProjectedStartDate, dlTask.ActualStartDate, dlTask.Duration, dlTask.Deadline, dlTask.ActualEndDate);
             }
             else // Has a project start date, but no other planned dates yet
             {
-                newTask = new(task.ID, dlTask.IsMilestone, (DO.EngineerExperience)task.Complexity, dlTask.AssignedEngineerId, task.Name, task.Description, task.Deliverables, task.Notes, dlTask.DateCreated, task.ProjectedStartDate, dlTask.ActualStartDate, task.RequiredEffortTime, task.Deadline, dlTask.ActualEndDate);
+                newTask = new(task.ID, task.Name, dlTask.IsMilestone, (DO.EngineerExperience)task.Complexity, dlTask.AssignedEngineerId,  task.Description, task.Deliverables, task.Notes, dlTask.DateCreated, task.ProjectedStartDate, dlTask.ActualStartDate, task.RequiredEffortTime, task.Deadline, dlTask.ActualEndDate);
             }
 
             _dal.Task.Update(newTask);
@@ -153,7 +153,7 @@ internal class TaskImplementation : ITask
             }
 
             // Add the updated task -- with the startDate as the projectedStartDate
-            DO.Task updatedTask = new(task.ID, false, task.DegreeOfDifficulty, task.AssignedEngineerId, task.Nickname, task.Description, task.Deliverables, task.Notes, task.DateCreated, startDate, task.ActualStartDate, task.Duration, task.Deadline, task.ActualEndDate);
+            DO.Task updatedTask = new(task.ID, task.Nickname, false, task.DegreeOfDifficulty, task.AssignedEngineerId, task.Description, task.Deliverables, task.Notes, task.DateCreated, startDate, task.ActualStartDate, task.Duration, task.Deadline, task.ActualEndDate);
             _dal.Task.Update(updatedTask);
         }
         catch (DO.DalDoesNotExistException exc)

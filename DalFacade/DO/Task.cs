@@ -20,10 +20,10 @@
 public record Task
 (
     int ID,
+    String Nickname,
     bool IsMilestone = false,
     EngineerExperience DegreeOfDifficulty = EngineerExperience.Beginner,
     int? AssignedEngineerId = null,
-    String? Nickname = null,
     String? Description = null,
     String? Deliverables = null,
     String? Notes = null,
@@ -36,5 +36,5 @@ public record Task
     bool Active = true
 )
 {
-    public Task() : this(0) { } // empty ctor for stage 3
+    public Task() : this(0, "") { } // empty ctor for stage 3
 };

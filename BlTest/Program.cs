@@ -256,9 +256,14 @@ internal class Program
                     Console.WriteLine();
                     break;
                 case "b": //Add Task
-                    Console.WriteLine("Enter the id, name, description, status, date created, projected start date, actual start date, required effort time, deadline, actual end date, deliverables, notes, assigned engineer ID, complexity (on separate lines):\n");
-                    newTask = ParseTask(); //Need to also ask for dependencies
-                    s_bl.Task.AddTask(newTask);
+                    if (!s_bl.Config.inProduction())
+                    {
+                        Console.WriteLine("Enter the id, name, description, status, date created, projected start date, actual start date, required effort time, deadline, actual end date, deliverables, notes, assigned engineer ID, complexity (on separate lines):\n");
+                        newTask = ParseTask(); //Need to also ask for dependencies
+                        s_bl.Task.AddTask(newTask);
+                        break;
+                    }
+                    Console.WriteLine("In production so can't create a new task\n");
                     break;
                 case "c": //Display Task
                     Console.WriteLine("Enter the id of the task you would like to display:\n");
@@ -475,7 +480,7 @@ internal class Program
         List<TaskInList> dependencies = new List<TaskInList>();
         Console.WriteLine("Enter IDs of tasks this task depends on (comma-separated):");
         string? input = Console.ReadLine();
-        if (input != null)
+        if (input != "")
         {
             string[] dependencyIds = input.Split(',');
 

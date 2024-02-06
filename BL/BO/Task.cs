@@ -45,7 +45,7 @@ public class Task
     /// <param name="complexity">The complexity of the task.</param>
     public Task(
         int id,
-        string? name,
+        string name,
         string? description,
         Status status,
         IEnumerable<TaskInList>? dependencies,

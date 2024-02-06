@@ -15,7 +15,7 @@ internal class MilestoneImplementation : IMilestone
     private int createMilestoneTaskAndGetId()
     {
         // Create a task for the milestone
-        DO.Task milestoneTask = new DO.Task(0, true, Nickname: "M" + NextMilestoneId);
+        DO.Task milestoneTask = new DO.Task(0, "M" + NextMilestoneId, true);
         // Add the milestone task to the database and return its ID
         return _dal.Task.Create(milestoneTask);
     }
@@ -90,7 +90,7 @@ internal class MilestoneImplementation : IMilestone
         }).Where(d => d != null).ToList().ForEach(d => _dal.Dependency.Create(d!));
 
         //Create starting Milestone in database (as Task)
-        int startMilestoneTaskId = _dal.Task.Create(new(0, true, Nickname: "Start"));
+        int startMilestoneTaskId = _dal.Task.Create(new(0, "Start", true));
         //Get all Tasks with no dependencies
         IEnumerable<DO.Task> tasksWithoutDependencies = _dal.Task.ReadAll(t => oldDependencies.All(d => d.DependentTask != t.ID) && !t.IsMilestone); //t.ID != startMilestoneTaskId
         //Create a dependency for every Task with no dependencies on the Start Milestone
@@ -100,7 +100,7 @@ internal class MilestoneImplementation : IMilestone
         }).Where(d => d != null).ToList().ForEach(d => _dal.Dependency.Create(d!));
 
         //Create end Milestone in database (as Task)
-        int endMilestoneTaskId = _dal.Task.Create(new(0, true, Nickname: "End"));
+        int endMilestoneTaskId = _dal.Task.Create(new(0, "End", true));
         //Get all Tasks which are not depended on
         IEnumerable<DO.Task> tasksNotDependedOn = _dal.Task.ReadAll(t => oldDependencies.All(d => d.DependsOnTask != t.ID) && !t.IsMilestone); //t.ID != endMilestoneTaskId
         //Create a dependency for the End Milestone on all last tasks which are not depended on by other tasks

@@ -30,6 +30,18 @@ internal class ConfigImplementation : IConfig
         }
     }
 
+    public bool inProduction()
+    {
+        if (_dal.Config.GetStartDate().HasValue) // if value is set then in production already
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
     public void Reset()
     {
         _dal.Config.Reset();
