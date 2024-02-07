@@ -21,8 +21,16 @@ internal class TaskImplementation : ITask
                 throw new BO.BlInvalidInputException($"One of the fields of the Task with id {task.ID} was invalid");
             }
 
-            // Getting all previous tasks to add into Dependencies
-            IEnumerable<DO.Task> previousTasks = _dal.Task.ReadAll(t => t.ProjectedStartDate < task.ProjectedStartDate); 
+            IEnumerable<DO.Task> previousTasks = Enumerable.Empty<DO.Task>();
+            try
+            {
+                // Getting all previous tasks to add into Dependencies
+                previousTasks = _dal.Task.ReadAll(t => t.ProjectedStartDate < task.ProjectedStartDate);
+            }
+            catch (DO.DalDoesNotExistException)
+            {
+                // Not an error, just that if create task won't have dependencies
+            }
 
             // Make the new task dependent on all previous tasks
             IEnumerable<DO.Dependency> dependencies = from t in previousTasks 
