@@ -1,5 +1,7 @@
 ﻿namespace BlImplementation;
 using BlApi;
+using System.Collections.Specialized;
+using System.Linq;
 
 internal class MilestoneImplementation : IMilestone
 {
@@ -33,15 +35,19 @@ internal class MilestoneImplementation : IMilestone
 
         //Create a list of tasks and their dependencies, grouped
         IEnumerable<IGrouping<DO.Task, DO.Task>> groupedDependencies = oldDependencies.GroupBy(d => _dal.Task.Read(d.DependentTask), d => _dal.Task.Read(d.DependsOnTask)).ToList();
-        //Sort the list by Dependent Task
-        groupedDependencies = groupedDependencies.OrderBy(group => group.Key.ID);
-        //Filter the list using distinct (to remove items which have the same dependencies)
-        IEnumerable<IGrouping<DO.Task, DO.Task>> filteredDependencies = groupedDependencies.Distinct(new TaskGroupEqualityComparer());
+        //Sort the lists of dependsOn Tasks
+        Dictionary<DO.Task, List<DO.Task>> sortedDependencies = groupedDependencies.ToDictionary(group => group.Key, group => group.OrderBy(t => t.ID).ToList());
+        //Filter the list using distinct (to remove items which have the same dependencies - i.e. value in the dictionary)
+        Dictionary<DO.Task, List<DO.Task>> distinctDependencies = sortedDependencies
+            .GroupBy(kv => kv.Value, new TaskListEqualityComparer())
+            .Select(g => g.First())
+            .ToDictionary(kv => kv.Key, kv => kv.Value);
+
         //Create Milestones for every item left in the filtered list
-        IEnumerable<BO.Milestone> milestones = filteredDependencies
+        IEnumerable<BO.Milestone> milestones = distinctDependencies
             .Select(dependency =>
                 new BO.Milestone(NextMilestoneId, "M"+(_nextMilestoneId-1), null, null, BO.Status.Unscheduled, null, null, null, 0, null,
-                    dependency.Select(task =>
+                    dependency.Value.Select(task =>
                         new BO.TaskInList(
                             task.ID,
                             task.Nickname,
@@ -55,7 +61,7 @@ internal class MilestoneImplementation : IMilestone
         _nextMilestoneId = StartMilestoneId;
 
         //Create Tasks representing each milestone
-        IEnumerable<int> milestoneTaskIds = filteredDependencies.Select(_ => createMilestoneTaskAndGetId()).ToList();
+        IEnumerable<int> milestoneTaskIds = distinctDependencies.Select(_ => createMilestoneTaskAndGetId()).ToList();
         //Get those Task Milestones
         IEnumerable<DO.Task> milestoneTasks = _dal.Task.ReadAll(t => t.IsMilestone);
         // Add dependencies for each milestone to the tasks that it depends on
@@ -79,14 +85,18 @@ internal class MilestoneImplementation : IMilestone
         {
             //IDs of tasks which the milestone depends on
             IEnumerable<int> idOfTasks = dependency.Select(t => t.ID);
-            //The corresponding milestone which has in its Dependencies list, a TaskInList with id corresponding to each ID in _idOfTasks 
-            BO.Milestone? correspondingMilestone = milestones.FirstOrDefault(m => idOfTasks.All(taskId => m.Dependencies!.Any(task => task.ID == taskId)));
-            if (correspondingMilestone != null)
+            //The corresponding milestone which has in its Dependencies list, a TaskInList with id corresponding to each ID in idOfTasks 
+            if (idOfTasks.Any())
             {
-                //Get the Task id which represents this milestone
-                int taskId = _dal.Task.Read(t => t.Nickname == "M" + correspondingMilestone.ID).ID;
-                return new DO.Dependency(0, dependency.Key.ID, taskId);
-            }
+                //Find the corresponding milestone in _milestones
+                BO.Milestone? correspondingMilestone = milestones.Where(m => m.Dependencies is not null && idOfTasks.Order().SequenceEqual(m.Dependencies.Select(d => d.ID).Order())).FirstOrDefault();
+                if (correspondingMilestone != null)
+                {
+                    //Get the Task id which represents this milestone
+                    int taskId = _dal.Task.Read(t => t.Nickname == "M" + correspondingMilestone.ID).ID;
+                    return new DO.Dependency(0, dependency.Key.ID, taskId);
+                }
+            }   
             return null;
         }).Where(d => d != null).ToList().ForEach(d => _dal.Dependency.Create(d!));
 
@@ -287,6 +297,7 @@ internal class MilestoneImplementation : IMilestone
     /// Recursive method to go through the queue of tasks from end to beginning and set the deadlines for each
     /// </summary>
     /// <param name="queue">of tasks</param>
+    /// <param name="processedTasks">HashSet of processed tasks</param>
     private void breadthFirstTraversalBackwards(Queue<DO.Task> queue, HashSet<int> processedTasks)
     {
         if (queue.Count == 0)
@@ -303,9 +314,6 @@ internal class MilestoneImplementation : IMilestone
             return;
         }
 
-        // Mark the task as processed
-        processedTasks.Add(currentTask.ID);
-
         // Calculate the latest possible completion date (LPCD) based on dependencies
         DateTime? lpcd = null;
 
@@ -321,6 +329,14 @@ internal class MilestoneImplementation : IMilestone
             IEnumerable<DO.Task> dependentTasks = _dal.Dependency
                 .ReadAll(d => d.DependsOnTask == currentTask.ID)
                 .Select(d => _dal.Task.Read(d.DependentTask));
+
+            // Ensure dependent tasks are processed
+            if (dependentTasks.Any(dependentTask => !processedTasks.Contains(dependentTask.ID)))
+            {
+                // Recursively process dependent tasks
+                breadthFirstTraversalBackwards(queue, processedTasks);
+            }
+
             DO.Task? dependentTask = null;
             if (dependentTasks.Any())
             {
@@ -348,6 +364,10 @@ internal class MilestoneImplementation : IMilestone
                 {
                     lpcd = dependentTask.Deadline;
                 }
+                else
+                {
+                    throw new BO.BlUnableToCreateScheduleException("Project schedule was not able to be automatically generated because there was an error setting the deadlines");
+                }
             }
             else
             {
@@ -374,6 +394,9 @@ internal class MilestoneImplementation : IMilestone
         
         dependsOnTasks.ToList().ForEach(queue.Enqueue);
 
+        // Mark the current task as processed
+        processedTasks.Add(currentTask.ID);
+
         // Recursive call for the next iteration
         breadthFirstTraversalBackwards(queue, processedTasks);
     }
@@ -382,6 +405,7 @@ internal class MilestoneImplementation : IMilestone
     /// Recursive method to go through the queue of tasks from beginning to end and set the start date for each
     /// </summary>
     /// <param name="queue">of Tasks</param>
+    /// <param name="processedTasks">HashSet of processed tasks</param>
     private void breadthFirstTraversalForward(Queue<DO.Task> queue, HashSet<int> processedTasks)
     {
         if (queue.Count == 0)
@@ -398,9 +422,6 @@ internal class MilestoneImplementation : IMilestone
             return;
         }
 
-        // Mark the task as processed
-        processedTasks.Add(currentTask.ID);
-
         // Calculate the projected start date (PSD) based on dependencies and project start date
         DateTime? psd = null;
 
@@ -413,8 +434,15 @@ internal class MilestoneImplementation : IMilestone
         {
             // Find the depends on tasks (the ones this task depends on)
             IEnumerable<DO.Task> dependsOnTasks = _dal.Dependency
-            .ReadAll(d => d.DependentTask == currentTask.ID)
-            .Select(d => _dal.Task.Read(d.DependsOnTask));
+                .ReadAll(d => d.DependentTask == currentTask.ID)
+                .Select(d => _dal.Task.Read(d.DependsOnTask));
+
+            // Ensure dependency tasks are processed
+            if (dependsOnTasks.Any(dependsOnTask => !processedTasks.Contains(dependsOnTask.ID)))
+            {
+                // Recursively process dependency tasks
+                breadthFirstTraversalForward(queue, processedTasks);
+            }
 
             // Find the dependsOn task with the latest start date or longest duration
             DO.Task? dependsOnTask = null;
@@ -437,11 +465,15 @@ internal class MilestoneImplementation : IMilestone
             {
                 if (dependsOnTask.ProjectedStartDate.HasValue && dependsOnTask.Duration.HasValue) // Task
                 {
-                    psd = dependsOnTask.ProjectedStartDate.Value + dependsOnTask.Duration.Value;
+                    psd = dependsOnTask.ProjectedStartDate + dependsOnTask.Duration;
                 }
                 else if (dependsOnTask.ProjectedStartDate.HasValue) // Milestone with only a PSD
                 {
-                    psd = dependsOnTask.ProjectedStartDate.Value;
+                    psd = dependsOnTask.ProjectedStartDate;
+                }
+                else
+                {
+                    throw new BO.BlUnableToCreateScheduleException("Project schedule was not able to be automatically generated because there was an error setting the start dates");
                 }
             }
             else
@@ -458,15 +490,18 @@ internal class MilestoneImplementation : IMilestone
         try
         {
             dependentTasks = _dal.Dependency
-            .ReadAll(d => d.DependsOnTask == currentTask.ID)
-            .Select(d => _dal.Task.Read(d.DependentTask))
-            .Where(t => !t.ProjectedStartDate.HasValue && !processedTasks.Contains(t.ID));
+                .ReadAll(d => d.DependsOnTask == currentTask.ID)
+                .Select(d => _dal.Task.Read(d.DependentTask))
+                .Where(t => !t.ProjectedStartDate.HasValue && !processedTasks.Contains(t.ID));
         }
         catch (DO.DalDoesNotExistException)
         {
-            //There are no more tasks to process. Not an error
+            // There are no more tasks to process. Not an error
         }
         dependentTasks.ToList().ForEach(queue.Enqueue);
+
+        // Mark the current task as processed
+        processedTasks.Add(currentTask.ID);
 
         // Recursive call for the next iteration
         breadthFirstTraversalForward(queue, processedTasks);
@@ -474,24 +509,24 @@ internal class MilestoneImplementation : IMilestone
 
 }
 
-public class TaskGroupEqualityComparer : IEqualityComparer<IGrouping<DO.Task, DO.Task>>
+public class TaskListEqualityComparer : IEqualityComparer<List<DO.Task>>
 {
-    public bool Equals(IGrouping<DO.Task, DO.Task> x, IGrouping<DO.Task, DO.Task> y)
+    public bool Equals(List<DO.Task> x, List<DO.Task> y)
     {
-        // Compare the items in the group
-        return x.OrderBy(task => task.ID).SequenceEqual(y.OrderBy(task => task.ID));
+        return x.SequenceEqual(y);
     }
 
-    public int GetHashCode(IGrouping<DO.Task, DO.Task> obj)
+    public int GetHashCode(List<DO.Task> obj)
     {
-        // Generate a hash code based on the key and the items in the group
-        int hash = 17;
-        hash = hash * 23 + obj.Key.GetHashCode();
-        foreach (var item in obj.OrderBy(task => task.ID))
+        unchecked
         {
-            hash = hash * 23 + item.GetHashCode();
+            int hash = 17;
+            foreach (var item in obj)
+            {
+                hash = hash * 23 + item.GetHashCode();
+            }
+            return hash;
         }
-        return hash;
     }
 }
 
