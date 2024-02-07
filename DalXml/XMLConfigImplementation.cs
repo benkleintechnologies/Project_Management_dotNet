@@ -30,7 +30,7 @@ public class XMLConfigImplementation : IConfig
     /// <exception cref="DateCannotBeChangedException">Thrown if trying to set the end date while there is still data in the XML files</exception>
     public void SetEndDate(DateTime endDate)
     {
-        if (xmlFilesReset())
+        if (!GetEndDate().HasValue)
         {
             Config.EndDate = endDate;
         }
@@ -47,7 +47,7 @@ public class XMLConfigImplementation : IConfig
     /// <exception cref="DateCannotBeChangedException">Thrown if trying to set the start date while there is still data in the XML files</exception>
     public void SetStartDate(DateTime startDate)
     {
-        if (xmlFilesReset())
+        if (!GetStartDate().HasValue)
         {
             Config.StartDate = startDate;
         }
@@ -57,19 +57,4 @@ public class XMLConfigImplementation : IConfig
         }
     }
 
-    /// <summary>
-    /// Check if the XML data files are all empty, meaning they are uninitialized or were reset
-    /// </summary>
-    /// <returns>True if all files are empty</returns>
-    private bool xmlFilesReset()
-    {
-        List<Engineer> engineerList = XMLTools.LoadListFromXMLSerializer<Engineer>("engineers");
-        List<Task> taskList = XMLTools.LoadListFromXMLSerializer<Task>("tasks");
-        List<Dependency> dependencyList = XMLTools.LoadListFromXMLSerializer<Dependency>("dependencies");
-
-        if (engineerList.Count == 0 && taskList.Count == 0 && dependencyList.Count == 0)
-            return true;
-
-        return false;
-    }
 }

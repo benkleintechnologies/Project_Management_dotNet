@@ -25,6 +25,10 @@ public static class Initialization
     public static void Do()
     {
         s_dal = DalApi.Factory.Get;
+        s_dal.Engineer.Reset();
+        s_dal.Dependency.Reset();
+        s_dal.Task.Reset();
+        s_dal.Config.Reset();
         createEngineers();
         createTasks(false);
         createDependencies();
@@ -159,16 +163,25 @@ public static class Initialization
             Dependency newDependency = new(0, dependentTask, dependsOnTask);
 
             //Make sure a dependency doesn't exist in s_dalDependency with the same dependentTask and dependsOnTask
-            Dependency[] dependencies = s_dal!.Dependency.ReadAll().ToArray();
             bool existsAlready = false;
-            foreach(Dependency dependency in dependencies)
+
+            try
             {
-                if (dependency.DependentTask == dependentTask && dependency.DependsOnTask == dependsOnTask) 
+                Dependency[] dependencies = s_dal!.Dependency.ReadAll().ToArray();
+                foreach (Dependency dependency in dependencies)
                 {
-                    existsAlready = true;
-                    break;
+                    if (dependency.DependentTask == dependentTask && dependency.DependsOnTask == dependsOnTask)
+                    {
+                        existsAlready = true;
+                        break;
+                    }
                 }
             }
+            catch (DalDoesNotExistException)
+            {
+                //There are no dependencies, so it doesn't exist (stays false)
+            }
+            
             if (!existsAlready)
             {
                 s_dal!.Dependency.Create(newDependency);
@@ -209,7 +222,17 @@ public static class Initialization
 
         visitedTasks.Add(currentTask);
 
-        Dependency[] dependencies = s_dal!.Dependency.ReadAll().Where(d => d.DependentTask == currentTask).ToArray();
+        Dependency[] dependencies;
+        try
+        {
+            dependencies = s_dal!.Dependency.ReadAll().Where(d => d.DependentTask == currentTask).ToArray();
+        }
+        catch(DO.DalDoesNotExistException)
+        {
+            //No dependencies exist yet
+            return false;
+        }
+        
 
         foreach (Dependency dependency in dependencies)
         {
