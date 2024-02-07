@@ -212,7 +212,7 @@ internal class TaskImplementation : ITask
         {
             try
             {
-                DO.Task milestoneTask = _dal.Task.Read(t => t.ID == _dal.Dependency.Read(d => d.DependsOnTask == task.ID).DependentTask && t.IsMilestone);
+                DO.Task milestoneTask = _dal.Task.Read(t => t.ID == _dal.Dependency.Read(d => d.DependentTask == task.ID).DependsOnTask && t.IsMilestone);
                 milestone = new(milestoneTask.ID, milestoneTask.Nickname);
             }
             catch (DO.DalDoesNotExistException)

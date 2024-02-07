@@ -32,7 +32,7 @@ internal class Config
         set
         {
             XElement root = XMLTools.LoadListFromXMLElement(s_data_config_xml);
-            root.Element("StartDate")?.SetValue(value.HasValue ? value.Value.ToString("dd/MM/yyyy") : "");
+            root.Element("StartDate")?.SetValue(value.HasValue ? value.Value.ToString("MM/dd/yyyy") : "");
             XMLTools.SaveListToXMLElement(root, s_data_config_xml);
         }
     }
@@ -44,7 +44,7 @@ internal class Config
         set
         {
             XElement root = XMLTools.LoadListFromXMLElement(s_data_config_xml);
-            root.Element("EndDate")?.SetValue(value.HasValue ? value.Value.ToString("dd/MM/yyyy") : "");
+            root.Element("EndDate")?.SetValue(value.HasValue ? value.Value.ToString("MM/dd/yyyy") : "");
             XMLTools.SaveListToXMLElement(root, s_data_config_xml);
         }
     }
