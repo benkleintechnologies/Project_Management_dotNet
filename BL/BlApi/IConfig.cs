@@ -7,6 +7,7 @@ public interface IConfig
 {
     void SetProjectStartDate(DateTime startDate);
     void SetProjectEndDate(DateTime endDate);
+    public bool inProduction();
     void Reset();
 
 }

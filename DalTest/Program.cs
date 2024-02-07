@@ -400,7 +400,7 @@ internal class Program
         actualEndDate = endDateConverted ? endDateValue : null;
         Console.WriteLine();
 
-        Task newTask = new(id, isMilestone, level, assignedEngineerId, nickname, description, deliverables, notes, dateCreated, projectedStartDate, actualStartDate, duration, deadline, actualEndDate);
+        Task newTask = new(id, nickname, isMilestone, level, assignedEngineerId, description, deliverables, notes, dateCreated, projectedStartDate, actualStartDate, duration, deadline, actualEndDate);
         return newTask;
     }
 

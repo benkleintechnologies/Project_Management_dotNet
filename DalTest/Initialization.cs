@@ -113,11 +113,11 @@ public static class Initialization
             Task newTask;
             if (addDates)
             {
-                newTask = new(0, false, _difficultyLevel, null, null, null, null, null, dateCreated, projectedStartDate, null, duration, deadline, null);
+                newTask = new(0, "", false, _difficultyLevel, null, null, null, null, dateCreated, projectedStartDate, null, duration, deadline, null);
             }
             else
             {
-                newTask = new(0, false, _difficultyLevel, null, null, null, null, null, dateCreated, null, null, duration, null, null);
+                newTask = new(0, "", false, _difficultyLevel, null, null, null, null, dateCreated, null, null, duration, null, null);
             }
             
             s_dal!.Task.Create(newTask);

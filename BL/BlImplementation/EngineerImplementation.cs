@@ -34,11 +34,19 @@ internal class EngineerImplementation : IEngineer
     {
         try
         {
-            //Make sure the engineer is not assigned to a task
-            if (_dal.Task.Read(t => t.AssignedEngineerId == id) is null)
+            try
             {
-                throw new BO.BlCannotBeDeletedException($"This engineer with ID {id} could not be deleted because they are assigned to a Task.");
+                //Make sure the engineer is not assigned to a task
+                if (_dal.Task.Read(t => t.AssignedEngineerId == id) is not null)
+                {
+                    throw new BO.BlCannotBeDeletedException($"This engineer with ID {id} could not be deleted because they are assigned to a Task.");
+                }
             }
+            catch (DO.DalDoesNotExistException)
+            {
+                // Not an error just means no assigned task
+            }
+            
             //try to delete the engineer from the DAL
             _dal.Engineer.Delete(id);
         }
@@ -105,14 +113,20 @@ internal class EngineerImplementation : IEngineer
 
             //Update the Task the Engineer is assigned to.
             //Find the task the engineer is currently assigned to
-            DO.Task assignedTask = _dal.Task.Read(t => t.AssignedEngineerId == engineer.ID);
-
-            // Unassign the engineer from the old task if there was a change in assignment
-            if (engineer.Task?.ID != assignedTask?.ID && assignedTask is not null)
+            try
             {
-                _dal.Task.Update(assignedTask with { AssignedEngineerId = null });
+                DO.Task assignedTask = _dal.Task.Read(t => t.AssignedEngineerId == engineer.ID);
+                // Unassign the engineer from the old task if there was a change in assignment
+                if (engineer.Task?.ID != assignedTask?.ID && assignedTask is not null)
+                {
+                    _dal.Task.Update(assignedTask with { AssignedEngineerId = null });
+                }
             }
-
+            catch (DO.DalDoesNotExistException)
+            {
+                // Not an error just means no assigned task
+            }
+            
             // If the engineer is assigned to a new task, update the task with the engineer's ID
             if (engineer.Task is not null)
             {

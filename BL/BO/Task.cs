@@ -6,7 +6,7 @@
 public class Task
 {
     public int ID { get; init; }
-    public string? Name { get; set; }
+    public string Name { get; set; }
     public string? Description { get; set; }
     public Status Status { get; set; }
     public IEnumerable<TaskInList>? Dependencies { get; set; }
@@ -45,7 +45,7 @@ public class Task
     /// <param name="complexity">The complexity of the task.</param>
     public Task(
         int id,
-        string? name,
+        string name,
         string? description,
         Status status,
         IEnumerable<TaskInList>? dependencies,

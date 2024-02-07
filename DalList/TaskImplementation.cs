@@ -18,7 +18,22 @@ internal class TaskImplementation : ITask
     public int Create(Task item)
     {
         int id = DataSource.Config.NextTaskId;
-        Task task = item with { ID = id };
+        Task task;
+        if (item.Nickname == "")
+        {
+            task = item with
+            {
+                ID = id,
+                Nickname = "task" + id
+            };
+        }
+        else
+        {
+            task = item with
+            {
+                ID = id
+            };
+        }
         DataSource.Tasks.Add(task);
         return id;
     }
