@@ -29,6 +29,7 @@ internal class MilestoneImplementation : IMilestone
         _nextMilestoneId = StartMilestoneId;
 
         IEnumerable<DO.Dependency> oldDependencies = _dal.Dependency.ReadAll().ToList();
+        IEnumerable<DO.Task> oldTasks = _dal.Task.ReadAll().ToList();
 
         //Create a list of tasks and their dependencies, grouped
         IEnumerable<IGrouping<DO.Task, DO.Task>> groupedDependencies = oldDependencies.GroupBy(d => _dal.Task.Read(d.DependentTask), d => _dal.Task.Read(d.DependsOnTask)).ToList();
@@ -92,7 +93,7 @@ internal class MilestoneImplementation : IMilestone
         //Create starting Milestone in database (as Task)
         int startMilestoneTaskId = _dal.Task.Create(new(0, true, Nickname: "Start"));
         //Get all Tasks with no dependencies
-        IEnumerable<DO.Task> tasksWithoutDependencies = _dal.Task.ReadAll(t => oldDependencies.All(d => d.DependentTask != t.ID) && !t.IsMilestone); //t.ID != startMilestoneTaskId
+        IEnumerable<DO.Task> tasksWithoutDependencies = oldTasks.Where(t => oldDependencies.All(d => d.DependentTask != t.ID) && !t.IsMilestone); //t.ID != startMilestoneTaskId
         //Create a dependency for every Task with no dependencies on the Start Milestone
         tasksWithoutDependencies.Select(task =>
         {
@@ -102,7 +103,7 @@ internal class MilestoneImplementation : IMilestone
         //Create end Milestone in database (as Task)
         int endMilestoneTaskId = _dal.Task.Create(new(0, true, Nickname: "End"));
         //Get all Tasks which are not depended on
-        IEnumerable<DO.Task> tasksNotDependedOn = _dal.Task.ReadAll(t => oldDependencies.All(d => d.DependsOnTask != t.ID) && !t.IsMilestone); //t.ID != endMilestoneTaskId
+        IEnumerable<DO.Task> tasksNotDependedOn = oldTasks.Where(t => oldDependencies.All(d => d.DependsOnTask != t.ID) && !t.IsMilestone); //t.ID != endMilestoneTaskId
         //Create a dependency for the End Milestone on all last tasks which are not depended on by other tasks
         tasksNotDependedOn.Select(task =>
         {
@@ -477,10 +478,6 @@ public class TaskGroupEqualityComparer : IEqualityComparer<IGrouping<DO.Task, DO
 {
     public bool Equals(IGrouping<DO.Task, DO.Task> x, IGrouping<DO.Task, DO.Task> y)
     {
-        // Compare the key of the group
-        if (!x.Key.Equals(y.Key))
-            return false;
-
         // Compare the items in the group
         return x.OrderBy(task => task.ID).SequenceEqual(y.OrderBy(task => task.ID));
     }
