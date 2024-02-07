@@ -404,6 +404,11 @@ internal class Program
             //Exception because the schedule could not be created for some reason
             Console.WriteLine(ex.Message);
         }
+        catch (BlUnableToPerformActionInProductionException ex)
+        {
+            //Exception because this action cannot be performed once the system is in production mode
+            Console.WriteLine(ex.Message);
+        }
     }
 
     /// <summary>

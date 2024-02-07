@@ -73,7 +73,7 @@ internal class TaskImplementation : ITask
         try
         {
             //Get all Tasks from the DL
-            IEnumerable<DO.Task> tasks = _dal.Task.ReadAll();
+            IEnumerable<DO.Task> tasks = _dal.Task.ReadAll(t => !t.IsMilestone);
             //Filter the DL objects based on the filter
             IEnumerable<DO.Task> filteredDlTasks = filter != null ? tasks.Where(e => filter(toBlTask(e))) : tasks;
             //Return the list of BL type Tasks
@@ -95,7 +95,7 @@ internal class TaskImplementation : ITask
                 throw new BO.BlInvalidInputException($"The id {id} was invalid");
             }
             // Get the Task from the Data Layer, convert to BL Task and return it
-            return toBlTask(_dal.Task.Read(id));
+            return toBlTask(_dal.Task.Read(t => t.ID == id && !t.IsMilestone));
         }
         catch (DO.DalDoesNotExistException exc)
         {

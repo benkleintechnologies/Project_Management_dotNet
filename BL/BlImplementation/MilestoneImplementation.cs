@@ -122,6 +122,8 @@ internal class MilestoneImplementation : IMilestone
 
         //Clear all old dependencies
         oldDependencies.ToList().ForEach(d => _dal.Dependency.Delete(d.ID));
+
+        Console.WriteLine("Successfully created milestones and dependencies!");
     }
 
     public void CreateProjectSchedule()
@@ -180,6 +182,7 @@ internal class MilestoneImplementation : IMilestone
             {
                 throw new BO.BlUnableToCreateScheduleException("The calculation of start dates starting from the beginning goes past the end date of the project");
             }
+            Console.WriteLine("Successfully created project schedule!");
         }
         catch (DO.DalDoesNotExistException exc) 
         {
