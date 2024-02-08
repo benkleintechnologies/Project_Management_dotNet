@@ -20,7 +20,22 @@ internal class TaskImplementation : ITask
     public int Create(Task item)
     {
         int id = Config.NextTaskId;
-        Task task = item with { ID = id };
+        Task task;
+        if (item.Nickname == "")
+        {
+            task = item with
+            {
+                ID = id,
+                Nickname = "task" + id
+            };
+        }
+        else
+        {
+            task = item with
+            {
+                ID = id
+            };
+        }
         List<Task> tasks = XMLTools.LoadListFromXMLSerializer<Task>(s_tasks_xml);
         tasks.Add(task);
         XMLTools.SaveListToXMLSerializer<Task>(tasks, s_tasks_xml);

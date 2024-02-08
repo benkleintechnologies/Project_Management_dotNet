@@ -21,27 +21,15 @@ internal class TaskImplementation : ITask
                 throw new BO.BlInvalidInputException($"One of the fields of the Task with id {task.ID} was invalid");
             }
 
-            IEnumerable<DO.Task> previousTasks = Enumerable.Empty<DO.Task>();
-            try
-            {
-                // Getting all previous tasks to add into Dependencies
-                previousTasks = _dal.Task.ReadAll(t => t.ProjectedStartDate < task.ProjectedStartDate);
-            }
-            catch (DO.DalDoesNotExistException)
-            {
-                // Not an error, just that if create task won't have dependencies
-            }
+            //Try to add the Task to the data layer
+            DO.Task newTask = new(task.ID, task.Name, false, (DO.EngineerExperience)task.Complexity, null, task.Description, task.Deliverables, task.Notes, task.CreatedAtDate, task.ProjectedStartDate, task.ActualStartDate, task.RequiredEffortTime, task.Deadline, task.ActualEndDate);
+
+            int newTaskId = _dal.Task.Create(newTask);
 
             // Make the new task dependent on all previous tasks
-            IEnumerable<DO.Dependency> dependencies = from t in previousTasks 
-                                                  select new DO.Dependency(0, task.ID, t.ID);
+            IEnumerable<DO.Dependency> dependencies = from t in task.Dependencies
+                                                      select new DO.Dependency(0, newTaskId, t.ID);
             dependencies.ToList().ForEach(d => _dal.Dependency.Create(d));
-
-
-            //Try to add the Task to the data layer
-            DO.Task newTask = new(task.ID, task.Name, false, (DO.EngineerExperience)task.Complexity, task.Engineer?.ID, task.Description, task.Deliverables, task.Notes, task.CreatedAtDate, task.ProjectedStartDate, task.ActualStartDate, task.RequiredEffortTime, task.Deadline, task.ActualEndDate);
-
-            _dal.Task.Create(newTask);
         }
         catch (DO.DalAlreadyExistsException exc)
         {
@@ -110,7 +98,7 @@ internal class TaskImplementation : ITask
             DO.Task dlTask = _dal.Task.Read(task.ID);
             
             // Check if task exists in the DL and that name is nonempty
-            if (dlTask is not null || task.Name == "")
+            if (dlTask is null || task.Name == "")
             {
                 throw new BO.BlInvalidInputException($"One of the fields of the Task with id {task.ID} was invalid");
             }
@@ -121,14 +109,23 @@ internal class TaskImplementation : ITask
             if (_dal.Config.GetStartDate().HasValue && _dal.Task.ReadAll(t => t.ProjectedStartDate.HasValue).Count() == _dal.Task.ReadAll().Count()) // Production phase
             {
                 newTask = new(task.ID, task.Name, dlTask.IsMilestone, (DO.EngineerExperience)task.Complexity, task.Engineer?.ID, task.Description, task.Deliverables, task.Notes, dlTask.DateCreated, dlTask.ProjectedStartDate, task.ActualStartDate, dlTask.Duration, dlTask.Deadline, task.ActualEndDate);
+
+                //Check that new assigned engineer has proper level (equal or greater than complexity)
+                if (_dal.Engineer.Read(task.Engineer.ID).Level < (DO.EngineerExperience)task.Complexity)
+                {
+                    throw new BO.BlInvalidInputException("The assigned engineer's experience level is not sufficient for the task's complexity");
+                }
             }
-            else if (!_dal.Config.GetStartDate().HasValue) // Planning stage
+            else // Planning stage
             {
-                newTask = new(task.ID, task.Name, dlTask.IsMilestone, (DO.EngineerExperience)task.Complexity, dlTask.AssignedEngineerId, task.Description, task.Deliverables, task.Notes, dlTask.DateCreated, dlTask.ProjectedStartDate, dlTask.ActualStartDate, dlTask.Duration, dlTask.Deadline, dlTask.ActualEndDate);
-            }
-            else // Has a project start date, but no other planned dates yet
-            {
-                newTask = new(task.ID, task.Name, dlTask.IsMilestone, (DO.EngineerExperience)task.Complexity, dlTask.AssignedEngineerId,  task.Description, task.Deliverables, task.Notes, dlTask.DateCreated, task.ProjectedStartDate, dlTask.ActualStartDate, task.RequiredEffortTime, task.Deadline, dlTask.ActualEndDate);
+                newTask = new(task.ID, task.Name, dlTask.IsMilestone, (DO.EngineerExperience)task.Complexity, dlTask.AssignedEngineerId, task.Description, task.Deliverables, task.Notes, dlTask.DateCreated, task.ProjectedStartDate, dlTask.ActualStartDate, task.RequiredEffortTime, task.Deadline, dlTask.ActualEndDate);
+
+                // Update the dependencies for the task (remove any old and add any new)
+                IEnumerable<DO.Dependency> oldDependencies = _dal.Dependency.ReadAll(d => d.DependentTask == task.ID);
+                oldDependencies.ToList().ForEach(d => _dal.Dependency.Delete(d.ID));
+                IEnumerable<DO.Dependency> newDependencies = from t in task.Dependencies
+                                                             select new DO.Dependency(0, task.ID, t.ID);
+                newDependencies.ToList().ForEach(d => _dal.Dependency.Create(d));
             }
 
             _dal.Task.Update(newTask);

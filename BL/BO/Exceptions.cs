@@ -39,3 +39,8 @@ public class BlCannotChangeDateException : Exception
 {
     public BlCannotChangeDateException(string? message) : base(message) { }
 }
+
+public class BlUnableToPerformActionInPlanningException : Exception
+{
+    public BlUnableToPerformActionInPlanningException(string? message) : base(message) { }
+}

@@ -1,10 +1,11 @@
 ﻿using BO;
+using DalApi;
+using System.Xml.Linq;
 namespace BlTest;
 
 internal class Program
 {
     static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
-
     static void Main(string[] args)
     {
         Console.Write("Would you like to create Initial data? (Y/N) ");
@@ -124,8 +125,9 @@ internal class Program
                             "d) Display the task list\n" +
                             "e) Update a task\n" +
                             "f) Update a task's start date\n" +
-                            "g) Delete a task from the task list\n" +
-                            "h) Reset tasks\n");
+                            "g) Assign an engineer to a Task\n" +
+                            "h) Delete a task from the task list\n" +
+                            "i) Reset tasks\n");
     }
 
     static void MilestoneOptionsPrint()
@@ -258,8 +260,8 @@ internal class Program
                 case "b": //Add Task
                     if (!s_bl.Config.inProduction())
                     {
-                        Console.WriteLine("Enter the id, name, description, status, date created, projected start date, actual start date, required effort time, deadline, actual end date, deliverables, notes, assigned engineer ID, complexity (on separate lines):\n");
-                        newTask = ParseTask(); //Need to also ask for dependencies
+                        Console.WriteLine("Enter the id, name, description, date created, projected start date, required effort time, deadline, deliverables, notes, and complexity (on separate lines):\n");
+                        newTask = ParseTask(adding: true); //Need to also ask for dependencies
                         s_bl.Task.AddTask(newTask);
                         break;
                     }
@@ -281,7 +283,14 @@ internal class Program
                     Console.WriteLine();
                     break;
                 case "e": //Update Task
-                    Console.WriteLine("Enter the updated information of the task, including - id, name, description, status, date created, projected start date, actual start date, required effort time, deadline, actual end date, deliverables, notes, assigned engineer ID, complexity (on separate lines):\n");
+                    if (s_bl.Config.inProduction())
+                    {
+                        Console.WriteLine("Enter the updated information of the task, including - id, name, description, actual start date, actual end date, deliverables, notes, assigned engineer ID (on separate lines):\n");
+                    }
+                    else 
+                    {
+                        Console.WriteLine("Enter the updated information of the task, including - id, name, description, projected start date, required effort time, deadline, deliverables, notes, complexity (on separate lines):\n");
+                    }
                     newTask = ParseTask();
                     s_bl.Task.UpdateTask(newTask);
                     break;
@@ -292,13 +301,25 @@ internal class Program
                     DateTime.TryParse(Console.ReadLine(), out DateTime startDateValue);
                     s_bl.Task.UpdateTaskStartDate(id, startDateValue);
                     break;
-                case "g": //Delete Task
+                case "g": //Assign engineer to Task
+                    if (!s_bl.Config.inProduction())
+                        throw new BO.BlUnableToPerformActionInPlanningException("Cannot assign an engineer to a task in planning mode");
+                    Console.WriteLine("Enter the id of the task you would like to assign an engineer to:");
+                    int.TryParse(Console.ReadLine(), out id);
+                    Console.WriteLine("Enter the id of the engineer you would like to assign to the task:");
+                    int.TryParse(Console.ReadLine(), out int engineerId);
+                    BO.Task oldTask = s_bl.Task.GetTask(id);
+                    BO.Engineer engineer = s_bl.Engineer.GetEngineer(engineerId);
+                    BO.Task taskWithEngineer = new(id, oldTask.Name, oldTask.Description, Status.Unscheduled, oldTask.Dependencies, oldTask.Milestone, oldTask.CreatedAtDate, oldTask.ProjectedStartDate, oldTask.ActualStartDate, oldTask.ProjectedEndDate, oldTask.Deadline, oldTask.ActualEndDate, oldTask.RequiredEffortTime, oldTask.Deliverables, oldTask.Notes, new EngineerInTask(engineer.ID, engineer.Name), oldTask.Complexity);
+                    s_bl.Task.UpdateTask(taskWithEngineer);
+                    break;
+                case "h": //Delete Task
                     Console.WriteLine("Enter the id of the task you would like to delete:\n");
                     int.TryParse(Console.ReadLine(), out id);
                     Console.WriteLine();
                     s_bl.Task.DeleteTask(id);
                     break;
-                case "h": //Reset Tasks
+                case "i": //Reset Tasks
                     s_bl.Task.Reset();
                     break;
                 default:
@@ -334,6 +355,11 @@ internal class Program
         catch (BlNullPropertyException ex)
         {
             //Exception because a necessary property was null
+            Console.WriteLine(ex.Message);
+        }
+        catch (BlUnableToPerformActionInPlanningException ex)
+        {
+            //Exception because this action cannot be performed once the system is in planning mode
             Console.WriteLine(ex.Message);
         }
     }
@@ -442,82 +468,124 @@ internal class Program
     /// Receives input from user for all fields of Task
     /// </summary>
     /// <returns>Task object based on user input</returns>
-    private static BO.Task ParseTask()
+    private static BO.Task ParseTask(bool adding = false)
     {
-        //Enter the updated information of the task, including - id, name, description, status, date created, projected start date, actual start date, required effort time, deadline, deliverables, notes, assigned engineer ID, complexity
+        //Enter the updated information of the task, including:
+        //In Production - id, name, description, actual start date, actual end date, deliverables, notes, assigned engineer ID
+        //In Planning - id, name, description, projected start date, required effort time, deadline, deliverables, notes, complexity [and dependencies]
+        //When Adding - id, name, description, date created, projected start date, required effort time, deadline, deliverables, notes, and complexity [and dependencies]
+        bool inProduction = s_bl.Config.inProduction();
+        bool inPlanning = !s_bl.Config.inProduction();
+
         int.TryParse(Console.ReadLine(), out int id);
         string? name = Console.ReadLine();
         string? description = Console.ReadLine();
-        Enum.TryParse(Console.ReadLine(), out BO.Status status);
-        DateTime? dateCreated;
-        bool dateCreatedConverted = DateTime.TryParse(Console.ReadLine(), out DateTime dateCreatedValue);
-        dateCreated = dateCreatedConverted ? dateCreatedValue : null;
-        DateTime? projectedStartDate;
-        bool projectedDateConverted = DateTime.TryParse(Console.ReadLine(), out DateTime projectedDateValue);
-        projectedStartDate = projectedDateConverted ? projectedDateValue : null;
-        DateTime? actualStartDate;
-        bool startDateConverted = DateTime.TryParse(Console.ReadLine(), out DateTime startDateValue);
-        actualStartDate = startDateConverted ? startDateValue : null;
-        TimeSpan? duration;
-        bool durationConverted = TimeSpan.TryParse(Console.ReadLine(), out TimeSpan durationValue);
-        duration = durationConverted ? durationValue : null;
-        DateTime? deadline;
-        bool deadlineConverted = DateTime.TryParse(Console.ReadLine(), out DateTime deadlineValue);
-        deadline = deadlineConverted ? deadlineValue : null;
-        DateTime? actualEndDate;
-        bool endDateConverted = DateTime.TryParse(Console.ReadLine(), out DateTime endDateValue);
-        actualEndDate = endDateConverted ? endDateValue : null;
+        
+        DateTime? dateCreated = null;
+        if (adding)
+        {
+            bool dateCreatedConverted = DateTime.TryParse(Console.ReadLine(), out DateTime dateCreatedValue);
+            dateCreated = dateCreatedConverted ? dateCreatedValue : null;
+        }
+
+        DateTime? projectedStartDate = null;
+        if (inPlanning || adding)
+        {
+            bool projectedDateConverted = DateTime.TryParse(Console.ReadLine(), out DateTime projectedDateValue);
+            projectedStartDate = projectedDateConverted ? projectedDateValue : null;
+        }
+        
+        DateTime? actualStartDate = null;
+        if (inProduction)
+        {
+            bool startDateConverted = DateTime.TryParse(Console.ReadLine(), out DateTime startDateValue);
+            actualStartDate = startDateConverted ? startDateValue : null;
+        }
+        
+        TimeSpan? duration = null;
+        if (inPlanning || adding)
+        {
+            bool durationConverted = TimeSpan.TryParse(Console.ReadLine(), out TimeSpan durationValue);
+            duration = durationConverted ? durationValue : null;
+        }
+
+        DateTime? deadline = null;
+        if (inPlanning || adding)
+        {
+            bool deadlineConverted = DateTime.TryParse(Console.ReadLine(), out DateTime deadlineValue);
+            deadline = deadlineConverted ? deadlineValue : null;
+        }
+        
+        DateTime? actualEndDate = null;
+        if (inProduction)
+        {
+            bool endDateConverted = DateTime.TryParse(Console.ReadLine(), out DateTime endDateValue);
+            actualEndDate = endDateConverted ? endDateValue : null;
+        }
+        
         string? deliverables = Console.ReadLine();
         string? notes = Console.ReadLine();
         
         //Get Assigned Engineer from ID
         EngineerInTask? assignedEngineer = null;
-        bool engineerConverted = int.TryParse(Console.ReadLine(), out int assignedId);
-        if (engineerConverted)
+        if (inProduction)
         {
-            BO.Engineer engineer = s_bl.Engineer.GetEngineer(assignedId);
-            assignedEngineer = new(engineer.ID, engineer.Name);
+            bool engineerConverted = int.TryParse(Console.ReadLine(), out int assignedId);
+            if (engineerConverted)
+            {
+                BO.Engineer engineer = s_bl.Engineer.GetEngineer(assignedId);
+                assignedEngineer = new(engineer.ID, engineer.Name);
+            }
         }
 
-        Enum.TryParse(Console.ReadLine(), out EngineerExperience complexity);
+        EngineerExperience complexity = EngineerExperience.Beginner;
+        if (inPlanning || adding)
+        {
+            Enum.TryParse(Console.ReadLine(), out complexity);
+
+        }
 
         //Ask for dependencies
         List<TaskInList> dependencies = new List<TaskInList>();
-        Console.WriteLine("Enter IDs of tasks this task depends on (comma-separated):");
-        string? input = Console.ReadLine();
-        if (input != "")
+        if (inPlanning || adding)
         {
-            string[] dependencyIds = input.Split(',');
-
-            foreach (string dependencyId in dependencyIds)
+            Console.WriteLine("Enter IDs of tasks this task depends on (comma-separated):");
+            string? input = Console.ReadLine();
+            if (input != "")
             {
-                if (int.TryParse(dependencyId.Trim(), out int depId))
+                string[] dependencyIds = input.Split(',');
+
+                foreach (string dependencyId in dependencyIds)
                 {
-                    BO.Task dependencyTask = s_bl.Task.GetTask(depId);
-                    if (dependencyTask != null)
+                    if (int.TryParse(dependencyId.Trim(), out int depId))
                     {
-                        TaskInList taskInList = new TaskInList(
-                            dependencyTask.ID,
-                            dependencyTask.Name,
-                            dependencyTask.Description,
-                            dependencyTask.Status
-                        );
-                        dependencies.Add(taskInList);
+                        BO.Task dependencyTask = s_bl.Task.GetTask(depId);
+                        if (dependencyTask != null)
+                        {
+                            TaskInList taskInList = new TaskInList(
+                                dependencyTask.ID,
+                                dependencyTask.Name,
+                                dependencyTask.Description,
+                                dependencyTask.Status
+                            );
+                            dependencies.Add(taskInList);
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Task with ID {depId} not found.");
+                        }
                     }
                     else
                     {
-                        Console.WriteLine($"Task with ID {depId} not found.");
+                        Console.WriteLine($"Invalid ID: {dependencyId}");
                     }
-                }
-                else
-                {
-                    Console.WriteLine($"Invalid ID: {dependencyId}");
                 }
             }
         }
+        
         Console.WriteLine();
 
-        BO.Task newTask = new(id, name, description, status, dependencies, null, dateCreated, projectedStartDate, actualStartDate, projectedStartDate+duration, deadline, actualEndDate, duration, deliverables, notes, assignedEngineer, complexity);
+        BO.Task newTask = new(id, name, description, Status.Unscheduled, dependencies, null, dateCreated, projectedStartDate, actualStartDate, projectedStartDate+duration, deadline, actualEndDate, duration, deliverables, notes, assignedEngineer, complexity);
         return newTask;
     }
 

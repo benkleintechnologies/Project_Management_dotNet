@@ -206,11 +206,22 @@ internal class MilestoneImplementation : IMilestone
             // Get the Task from the Data Layer
             DO.Task milestoneTask = _dal.Task.Read(t => t.ID == id && t.IsMilestone);
             // Get all dependencies of this milestone
-            IEnumerable<DO.Task> dependentTasks = _dal.Dependency.ReadAll(d => d.DependentTask == id).Select(d => _dal.Task.Read(d.DependsOnTask));
-            //Create a TaskInList for all dependencies
-            IEnumerable<BO.TaskInList> dependenciesList = dependentTasks.Select(t => new BO.TaskInList(t.ID, t.Nickname, t.Description, getStatusForTask(t)));
-            //Calculate completion percentage
-            double completedPercentage = dependenciesList.Where(t => t.Status == BO.Status.Done).Count() / dependenciesList.Count();
+            IEnumerable<DO.Task> dependentTasks = Enumerable.Empty<DO.Task>();
+            IEnumerable<BO.TaskInList> dependenciesList = Enumerable.Empty<BO.TaskInList>();
+            double completedPercentage = 100;
+            try
+            {
+                dependentTasks = _dal.Dependency.ReadAll(d => d.DependentTask == id).Select(d => _dal.Task.Read(d.DependsOnTask));
+                //Create a TaskInList for all dependencies
+                dependenciesList = dependentTasks.Select(t => new BO.TaskInList(t.ID, t.Nickname, t.Description, getStatusForTask(t)));
+                //Calculate completion percentage
+                completedPercentage = dependenciesList.Where(t => t.Status == BO.Status.Done).Count() / dependenciesList.Count() * 100;
+            }
+            catch (DO.DalDoesNotExistException)
+            {
+                //Not an error - this milestone has no dependencies (it's the start milestone)
+            }
+            
             //Create Milestone object (and calculate Business layer fields)
             return new BO.Milestone(milestoneTask.ID, milestoneTask.Nickname, milestoneTask.Description, milestoneTask.DateCreated, getStatusForTask(milestoneTask), milestoneTask.ProjectedStartDate, milestoneTask.Deadline, milestoneTask.ActualEndDate, completedPercentage, milestoneTask.Notes, dependenciesList);
         }

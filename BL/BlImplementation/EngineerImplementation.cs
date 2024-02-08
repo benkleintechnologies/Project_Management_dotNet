@@ -1,5 +1,6 @@
 ﻿namespace BlImplementation;
 using BlApi;
+using DO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +18,35 @@ internal class EngineerImplementation : IEngineer
             if (engineer.ID <= 0 || engineer.Name == "" || engineer.Cost <= 0 || !isValidEmail(engineer.Email))
             {
                 throw new BO.BlInvalidInputException($"One of the fields of the Engineer with id {engineer.ID} was invalid");
+            }
+
+            //If we're in production
+            if (_dal.Config.GetStartDate().HasValue)
+            {
+                //Update assigned task in DL (add assignedEngineerId to the task this engineer is assigned to)
+                if (engineer.Task is not null)
+                {
+                    DO.Task toAssignTask;
+                    try
+                    {
+                        toAssignTask = _dal.Task.Read(engineer.Task.ID);
+                    }
+                    catch (DalDoesNotExistException)
+                    {
+                        throw new BO.BlDoesNotExistException($"The Task with ID {engineer.Task.ID} which you are trying to assign to Engineer with ID {engineer.ID} does not exist.");
+                    }
+
+                    if (toAssignTask is not null)
+                    {
+                        //Check that the engineer has the same or higher experience level than the task
+                        if ((DO.EngineerExperience)engineer.Experience < toAssignTask.DegreeOfDifficulty)
+                        {
+                            throw new BO.BlInvalidInputException($"The Engineer with ID {engineer.ID} could not be assigned to the Task with ID {toAssignTask.ID} because their experience level is too low.");
+                        }
+
+                        _dal.Task.Update(toAssignTask with { AssignedEngineerId = engineer.ID });
+                    }
+                }
             }
 
             //Try to add the Engineer to the data layer
@@ -112,29 +142,32 @@ internal class EngineerImplementation : IEngineer
             _dal.Engineer.Update(newEngineer);
 
             //Update the Task the Engineer is assigned to.
-            //Find the task the engineer is currently assigned to
-            try
+            //If we're in production
+            if (_dal.Config.GetStartDate().HasValue)
             {
-                DO.Task assignedTask = _dal.Task.Read(t => t.AssignedEngineerId == engineer.ID);
-                // Unassign the engineer from the old task if there was a change in assignment
-                if (engineer.Task?.ID != assignedTask?.ID && assignedTask is not null)
+                //Update assigned task in DL (add assignedEngineerId to the task this engineer is assigned to)
+                if (engineer.Task is not null)
                 {
-                    _dal.Task.Update(assignedTask with { AssignedEngineerId = null });
-                }
-            }
-            catch (DO.DalDoesNotExistException)
-            {
-                // Not an error just means no assigned task
-            }
-            
-            // If the engineer is assigned to a new task, update the task with the engineer's ID
-            if (engineer.Task is not null)
-            {
-                DO.Task toAssignTask = _dal.Task.Read(engineer.Task.ID);
+                    DO.Task toAssignTask;
+                    try
+                    {
+                        toAssignTask = _dal.Task.Read(engineer.Task.ID);
+                    }
+                    catch (DalDoesNotExistException)
+                    {
+                        throw new BO.BlDoesNotExistException($"The Task with ID {engineer.Task.ID} which you are trying to assign to Engineer with ID {engineer.ID} does not exist.");
+                    }
 
-                if (toAssignTask is not null)
-                {
-                    _dal.Task.Update(toAssignTask with { AssignedEngineerId = engineer.ID });
+                    if (toAssignTask is not null)
+                    {
+                        //Check that the engineer has the same or higher experience level than the task
+                        if ((DO.EngineerExperience)engineer.Experience < toAssignTask.DegreeOfDifficulty)
+                        {
+                            throw new BO.BlInvalidInputException($"The Engineer with ID {engineer.ID} could not be assigned to the Task with ID {toAssignTask.ID} because their experience level is too low.");
+                        }
+
+                        _dal.Task.Update(toAssignTask with { AssignedEngineerId = engineer.ID });
+                    }
                 }
             }
         }

@@ -95,7 +95,7 @@ public static class Initialization
     /// <param name="addDates">Boolean value to determine whether to add dates to the tasks</param>
     private static void createTasks(bool addDates)
     {
-        for (int i = 0; i<6; i++)
+        for (int i = 0; i<20; i++)
         {
             //randomly choose difficulty level
             var values = Enum.GetValues(typeof(EngineerExperience));
@@ -147,7 +147,7 @@ public static class Initialization
         s_dal!.Dependency.Create(dependency4);
 
         //Generate random dependencies
-        for (int i = 0; i <= 5; i++) 
+        for (int i = 0; i <= 36; i++) 
         { 
            
             //Choose random tasks to be dependent on each other
