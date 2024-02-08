@@ -100,7 +100,7 @@ public static class Initialization
             //randomly choose difficulty level
             var values = Enum.GetValues(typeof(EngineerExperience));
             int randomIndex = s_rand.Next(values.Length);
-            EngineerExperience _difficultyLevel = (EngineerExperience)values.GetValue(randomIndex);
+            EngineerExperience _difficultyLevel = (EngineerExperience) values.GetValue(randomIndex);
             
             //Making each task a random length
             TimeSpan toSubtract = TimeSpan.FromDays(s_rand.Next(1,28));
