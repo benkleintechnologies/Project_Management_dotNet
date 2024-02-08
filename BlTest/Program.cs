@@ -18,7 +18,7 @@ internal class Program
             bool exit = false;
             while (!exit)
             {
-                Console.WriteLine("0. Exit the main menu\n1. Set project start and end date\n2. Test out Tasks\n3. Test out Engineers\n4. Test out Milestones\n5. Reset Project\n");
+                Console.WriteLine("\n0. Exit the main menu\n1. Set project start and end date\n2. Test out Tasks\n3. Test out Engineers\n4. Test out Milestones\n5. Reset Project\n");
                 string? input = Console.ReadLine();
                 int.TryParse(input, out int inputNumber);
                 Console.WriteLine();
@@ -65,42 +65,42 @@ internal class Program
         catch (BlDoesNotExistException ex)
         {
             //Exception because Entity does not exists
-            Console.WriteLine(ex.Message);
+            Console.WriteLine(ex.Message + "\n");
         }
         catch (BlAlreadyExistsException ex)
         {
             //Exception because Entity already exists
-            Console.WriteLine(ex.Message);
+            Console.WriteLine(ex.Message + "\n");
         }
         catch (BlCannotBeDeletedException ex)
         {
             //Exception because deletion is impossible
-            Console.WriteLine(ex.Message);
+            Console.WriteLine(ex.Message + "\n");
         }
         catch (BlInvalidInputException ex)
         {
             //Exception because invalid input was given
-            Console.WriteLine(ex.Message);
+            Console.WriteLine(ex.Message + "\n");
         }
         catch (BlNullPropertyException ex)
         {
             //Exception because a necessary property was null
-            Console.WriteLine(ex.Message);
+            Console.WriteLine(ex.Message + "\n");
         }
         catch (BlUnableToCreateScheduleException ex)
         {
             //Exception because the schedule could not be created for some reason
-            Console.WriteLine(ex.Message);
+            Console.WriteLine(ex.Message + "\n");
         }
         catch (BlUnableToPerformActionInProductionException ex)
         {
             //Exception because this action cannot be performed once the system is in production mode
-            Console.WriteLine(ex.Message);
+            Console.WriteLine(ex.Message + "\n");
         }
         catch (BlCannotChangeDateException ex)
         {
             //Exception because the start and end dates cannot be changed once they're set
-            Console.WriteLine(ex.Message);
+            Console.WriteLine(ex.Message + "\n");
         }
     }
 
@@ -181,12 +181,19 @@ internal class Program
                     Console.WriteLine();
                     break;
                 case "b": //Add Engineer
-                    Console.WriteLine("Enter the id, name, email, experience level, cost, and assigned task ID (on separate lines):\n");
+                    if (s_bl.Config.inProduction())
+                    {
+                        Console.WriteLine("Enter the id, name, email, experience level, cost, and assigned task ID (on separate lines):");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Enter the id, name, email, experience level, and cost (on separate lines):");
+                    }
                     newEngineer = ParseEngineer();
                     s_bl.Engineer.AddEngineer(newEngineer);
                     break;
                 case "c": //Display Engineer
-                    Console.WriteLine("Enter the id of the engineer you would like to display:\n");
+                    Console.WriteLine("Enter the id of the engineer you would like to display:");
                     int.TryParse(Console.ReadLine(), out id);
                     Console.WriteLine();
                     BO.Engineer? engineerToPrint = s_bl.Engineer.GetEngineer(id);
@@ -202,12 +209,19 @@ internal class Program
                     Console.WriteLine();
                     break;
                 case "e": //Update Engineer
-                    Console.WriteLine("Enter the updated information of the engineer, including - id, name, email, experience level, cost, and assigned task ID (on separate lines):\n");
+                    if (s_bl.Config.inProduction())
+                    {
+                        Console.WriteLine("Enter the updated information of the engineer, including - id, name, email, experience level, cost, and assigned task ID (on separate lines):");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Enter the updated information of the engineer, including - id, name, email, experience level, and cost (on separate lines):");
+                    }
                     newEngineer = ParseEngineer();
                     s_bl.Engineer.UpdateEngineer(newEngineer);
                     break;
                 case "f": //Delete Engineer
-                    Console.WriteLine("Enter the id of the engineer you would like to delete:\n");
+                    Console.WriteLine("Enter the id of the engineer you would like to delete:");
                     int.TryParse(Console.ReadLine(), out id);
                     Console.WriteLine();
                     s_bl.Engineer.DeleteEngineer(id);
@@ -223,22 +237,22 @@ internal class Program
         catch (BlDoesNotExistException ex)
         {
             //Exception because Entity does not exists
-            Console.WriteLine(ex.Message);
+            Console.WriteLine(ex.Message + "\n");
         }
         catch (BlAlreadyExistsException ex)
         {
             //Exception because Entity already exists
-            Console.WriteLine(ex.Message);
+            Console.WriteLine(ex.Message + "\n");
         }
         catch (BlCannotBeDeletedException ex)
         {
             //Exception because deletion is impossible
-            Console.WriteLine(ex.Message);
+            Console.WriteLine(ex.Message + "\n");
         }
         catch (BlInvalidInputException ex)
         {
             //Exception because invalid input was given
-            Console.WriteLine(ex.Message);
+            Console.WriteLine(ex.Message + "\n");
         }
     }
 
@@ -285,19 +299,21 @@ internal class Program
                 case "e": //Update Task
                     if (s_bl.Config.inProduction())
                     {
-                        Console.WriteLine("Enter the updated information of the task, including - id, name, description, actual start date, actual end date, deliverables, notes, assigned engineer ID (on separate lines):\n");
+                        Console.WriteLine("Enter the updated information of the task, including - id, name, description, actual start date, actual end date, deliverables, notes, assigned engineer ID (on separate lines):");
                     }
                     else 
                     {
-                        Console.WriteLine("Enter the updated information of the task, including - id, name, description, projected start date, required effort time, deadline, deliverables, notes, complexity (on separate lines):\n");
+                        Console.WriteLine("Enter the updated information of the task, including - id, name, description, projected start date, required effort time, deadline, deliverables, notes, complexity (on separate lines):");
                     }
                     newTask = ParseTask();
                     s_bl.Task.UpdateTask(newTask);
                     break;
-                case "f": //Update Task Start Date
-                    Console.WriteLine("Enter the id of the task you would like to update:\n");
+                case "f": //Update Task Projected Start Date
+                    if (s_bl.Config.inProduction())
+                        throw new BO.BlUnableToPerformActionInProductionException("Cannot update a task's projected start date in production mode");
+                    Console.WriteLine("Enter the id of the task you would like to update:");
                     int.TryParse(Console.ReadLine(), out id);
-                    Console.WriteLine("Enter the new start date of the Task:\n");
+                    Console.WriteLine("Enter the new start date of the Task:");
                     DateTime.TryParse(Console.ReadLine(), out DateTime startDateValue);
                     s_bl.Task.UpdateTaskStartDate(id, startDateValue);
                     break;
@@ -314,7 +330,7 @@ internal class Program
                     s_bl.Task.UpdateTask(taskWithEngineer);
                     break;
                 case "h": //Delete Task
-                    Console.WriteLine("Enter the id of the task you would like to delete:\n");
+                    Console.WriteLine("Enter the id of the task you would like to delete:");
                     int.TryParse(Console.ReadLine(), out id);
                     Console.WriteLine();
                     s_bl.Task.DeleteTask(id);
@@ -330,37 +346,37 @@ internal class Program
         catch (BlDoesNotExistException ex)
         {
             //Exception because Entity does not exists
-            Console.WriteLine(ex.Message);
+            Console.WriteLine(ex.Message + "\n");
         }
         catch (BlAlreadyExistsException ex)
         {
             //Exception because Entity already exists
-            Console.WriteLine(ex.Message);
+            Console.WriteLine(ex.Message + "\n");
         }
         catch (BlCannotBeDeletedException ex)
         {
             //Exception because deletion is impossible
-            Console.WriteLine(ex.Message);
+            Console.WriteLine(ex.Message + "\n");
         }
         catch (BlInvalidInputException ex)
         {
             //Exception because invalid input was given
-            Console.WriteLine(ex.Message);
+            Console.WriteLine(ex.Message + "\n");
         }
         catch (BlUnableToPerformActionInProductionException ex)
         {
             //Exception because this action cannot be performed once the system is in production mode
-            Console.WriteLine(ex.Message);
+            Console.WriteLine(ex.Message + "\n");
         }
         catch (BlNullPropertyException ex)
         {
             //Exception because a necessary property was null
-            Console.WriteLine(ex.Message);
+            Console.WriteLine(ex.Message + "\n");
         }
         catch (BlUnableToPerformActionInPlanningException ex)
         {
             //Exception because this action cannot be performed once the system is in planning mode
-            Console.WriteLine(ex.Message);
+            Console.WriteLine(ex.Message + "\n");
         }
     }
 
@@ -382,7 +398,7 @@ internal class Program
                     s_bl.Milestone.CreateProjectSchedule();
                     break;
                 case "c": //Display/Get Milestone
-                    Console.WriteLine("Enter the id of the milestone you would like to display:\n");
+                    Console.WriteLine("Enter the id of the milestone you would like to display:");
                     int.TryParse(Console.ReadLine(), out id);
                     Console.WriteLine();
                     Milestone? milestoneToPrint = s_bl.Milestone.GetMilestone(id);
@@ -390,7 +406,7 @@ internal class Program
                     Console.WriteLine(milestoneToPrint + "\n");
                     break;
                 case "d": //Update Milestone
-                    Console.WriteLine("Enter the updated information of the milestone, including - id, name, description, and notes (on separate lines):\n");
+                    Console.WriteLine("Enter the updated information of the milestone, including - id, name, description, and notes (on separate lines):");
                     int.TryParse(Console.ReadLine(), out id);
                     string? name = Console.ReadLine();
                     string? description = Console.ReadLine();
@@ -408,32 +424,32 @@ internal class Program
         catch (BlDoesNotExistException ex)
         {
             //Exception because Entity does not exists
-            Console.WriteLine(ex.Message);
+            Console.WriteLine(ex.Message + "\n");
         }
         catch (BlCannotBeDeletedException ex)
         {
             //Exception because deletion is impossible
-            Console.WriteLine(ex.Message);
+            Console.WriteLine(ex.Message + "\n");
         }
         catch (BlInvalidInputException ex)
         {
             //Exception because invalid input was given
-            Console.WriteLine(ex.Message);
+            Console.WriteLine(ex.Message + "\n");
         }
         catch (BlNullPropertyException ex)
         {
             //Exception because a necessary property was null
-            Console.WriteLine(ex.Message);
+            Console.WriteLine(ex.Message + "\n");
         }
         catch (BlUnableToCreateScheduleException ex)
         {
             //Exception because the schedule could not be created for some reason
-            Console.WriteLine(ex.Message);
+            Console.WriteLine(ex.Message + "\n");
         }
         catch (BlUnableToPerformActionInProductionException ex)
         {
             //Exception because this action cannot be performed once the system is in production mode
-            Console.WriteLine(ex.Message);
+            Console.WriteLine(ex.Message + "\n");
         }
     }
 
@@ -452,12 +468,17 @@ internal class Program
         cost = costConverted ? costValue : 0;
         //Get Assigned Task from ID
         TaskInEngineer? taskInEngineer = null;
-        bool hasTask = int.TryParse(Console.ReadLine(), out int taskID);
-        if (hasTask)
+        
+        if (s_bl.Config.inProduction())
         {
-            BO.Task assignedTask = s_bl.Task.GetTask(taskID);
-            taskInEngineer = new(assignedTask.ID, assignedTask.Name);
+            bool hasTask = int.TryParse(Console.ReadLine(), out int taskID);
+            if (hasTask)
+            {
+                BO.Task assignedTask = s_bl.Task.GetTask(taskID);
+                taskInEngineer = new(assignedTask.ID, assignedTask.Name);
+            }
         }
+        
         BO.Engineer newEngineer = new(id, name, email, level, cost, taskInEngineer);
         Console.WriteLine();
 

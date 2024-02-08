@@ -41,14 +41,16 @@ internal class TaskImplementation : ITask
     {
         try
         {
-            //Check that this task can be deleted - i.e. Not depended on by another Task. Otherwise throw error
-            if (_dal.Dependency.ReadAll(d => d.DependsOnTask == id) is not null)
+            try
             {
+                _dal.Dependency.ReadAll(d => d.DependsOnTask == id); //will throw an exception if there are no dependencies
                 throw new BO.BlCannotBeDeletedException($"Task with id {id} cannot be deleted because another task depends on it.");
             }
-
-            //Delete from the Data Layer
-            _dal.Dependency.Delete(id);
+            catch (DO.DalDoesNotExistException)
+            {
+                //Delete from the Data Layer because no other task depends on it
+                _dal.Task.Delete(id);
+            }  
         }
         catch (DO.DalDoesNotExistException exc)
         {
@@ -110,10 +112,13 @@ internal class TaskImplementation : ITask
             {
                 newTask = new(task.ID, task.Name, dlTask.IsMilestone, (DO.EngineerExperience)task.Complexity, task.Engineer?.ID, task.Description, task.Deliverables, task.Notes, dlTask.DateCreated, dlTask.ProjectedStartDate, task.ActualStartDate, dlTask.Duration, dlTask.Deadline, task.ActualEndDate);
 
-                //Check that new assigned engineer has proper level (equal or greater than complexity)
-                if (_dal.Engineer.Read(task.Engineer.ID).Level < (DO.EngineerExperience)task.Complexity)
+                if (task.Engineer is not null)
                 {
-                    throw new BO.BlInvalidInputException("The assigned engineer's experience level is not sufficient for the task's complexity");
+                    //Check that new assigned engineer has proper level (equal or greater than complexity)
+                    if (_dal.Engineer.Read(task.Engineer.ID).Level < (DO.EngineerExperience)task.Complexity)
+                    {
+                        throw new BO.BlInvalidInputException("The assigned engineer's experience level is not sufficient for the task's complexity");
+                    }
                 }
             }
             else // Planning stage
@@ -143,7 +148,15 @@ internal class TaskImplementation : ITask
             DO.Task task = _dal.Task.Read(id);
 
             // Getting all previous tasks on which _task depends directly or indirectly
-            IEnumerable<DO.Task> dependentTasks = getDependentTasks(task.ID);
+            IEnumerable<DO.Task> dependentTasks = Enumerable.Empty<DO.Task>();
+            try
+            {
+                dependentTasks = getDependentTasks(task.ID);
+            }
+            catch (DO.DalDoesNotExistException)
+            {
+                // There are no dependent tasks, not an error
+            }
 
             // Check if all the projected start dates of the previous tasks are already updated (exist)
             if (dependentTasks.Any(t => t.ProjectedStartDate == null))
