@@ -24,7 +24,7 @@ public static class Tools
         PropertyInfo[] properties = type.GetProperties();
 
         StringBuilder result = new StringBuilder();
-        result.Append(type.Name + " { ");
+        //result.Append(type.Name + " { ");
 
         foreach (PropertyInfo property in properties)
         {
@@ -40,24 +40,40 @@ public static class Tools
                     result.Append("[");
                     foreach (var item in collection)
                     {
-                        result.Append($"{item}, ");
+                        //If the item is a complex type, print its properties on one line
+                        if (item != null && item.GetType().GetProperties().Length > 1)
+                        {
+                            result.Append("{ ");
+                            foreach (PropertyInfo itemProperty in item.GetType().GetProperties())
+                            {
+                                result.Append($"{itemProperty.Name}: {itemProperty.GetValue(item)}, ");
+                            }
+                            result.Remove(result.Length - 2, 2);// Remove the trailing comma and space
+                            result.Append("}, ");
+                        }
+                        else
+                        {
+                            result.Append($"{item}, ");
+                        }
                     }
-                    result.Append("], ");
+                    result.Remove(result.Length - 2, 2);// Remove the trailing comma and space
+                    result.AppendLine("]");
                 }
                 else
                 {
-                    result.Append("null, ");
+                    result.AppendLine("null");
                 }
             }
             else
             {
                 // Handle non-collection properties
-                result.Append($"{property.GetValue(obj)}, ");
+                result.AppendLine($"{property.GetValue(obj)}");
             }
         }
 
-        result.Remove(result.Length - 2, 2); // Remove the trailing comma and space
-        result.Append(" }");
+        //result.Remove(result.Length - 2, 2); // Remove the trailing comma and space
+        //result.Append(" }");
+        result.Append(new string('-', 50)); // Add a line of dashes as a separator
 
         return result.ToString();
     }
