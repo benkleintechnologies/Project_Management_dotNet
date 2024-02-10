@@ -1,2 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ArrayOfEngineer xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+<ArrayOfEngineer xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Engineer>
+    <ID>294545615</ID>
+    <Name>Shloimy Rosenberg</Name>
+    <Email>shloimy.rosenberg@example.com</Email>
+    <Cost>121355</Cost>
+    <Level>Expert</Level>
+    <Active>true</Active>
+  </Engineer>
+  <Engineer>
+    <ID>274833991</ID>
+    <Name>Yitzy Schwartz</Name>
+    <Email>yitzy.schwartz@example.com</Email>
+    <Cost>148560</Cost>
+    <Level>Beginner</Level>
+    <Active>true</Active>
+  </Engineer>
+  <Engineer>
+    <ID>362484943</ID>
+    <Name>Shmuly Cohen</Name>
+    <Email>shmuly.cohen@example.com</Email>
+    <Cost>83322</Cost>
+    <Level>Intermediate</Level>
+    <Active>true</Active>
+  </Engineer>
+  <Engineer>
+    <ID>269386655</ID>
+    <Name>Dovid Greenbaum</Name>
+    <Email>dovid.greenbaum@example.com</Email>
+    <Cost>114892</Cost>
+    <Level>Intermediate</Level>
+    <Active>true</Active>
+  </Engineer>
+  <Engineer>
+    <ID>373827297</ID>
+    <Name>Moishe Goldstein</Name>
+    <Email>moishe.goldstein@example.com</Email>
+    <Cost>167977</Cost>
+    <Level>Intermediate</Level>
+    <Active>true</Active>
+  </Engineer>
+  <Engineer>
+    <ID>576708580</ID>
+    <Name>Binyamin Klein</Name>
+    <Email>bendklein1@gmail.com</Email>
+    <Cost>500000</Cost>
+    <Level>Expert</Level>
+    <Active>true</Active>
+  </Engineer>
+  <Engineer>
+    <ID>34564321</ID>
+    <Name>Eli Isaacs</Name>
+    <Email>eli@isaacs.com</Email>
+    <Cost>500000</Cost>
+    <Level>Expert</Level>
+    <Active>true</Active>
+  </Engineer>
+</ArrayOfEngineer>
