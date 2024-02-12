@@ -6,6 +6,36 @@
         xmlns:local="clr-namespace:PL"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
+    <Window.Resources>
+        <Style TargetType="Button">
+            <!-- Setting background color -->
+            <Setter Property="Background" Value="#074081"/>
+            <!-- Setting text color -->
+            <Setter Property="Foreground" Value="White"/>
+            <!-- Setting font family -->
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <!-- Setting font size -->
+            <Setter Property="FontSize" Value="14"/>
+            <!-- Adding some margin -->
+            <Setter Property="Margin" Value="0,10"/>
+            <!-- Adding Padding-->
+            <Setter Property="Padding" Value="10"/>
+            <!-- Rounding the corners -->
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="5">
+                            <!-- Setting corner radius -->
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
     <Grid>
         <!-- Button to take the user to the Engineer List Window-->
         <Button Content="Handle Engineers" Click="btnEngineers_Click" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,300,0" Height="50" Width="125"/>
