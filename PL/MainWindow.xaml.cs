@@ -17,14 +17,22 @@ namespace PL;
 /// </summary>
 public partial class MainWindow : Window
 {
+    //The BL instance
+    static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
     public MainWindow()
     {
         InitializeComponent();
     }
 
-    private void btnEngineers_Click(object sender, RoutedEventArgs e)
+    private void btnAdminUser_Click(object sender, RoutedEventArgs e)
     {
-        new EngineerListWindow().Show();
+        new AdminUser.AdminUserWindow().ShowDialog();
+    }
+
+    private void btnEngineerUser_Click(object sender, RoutedEventArgs e)
+    {
+        //new EngineerUserWindow().ShowDialog();
+        //TODO: Uncomment once implemented
     }
 
     private void btnInitializeDB_Click(object sender, RoutedEventArgs e)
@@ -34,5 +42,20 @@ public partial class MainWindow : Window
             DalTest.Initialization.Do();
         }
     }
+
+    private void btnResetSystem_Click(object sender, RoutedEventArgs e)
+    {
+        if (MessageBox.Show("Are you sure you want to reset the system?", "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+        {
+            s_bl.Config.Reset();
+        }
+    }
+
+    private void btnChangeSystemClock_Click(object sender, RoutedEventArgs e)
+    {
+        //new SystemClockWindow().ShowDialog();
+        //TODO: Uncomment once implemented
+    }
+
 
 }

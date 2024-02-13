@@ -11,7 +11,7 @@ public interface ITask
     /// <param name="filter">optional filter</param>
     /// <returns>list of Tasks</returns>
     /// <exception cref="BO.BlDoesNotExistException">when no Task matching the filter is not found in the DAL<exception>
-    public IEnumerable<BO.Task> GetListOfTasks(Func<BO.Task, bool>? filter = null);
+    public IEnumerable<BO.TaskInList> GetListOfTasks(Func<BO.Task, bool>? filter = null);
 
     /// <summary>
     /// Gets the details of a Task

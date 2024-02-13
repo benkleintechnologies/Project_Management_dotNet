@@ -32,7 +32,7 @@ public partial class EngineerWindow : Window
             {
                 CurrentEngineer = s_bl?.Engineer.GetEngineer(id)!;
             }
-            catch (BO.BlDoesNotExistException ex)//Added on my own, wasn't in instructions yet
+            catch (BO.BlDoesNotExistException ex)
             {
                 MessageBox.Show(ex.Message);
             }

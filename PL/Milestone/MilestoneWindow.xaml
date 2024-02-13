@@ -1,0 +1,84 @@
+﻿<Window x:Class="PL.Milestone.MilestoneWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PL.Milestone"
+        mc:Ignorable="d"
+        DataContext="{Binding CurrentMilestone, RelativeSource={RelativeSource Self}, Mode=TwoWay}"
+        Title="MilestoneWindow" Height="450" Width="400">
+    <Window.Resources>
+        <Style TargetType="Button">
+            <Setter Property="Background" Value="#074081"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="Padding" Value="10"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="5">
+                            <!-- Setting corner radius -->
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+    <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Label Content="ID:" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" Margin="0,0,5,0"/>
+        <TextBox Text="{Binding ID, Mode=TwoWay, NotifyOnValidationError=true,  ValidatesOnExceptions=true}" IsEnabled="False" HorizontalAlignment="Left" Margin="0,0,5,0" Grid.Row="0" Grid.Column="1" Width="150" Height="20"/>
+
+        <Label Content="Name:" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Left" Margin="0,5,5,0"/>
+        <TextBox Text="{Binding Name, Mode=TwoWay, NotifyOnValidationError=true,  ValidatesOnExceptions=true}" HorizontalAlignment="Left" Margin="0,5,5,0" Grid.Row="1" Grid.Column="1" Width="150" Height="20"/>
+
+        <Label Content="Description:" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Left" Margin="0,5,5,0"/>
+        <TextBox Text="{Binding Description, Mode=TwoWay, NotifyOnValidationError=true,  ValidatesOnExceptions=true}" HorizontalAlignment="Left" Margin="0,5,5,0" Grid.Row="2" Grid.Column="1" Width="150" Height="20"/>
+
+        <Label Content="Created At Date:" Grid.Row="3" Grid.Column="0" HorizontalAlignment="Left" Margin="0,5,5,0"/>
+        <DatePicker SelectedDate="{Binding CreatedAtDate, Mode=TwoWay, NotifyOnValidationError=true,  ValidatesOnExceptions=true}" IsEnabled="False" HorizontalAlignment="Left" Margin="0,5,5,0" Grid.Row="3" Grid.Column="1" Width="150"/>
+
+        <Label Content="Status:" Grid.Row="4" Grid.Column="0" HorizontalAlignment="Left" Margin="0,5,5,0"/>
+        <ComboBox SelectedItem="{Binding Status, Mode=TwoWay, NotifyOnValidationError=true,  ValidatesOnExceptions=true}" ItemsSource="{Binding Source={StaticResource StatusCollectionKey}}" IsEnabled="False" HorizontalAlignment="Left" Margin="0,5,5,0" Grid.Row="4" Grid.Column="1" Width="150"/>
+
+        <Label Content="Projected End Date:" Grid.Row="5" Grid.Column="0" HorizontalAlignment="Left" Margin="0,5,5,0"/>
+        <DatePicker SelectedDate="{Binding ProjectedEndDate, Mode=TwoWay, NotifyOnValidationError=true,  ValidatesOnExceptions=true}" IsEnabled="False" HorizontalAlignment="Left" Margin="0,5,5,0" Grid.Row="5" Grid.Column="1" Width="150"/>
+
+        <Label Content="Deadline:" Grid.Row="6" Grid.Column="0" HorizontalAlignment="Left" Margin="0,5,5,0"/>
+        <DatePicker SelectedDate="{Binding Deadline, Mode=TwoWay, NotifyOnValidationError=true,  ValidatesOnExceptions=true}" IsEnabled="False" HorizontalAlignment="Left" Margin="0,5,5,0" Grid.Row="6" Grid.Column="1" Width="150"/>
+
+        <Label Content="Actual End Date:" Grid.Row="7" Grid.Column="0" HorizontalAlignment="Left" Margin="0,5,5,0"/>
+        <DatePicker SelectedDate="{Binding ActualEndDate, Mode=TwoWay, NotifyOnValidationError=true,  ValidatesOnExceptions=true}" IsEnabled="False" HorizontalAlignment="Left" Margin="0,5,5,0" Grid.Row="7" Grid.Column="1" Width="150"/>
+
+        <Label Content="Completion Percentage:" Grid.Row="8" Grid.Column="0" HorizontalAlignment="Left" Margin="0,5,5,0"/>
+        <Slider Value="{Binding CompletionPercentage, Mode=TwoWay, NotifyOnValidationError=true,  ValidatesOnExceptions=true}" IsEnabled="False" HorizontalAlignment="Left" Margin="0,5,5,0" Grid.Row="8" Grid.Column="1" Width="150"/>
+
+        <Label Content="Notes:" Grid.Row="9" Grid.Column="0" HorizontalAlignment="Left" Margin="0,5,5,0"/>
+        <TextBox Text="{Binding Notes, Mode=TwoWay, NotifyOnValidationError=true,  ValidatesOnExceptions=true}" HorizontalAlignment="Left" Margin="0,5,5,0" Grid.Row="9" Grid.Column="1" Width="150" Height="50"/>
+
+        <Button Content="Update" Click="btnUpdate_Click" Padding="5" HorizontalAlignment="Center" Margin="0,5,0,0" Grid.ColumnSpan="2" Grid.Row="10" Height="40" Width="100"/>
+    </Grid>
+</Window>

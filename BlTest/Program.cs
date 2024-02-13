@@ -136,8 +136,9 @@ internal class Program
                             "a) Go back\n" +
                             "b) Create (automatically) milestones and project schedule\n" +
                             "c) Get Milestone\n" +
-                            "d) Update Milestone\n" +
-                            "e) Reset Milestones\n");
+                            "d) Display the milestone list\n" +
+                            "e) Update Milestone\n" +
+                            "f) Reset Milestones\n");
     }
 
     static void SetProjectTimeSpan()
@@ -289,8 +290,8 @@ internal class Program
                     Console.WriteLine(taskToPrint + "\n");
                     break;
                 case "d": //Display Task List
-                    IEnumerable<BO.Task?> taskList = s_bl.Task.GetListOfTasks();
-                    foreach (BO.Task? task in taskList)
+                    IEnumerable<BO.TaskInList?> taskList = s_bl.Task.GetListOfTasks();
+                    foreach (BO.TaskInList? task in taskList)
                     {
                         Console.WriteLine(task);
                     }
@@ -405,7 +406,15 @@ internal class Program
                     Console.WriteLine();
                     Console.WriteLine(milestoneToPrint + "\n");
                     break;
-                case "d": //Update Milestone
+                case "d": //Display Milestone List
+                    IEnumerable<MilestoneInList?> milestoneList = s_bl.Milestone.GetListOfMilestones();
+                    foreach (MilestoneInList? milestone in milestoneList)
+                    {
+                        Console.WriteLine(milestone);
+                    }
+                    Console.WriteLine();
+                    break;
+                case "e": //Update Milestone
                     Console.WriteLine("Enter the updated information of the milestone, including - id, name, description, and notes (on separate lines):");
                     int.TryParse(Console.ReadLine(), out id);
                     string? name = Console.ReadLine();
@@ -413,7 +422,7 @@ internal class Program
                     string? notes = Console.ReadLine();
                     s_bl.Milestone.UpdateMilestone(id, name, description, notes);
                     break;
-                case "e": //Reset Milestones
+                case "f": //Reset Milestones
                     s_bl.Milestone.Reset();
                     break;
                 default:

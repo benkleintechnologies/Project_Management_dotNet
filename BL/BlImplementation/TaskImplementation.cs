@@ -58,7 +58,7 @@ internal class TaskImplementation : ITask
         }
     }
 
-    public IEnumerable<BO.Task> GetListOfTasks(Func<BO.Task, bool>? filter = null)
+    public IEnumerable<BO.TaskInList> GetListOfTasks(Func<BO.Task, bool>? filter = null)
     {
         try
         {
@@ -67,7 +67,7 @@ internal class TaskImplementation : ITask
             //Filter the DL objects based on the filter
             IEnumerable<DO.Task> filteredDlTasks = filter != null ? tasks.Where(e => filter(toBlTask(e))) : tasks;
             //Return the list of BL type Tasks
-            return filteredDlTasks.Select(toBlTask);
+            return filteredDlTasks.Select(toBlTask).Select(t => new BO.TaskInList(t.ID, t.Name, t.Description, t.Status));
         }
         catch (DO.DalDoesNotExistException exc)
         {

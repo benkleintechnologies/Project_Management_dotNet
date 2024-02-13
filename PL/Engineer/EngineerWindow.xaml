@@ -50,7 +50,7 @@
         </Grid.RowDefinitions>
 
         <Label Content="ID:" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" Margin="0,0,5,0"/>
-        <TextBox Text="{Binding ID, Mode=TwoWay, NotifyOnValidationError=true,  ValidatesOnExceptions=true}" HorizontalAlignment="Left" Margin="0,0,5,0" Grid.Row="0" Grid.Column="1" Width="150" Height="20"/>
+        <TextBox Text="{Binding ID, Mode=TwoWay, NotifyOnValidationError=true,  ValidatesOnExceptions=true}" IsEnabled="{Binding ID, Mode=OneTime, Converter={StaticResource ConvertIdToModeKey}}" HorizontalAlignment="Left" Margin="0,0,5,0" Grid.Row="0" Grid.Column="1" Width="150" Height="20"/>
 
         <Label Content="Name:" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Left" Margin="0,5,5,0"/>
         <TextBox Text="{Binding Name, Mode=TwoWay, NotifyOnValidationError=true,  ValidatesOnExceptions=true}" HorizontalAlignment="Left" Margin="0,5,5,0" Grid.Row="1" Grid.Column="1" Width="150" Height="20"/>

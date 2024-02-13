@@ -22,6 +22,14 @@ public interface IMilestone
     public BO.Milestone GetMilestone(int id);
 
     /// <summary>
+    /// An Milestone list request (administrator’s view)
+    /// </summary>
+    /// <param name="filter"></param>
+    /// <returns>the list object of the milestones found</returns>
+    /// <exception cref="BO.BlDoesNotExistException">Thrown when there is no Milestone which matches this filter</exception>
+    public IEnumerable<BO.MilestoneInList> GetListOfMilestones(Func<BO.Milestone, bool>? filter = null);
+
+    /// <summary>
     /// Updates certain fields of a Milestone object
     /// </summary>
     /// <param name="id">of the Milestone to update</param>

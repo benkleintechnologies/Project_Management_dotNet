@@ -1,5 +1,6 @@
 ﻿namespace BlImplementation;
 using BlApi;
+using BO;
 using System.Collections.Specialized;
 using System.Linq;
 
@@ -205,25 +206,27 @@ internal class MilestoneImplementation : IMilestone
             }
             // Get the Task from the Data Layer
             DO.Task milestoneTask = _dal.Task.Read(t => t.ID == id && t.IsMilestone);
-            // Get all dependencies of this milestone
-            IEnumerable<DO.Task> dependentTasks = Enumerable.Empty<DO.Task>();
-            IEnumerable<BO.TaskInList> dependenciesList = Enumerable.Empty<BO.TaskInList>();
-            double completedPercentage = 100;
-            try
-            {
-                dependentTasks = _dal.Dependency.ReadAll(d => d.DependentTask == id).Select(d => _dal.Task.Read(d.DependsOnTask));
-                //Create a TaskInList for all dependencies
-                dependenciesList = dependentTasks.Select(t => new BO.TaskInList(t.ID, t.Nickname, t.Description, getStatusForTask(t)));
-                //Calculate completion percentage
-                completedPercentage = dependenciesList.Where(t => t.Status == BO.Status.Done).Count() / dependenciesList.Count() * 100;
-            }
-            catch (DO.DalDoesNotExistException)
-            {
-                //Not an error - this milestone has no dependencies (it's the start milestone)
-            }
-            
-            //Create Milestone object (and calculate Business layer fields)
-            return new BO.Milestone(milestoneTask.ID, milestoneTask.Nickname, milestoneTask.Description, milestoneTask.DateCreated, getStatusForTask(milestoneTask), milestoneTask.ProjectedStartDate, milestoneTask.Deadline, milestoneTask.ActualEndDate, completedPercentage, milestoneTask.Notes, dependenciesList);
+            return toBlMilestone(milestoneTask);
+        }
+        catch (DO.DalDoesNotExistException exc)
+        {
+            throw new BO.BlDoesNotExistException(exc.Message);
+        }
+    }
+
+    public IEnumerable<MilestoneInList> GetListOfMilestones(Func<Milestone, bool>? filter = null)
+    {
+        try
+        {
+            // Convert Dl Tasks to BL Milestones and filter it before putting it into a list
+            IEnumerable<BO.Milestone> result = from task in _dal.Task.ReadAll(t=>t.IsMilestone)
+                                              let blMilestone = toBlMilestone(task)
+                                              where filter == null || filter(blMilestone)
+                                              select blMilestone;
+
+            IEnumerable<BO.MilestoneInList> convertedType = result.Select(m => new BO.MilestoneInList(m.ID, m.Name, m.Description, m.CreatedAtDate, m.Status, m.CompletionPercentage));
+
+            return convertedType;
         }
         catch (DO.DalDoesNotExistException exc)
         {
@@ -519,6 +522,29 @@ internal class MilestoneImplementation : IMilestone
 
         // Recursive call for the next iteration
         breadthFirstTraversalForward(queue, processedTasks);
+    }
+
+    private BO.Milestone toBlMilestone(DO.Task milestoneTask)
+    {
+        // Get all dependencies of this milestone
+        IEnumerable<DO.Task> dependentTasks = Enumerable.Empty<DO.Task>();
+        IEnumerable<BO.TaskInList> dependenciesList = Enumerable.Empty<BO.TaskInList>();
+        double completedPercentage = 100;
+        try
+        {
+            dependentTasks = _dal.Dependency.ReadAll(d => d.DependentTask == milestoneTask.ID).Select(d => _dal.Task.Read(d.DependsOnTask));
+            //Create a TaskInList for all dependencies
+            dependenciesList = dependentTasks.Select(t => new BO.TaskInList(t.ID, t.Nickname, t.Description, getStatusForTask(t)));
+            //Calculate completion percentage
+            completedPercentage = dependenciesList.Where(t => t.Status == BO.Status.Done).Count() / dependenciesList.Count() * 100;
+        }
+        catch (DO.DalDoesNotExistException)
+        {
+            //Not an error - this milestone has no dependencies (it's the start milestone)
+        }
+
+        //Create Milestone object (and calculate Business layer fields)
+        return new BO.Milestone(milestoneTask.ID, milestoneTask.Nickname, milestoneTask.Description, milestoneTask.DateCreated, getStatusForTask(milestoneTask), milestoneTask.ProjectedStartDate, milestoneTask.Deadline, milestoneTask.ActualEndDate, completedPercentage, milestoneTask.Notes, dependenciesList);
     }
 
 }
