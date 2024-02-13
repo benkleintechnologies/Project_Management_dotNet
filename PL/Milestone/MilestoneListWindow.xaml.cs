@@ -15,17 +15,17 @@ using System.Windows.Shapes;
 
 namespace PL.Milestone;
 
-/// <summary>
-/// Interaction logic for MilestoneListWindow.xaml
-/// </summary>
-public partial class MilestoneListWindow : Window
-{
+    /// <summary>
+    /// Interaction logic for MilestoneListWindow.xaml
+    /// </summary>
+    public partial class MilestoneListWindow : Window
+    {
     //The BL instance
     static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
-    public MilestoneListWindow()
-    {
-        InitializeComponent();
-    }
+        public MilestoneListWindow()
+        {
+            InitializeComponent();
+        }
 
     //The event handler for the window activation
     private void activated(object sender, EventArgs e)

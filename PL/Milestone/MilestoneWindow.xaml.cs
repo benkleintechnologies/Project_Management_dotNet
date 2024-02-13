@@ -14,16 +14,16 @@ using System.Windows.Shapes;
 
 namespace PL.Milestone;
 
-/// <summary>
-/// Interaction logic for MilestoneWindow.xaml
-/// </summary>
-public partial class MilestoneWindow : Window
-{
+    /// <summary>
+    /// Interaction logic for MilestoneWindow.xaml
+    /// </summary>
+    public partial class MilestoneWindow : Window
+    {
     //The BL instance
     static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
 
     public MilestoneWindow(int id = 0)
-    {
+        {
         if (id != 0)
         {
             try
@@ -39,8 +39,8 @@ public partial class MilestoneWindow : Window
         {
             CurrentMilestone = new BO.Milestone(0, "", "", null, BO.Status.Unscheduled, null, null, null, 0, "", null);
         }
-        InitializeComponent();
-    }
+            InitializeComponent();
+        }
 
     public BO.Milestone CurrentMilestone
     {
