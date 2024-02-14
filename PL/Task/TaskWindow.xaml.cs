@@ -40,6 +40,7 @@ public partial class TaskWindow : Window
         {
             // Need to figure out why this first option isn't working so just did the one with all nulls for now -- also not sure how to interact with Datasource and get the NextId bc user shouldn't be able to put in id?
             //CurrentTask = new BO.Task(id: 0, name: "task0", status: BO.Status.Unscheduled, complexity: BO.EngineerExperience.Beginner);
+            
             CurrentTask = new BO.Task(id: 0, name: "task0", null, status: BO.Status.Unscheduled, null, null, null, null, null, null, null, null, null, null, null, null, complexity: BO.EngineerExperience.Beginner);
         }
         InitializeComponent();
@@ -58,6 +59,8 @@ public partial class TaskWindow : Window
     private void btnDependencies_Click(object sender, RoutedEventArgs e)
     {
         // Get all the dependencies of the task
+        BO.Task? task = s_bl?.Task.GetTask(CurrentTask.ID);
+        IEnumerable<BO.TaskInList>? dependencies = task.Dependencies;
     }
 
     private void btnAddUpdate_Click(object sender, RoutedEventArgs e)

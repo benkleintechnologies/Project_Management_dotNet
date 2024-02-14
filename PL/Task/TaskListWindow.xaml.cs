@@ -22,35 +22,37 @@ public partial class TaskListWindow : Window
 {
     //The BL instance
     static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
+    
     public TaskListWindow()
     {
         InitializeComponent();
     }
+    
     //The event handler for the window activation
     private void activated(object sender, EventArgs e)
     {
-        TaskList = s_bl?.Task.GetListOfTasks()!;
+        TaskInList = s_bl?.Task.GetListOfTasks()!;
     }
 
-    //Getters and setters for the list of engineers
-    public IEnumerable<BO.Task> TaskList
+    //Getters and setters for the list of tasks
+    public IEnumerable<BO.TaskInList> TaskInList
     {
-        get { return (IEnumerable<BO.Task>)GetValue(TaskListProperty); }
-        set { SetValue(TaskListProperty, value); }
+        get { return (IEnumerable<BO.TaskInList>)GetValue(TaskInListProperty); }
+        set { SetValue(TaskInListProperty, value); }
     }
 
     //Dependency Property to connect the list of engineers to the window
-    public static readonly DependencyProperty TaskListProperty =
-        DependencyProperty.Register("TaskList", typeof(IEnumerable<BO.Engineer>), typeof(EngineerListWindow), new PropertyMetadata(null));
+    public static readonly DependencyProperty TaskInListProperty =
+        DependencyProperty.Register("TaskInList", typeof(IEnumerable<BO.Engineer>), typeof(EngineerListWindow), new PropertyMetadata(null));
 
-    //The selected engineer experience level
+    //The selected task experience level
     public BO.EngineerExperience ExperienceLevel { get; set; } = BO.EngineerExperience.All;
 
-    //The event handler for the selection of the experience level (to filter the list of engineers)
+    //The event handler for the selection of the experience level (to filter the list of tasks)
     private void cbDifficultySelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        TaskList = (ExperienceLevel == BO.EngineerExperience.All) ?
-             s_bl?.Task.GetListOfTasks()! : s_bl?.Task.GetListOfTasks(item => item.Complexity == ExperienceLevel)!;
+        TaskInList = ((ExperienceLevel == BO.EngineerExperience.All) ?
+             s_bl?.Task.GetListOfTasks()! : s_bl?.Task.GetListOfTasks(item => item.Complexity == ExperienceLevel)!);
     }    
     private void ListView_DoubleClick(object sender, MouseButtonEventArgs e)
     {
