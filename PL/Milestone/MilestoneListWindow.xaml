@@ -61,7 +61,7 @@
             <ComboBox Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalContentAlignment="Center"/>
         </Grid>
         <!-- List of Milestones filtered by filter-->
-        <ListView Grid.Row="1" ItemsSource="{Binding MilestonesList}" PreviewMouseDoubleClick="ListView_DoubleClick">
+        <ListView Grid.Row="1" ItemsSource="{Binding MilestoneList}" PreviewMouseDoubleClick="ListView_DoubleClick">
             <ListView.View>
                 <GridView>
                     <GridViewColumn/>

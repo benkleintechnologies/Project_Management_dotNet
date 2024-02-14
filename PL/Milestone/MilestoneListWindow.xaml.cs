@@ -18,14 +18,14 @@ namespace PL.Milestone;
     /// <summary>
     /// Interaction logic for MilestoneListWindow.xaml
     /// </summary>
-    public partial class MilestoneListWindow : Window
-    {
+public partial class MilestoneListWindow : Window
+{
     //The BL instance
     static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
-        public MilestoneListWindow()
-        {
-            InitializeComponent();
-        }
+    public MilestoneListWindow()
+    {
+        InitializeComponent();
+    }
 
     //The event handler for the window activation
     private void activated(object sender, EventArgs e)
@@ -43,12 +43,6 @@ namespace PL.Milestone;
     //Dependency Property to connect the list of engineers to the window
     public static readonly DependencyProperty MilestoneListProperty =
         DependencyProperty.Register("MilestoneList", typeof(IEnumerable<BO.MilestoneInList>), typeof(MilestoneListWindow), new PropertyMetadata(null));
-
-
-    private void btnAdd_Click(object sender, RoutedEventArgs e)
-    {
-        new MilestoneWindow().ShowDialog();
-    }
 
     private void ListView_DoubleClick(object sender, MouseButtonEventArgs e)
     {

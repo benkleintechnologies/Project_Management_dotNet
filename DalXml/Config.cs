@@ -52,7 +52,7 @@ internal class Config
     {
         StartDate = null;
         EndDate = null;
-        NextTaskId = 0;
+        NextTaskId = 1;
         NextDependencyId = 1000;
     }
 }

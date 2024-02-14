@@ -46,4 +46,14 @@ internal class ConfigImplementation : IConfig
     {
         _dal.Config.Reset();
     }
+
+    public DateTime? GetProjectStartDate()
+    {
+        return _dal.Config.GetStartDate();
+    }
+
+    public DateTime? GetProjectEndDate()
+    {
+        return _dal.Config.GetEndDate();
+    }
 }

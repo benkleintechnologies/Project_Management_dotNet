@@ -44,8 +44,23 @@ public partial class AdminUserWindow : Window
 
     private void btnCreateSchedule_Click(object sender, RoutedEventArgs e)
     {
-        s_bl?.Milestone.CreateProjectSchedule();
-        //TODO: Catch errors
+        try
+        {
+            s_bl?.Milestone.CreateProjectSchedule();
+            MessageBox.Show("The project schedule has been created");
+        }
+        catch (BO.BlDoesNotExistException ex)
+        {
+            MessageBox.Show(ex.Message);
+        }
+        catch (BO.BlCannotBeDeletedException ex)
+        {
+            MessageBox.Show(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(ex.Message);
+        }
     }
 
     private void btnCreateGantt_Click(object sender, RoutedEventArgs e)
@@ -62,12 +77,18 @@ public partial class AdminUserWindow : Window
 
     private void btnResetSystem_Click(object sender, RoutedEventArgs e)
     {
-        s_bl.Config.Reset();
+        if (MessageBox.Show("Are you sure you want to reset the system?", "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+        {
+            s_bl.Config.Reset();
+        }
     }
 
     private void btnInitializeDB_Click(object sender, RoutedEventArgs e)
     {
-        DalTest.Initialization.Do();
+        if (MessageBox.Show("Are you sure you want to initialize the database?", "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+        {
+            DalTest.Initialization.Do();
+        }
     }
 
     private void btnChangeSystemClock_Click(object sender, RoutedEventArgs e)

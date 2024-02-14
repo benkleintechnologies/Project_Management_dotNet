@@ -1,7 +1,7 @@
 ﻿namespace Dal;
 
 /// <summary>
-/// Class which acts as our databse, storing the lists on each entity
+/// Class which acts as our database, storing the lists on each entity
 /// </summary>
 internal static class DataSource
 {
@@ -12,7 +12,7 @@ internal static class DataSource
 		internal static DateTime? startDate { get; set; } = null;
 		internal static DateTime? endDate { get; set; } = null;
 
-		internal const int startTaskId = 0;
+		internal const int startTaskId = 1;
 		private static int nextTaskId = startTaskId;
 		internal static int NextTaskId { get => nextTaskId++;  }
 

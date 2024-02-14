@@ -53,9 +53,11 @@ public partial class MainWindow : Window
 
     private void btnChangeSystemClock_Click(object sender, RoutedEventArgs e)
     {
-        //new SystemClockWindow().ShowDialog();
-        //TODO: Uncomment once implemented
+        new Clock.SystemClockWindow().ShowDialog();
     }
 
-
+    private void btnSetProjectDates_Click(object sender, RoutedEventArgs e)
+    {
+        new Clock.ProjectDatesWindow().ShowDialog();
+    }
 }
