@@ -31,19 +31,19 @@ public partial class TaskListWindow : Window
     //The event handler for the window activation
     private void activated(object sender, EventArgs e)
     {
-        TaskInList = s_bl?.Task.GetListOfTasks()!;
+        TaskList = s_bl?.Task.GetListOfTasks()!;
     }
 
     //Getters and setters for the list of tasks
-    public IEnumerable<BO.TaskInList> TaskInList
+    public IEnumerable<BO.TaskInList> TaskList
     {
-        get { return (IEnumerable<BO.TaskInList>)GetValue(TaskInListProperty); }
-        set { SetValue(TaskInListProperty, value); }
+        get { return (IEnumerable<BO.TaskInList>)GetValue(TaskListProperty); }
+        set { SetValue(TaskListProperty, value); }
     }
 
     //Dependency Property to connect the list of engineers to the window
-    public static readonly DependencyProperty TaskInListProperty =
-        DependencyProperty.Register("TaskInList", typeof(IEnumerable<BO.Engineer>), typeof(EngineerListWindow), new PropertyMetadata(null));
+    public static readonly DependencyProperty TaskListProperty =
+        DependencyProperty.Register("TaskInList", typeof(IEnumerable<BO.TaskInList>), typeof(TaskListWindow), new PropertyMetadata(null));
 
     //The selected task experience level
     public BO.EngineerExperience ExperienceLevel { get; set; } = BO.EngineerExperience.All;
@@ -51,13 +51,13 @@ public partial class TaskListWindow : Window
     //The event handler for the selection of the experience level (to filter the list of tasks)
     private void cbDifficultySelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        TaskInList = ((ExperienceLevel == BO.EngineerExperience.All) ?
+        TaskList = ((ExperienceLevel == BO.EngineerExperience.All) ?
              s_bl?.Task.GetListOfTasks()! : s_bl?.Task.GetListOfTasks(item => item.Complexity == ExperienceLevel)!);
     }    
     private void ListView_DoubleClick(object sender, MouseButtonEventArgs e)
     {
         // Extract the selected item from the ListView
-        BO.Task? task = (sender as ListView)?.SelectedItem as BO.Task;
+        BO.TaskInList? task = (sender as ListView)?.SelectedItem as BO.TaskInList;
 
         if (task != null)
         {

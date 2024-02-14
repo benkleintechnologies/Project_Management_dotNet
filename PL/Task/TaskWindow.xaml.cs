@@ -37,11 +37,8 @@ public partial class TaskWindow : Window
             }
         }
         else
-        {
-            // Need to figure out why this first option isn't working so just did the one with all nulls for now -- also not sure how to interact with Datasource and get the NextId bc user shouldn't be able to put in id?
-            //CurrentTask = new BO.Task(id: 0, name: "task0", status: BO.Status.Unscheduled, complexity: BO.EngineerExperience.Beginner);
-            
-            CurrentTask = new BO.Task(id: 0, name: "task0", null, status: BO.Status.Unscheduled, null, null, null, null, null, null, null, null, null, null, null, null, complexity: BO.EngineerExperience.Beginner);
+        {   
+            CurrentTask = new BO.Task(id: 0, name: "", null, status: BO.Status.Unscheduled, null, null, null, null, null, null, null, null, null, null, null, null, complexity: BO.EngineerExperience.Beginner);
         }
         InitializeComponent();
     }
@@ -54,13 +51,30 @@ public partial class TaskWindow : Window
 
     // Using a DependencyProperty as the backing store for MyEngineerProperty.
     public static readonly DependencyProperty MyTaskProperty =
-        DependencyProperty.Register("CurrentTask", typeof(BO.Engineer), typeof(EngineerWindow), new PropertyMetadata(null));
+        DependencyProperty.Register("CurrentTask", typeof(BO.Task), typeof(TaskWindow), new PropertyMetadata(null));
 
     private void btnDependencies_Click(object sender, RoutedEventArgs e)
     {
         // Get all the dependencies of the task
-        BO.Task? task = s_bl?.Task.GetTask(CurrentTask.ID);
-        IEnumerable<BO.TaskInList>? dependencies = task.Dependencies;
+        BO.Task? task = null;
+        IEnumerable<BO.TaskInList>? dependencies = Enumerable.Empty<BO.TaskInList>();
+        try
+        {
+            task = s_bl?.Task.GetTask(CurrentTask.ID);
+        }
+        catch(BO.BlDoesNotExistException)
+        {
+           //There Task does not exist yet, so it's a new task
+        }
+        
+        if (task is not null)
+        {
+            dependencies = task.Dependencies; 
+        }
+
+        //TODO: Open the window to view or add dependencies
+        //Or figure out some other way to add dependencies
+        //
     }
 
     private void btnAddUpdate_Click(object sender, RoutedEventArgs e)
@@ -83,7 +97,7 @@ public partial class TaskWindow : Window
                         MessageBox.Show("The Task was added to the database.");
                         this.Close();
                     }
-                    catch (BO.BlDoesNotExistException ex)
+                    catch (BO.BlDoesNotExistException)
                     {
                         MessageBox.Show("The Task was not added to the database.");
                     }

@@ -34,8 +34,7 @@ public partial class AdminUserWindow : Window
 
     private void btnTasks_Click(object sender, RoutedEventArgs e)
     {
-        //new Task.TaskListWindow().ShowDialog();
-        //TODO: Uncomment once implemented
+        new Task.TaskListWindow().ShowDialog();
     }
 
     private void btnMilestones_Click(object sender, RoutedEventArgs e)

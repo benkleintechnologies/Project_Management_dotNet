@@ -60,7 +60,7 @@
             <!--Label to tell user to select level for filter-->
             <Label Content="Select Task Difficulty Level:" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
             <!--Options for filter by Task complexity-->
-            <ComboBox SelectedValue="{Binding Complexity, Mode=TwoWay}" SelectionChanged="cbDifficultySelector_SelectionChanged" ItemsSource="{Binding Source={StaticResource EngineerExperienceCollectionKey}}" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalContentAlignment="Center"/>
+            <ComboBox SelectedValue="{Binding ExperienceLevel, Mode=TwoWay}" SelectionChanged="cbDifficultySelector_SelectionChanged" ItemsSource="{Binding Source={StaticResource EngineerExperienceCollectionKey}}" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalContentAlignment="Center"/>
         </Grid>
         <!-- List of Tasks filtered by difficulty level-->
         <ListView Grid.Row="1" ItemsSource="{Binding TaskList}" PreviewMouseDoubleClick="ListView_DoubleClick">
@@ -70,7 +70,7 @@
                 </GridView>
             </ListView.View>
         </ListView>
-        <!-- Button to Add a new Engineer to the List-->
+        <!-- Button to Add a new Task to the List-->
         <Button Content="Add" Click="btnAdd_Click" Grid.Row="2" HorizontalAlignment="Center" Height="50" Width="100"/>
     </Grid>
 </Window>
