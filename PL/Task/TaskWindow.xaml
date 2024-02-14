@@ -76,22 +76,22 @@
         <TextBox Text="{Binding Milestone, Mode=TwoWay, NotifyOnValidationError=true,  ValidatesOnExceptions=true}" HorizontalAlignment="Left" Margin="0,5,5,0" Grid.Row="5" Grid.Column="1" Width="150" Height="20"/>
 
         <Label Content="Date Created:" Grid.Row="6" Grid.Column="0" HorizontalAlignment="Left" Margin="0,5,5,0"/>
-        <TextBox Text="{Binding CreatedAtDate, Mode=TwoWay, NotifyOnValidationError=true,  ValidatesOnExceptions=true}" HorizontalAlignment="Left" Margin="0,5,5,0" Grid.Row="6" Grid.Column="1" Width="150" Height="20"/>
+        <DatePicker SelectedDate="{Binding CreatedAtDate, Mode=TwoWay, NotifyOnValidationError=true,  ValidatesOnExceptions=true}" IsEnabled="False" HorizontalAlignment="Left" Margin="0,5,5,0" Grid.Row="6" Grid.Column="1" Width="150"/>
 
         <Label Content="Projected Start Date:" Grid.Row="7" Grid.Column="0" HorizontalAlignment="Left" Margin="0,5,5,0"/>
-        <TextBox Text="{Binding ProjectedStartDate, Mode=TwoWay, NotifyOnValidationError=true,  ValidatesOnExceptions=true}" HorizontalAlignment="Left" Margin="0,5,5,0" Grid.Row="7" Grid.Column="1" Width="150" Height="20"/>
+        <DatePicker SelectedDate="{Binding ProjectedStartDate, Mode=TwoWay, NotifyOnValidationError=true,  ValidatesOnExceptions=true}" IsEnabled="False" HorizontalAlignment="Left" Margin="0,5,5,0" Grid.Row="7" Grid.Column="1" Width="150"/>
 
         <Label Content="Actual Start Date:" Grid.Row="8" Grid.Column="0" HorizontalAlignment="Left" Margin="0,5,5,0"/>
-        <TextBox Text="{Binding ActualStartDate, Mode=TwoWay, NotifyOnValidationError=true,  ValidatesOnExceptions=true}" HorizontalAlignment="Left" Margin="0,5,5,0" Grid.Row="8" Grid.Column="1" Width="150" Height="20"/>
+        <DatePicker SelectedDate="{Binding ActualStartDate, Mode=TwoWay, NotifyOnValidationError=true,  ValidatesOnExceptions=true}" IsEnabled="False" HorizontalAlignment="Left" Margin="0,5,5,0" Grid.Row="8" Grid.Column="1" Width="150"/>
 
         <Label Content="Projected End Date:" Grid.Row="9" Grid.Column="0" HorizontalAlignment="Left" Margin="0,5,5,0"/>
-        <TextBox Text="{Binding ProjectedEndDate, Mode=TwoWay, NotifyOnValidationError=true,  ValidatesOnExceptions=true}" HorizontalAlignment="Left" Margin="0,5,5,0" Grid.Row="9" Grid.Column="1" Width="150" Height="20"/>
+        <DatePicker SelectedDate="{Binding ProjectedEndDate, Mode=TwoWay, NotifyOnValidationError=true,  ValidatesOnExceptions=true}" IsEnabled="False" HorizontalAlignment="Left" Margin="0,5,5,0" Grid.Row="9" Grid.Column="1" Width="150"/>
 
         <Label Content="Deadline:" Grid.Row="10" Grid.Column="0" HorizontalAlignment="Left" Margin="0,5,5,0"/>
-        <TextBox Text="{Binding Deadline, Mode=TwoWay, NotifyOnValidationError=true,  ValidatesOnExceptions=true}" HorizontalAlignment="Left" Margin="0,5,5,0" Grid.Row="10" Grid.Column="1" Width="150" Height="20"/>
+        <DatePicker SelectedDate="{Binding Deadline, Mode=TwoWay, NotifyOnValidationError=true,  ValidatesOnExceptions=true}" IsEnabled="False" HorizontalAlignment="Left" Margin="0,5,5,0" Grid.Row="10" Grid.Column="1" Width="150"/>
 
         <Label Content="Actual End Date:" Grid.Row="11" Grid.Column="0" HorizontalAlignment="Left" Margin="0,5,5,0"/>
-        <TextBox Text="{Binding ActualEndDate, Mode=TwoWay, NotifyOnValidationError=true,  ValidatesOnExceptions=true}" HorizontalAlignment="Left" Margin="0,5,5,0" Grid.Row="11" Grid.Column="1" Width="150" Height="20"/>
+        <DatePicker SelectedDate="{Binding ActualEndDate, Mode=TwoWay, NotifyOnValidationError=true,  ValidatesOnExceptions=true}" IsEnabled="False" HorizontalAlignment="Left" Margin="0,5,5,0" Grid.Row="11" Grid.Column="1" Width="150"/>
 
         <Label Content="Required Effort Time:" Grid.Row="12" Grid.Column="0" HorizontalAlignment="Left" Margin="0,5,5,0"/>
         <TextBox Text="{Binding RequiredEffortTime, Mode=TwoWay, NotifyOnValidationError=true,  ValidatesOnExceptions=true}" HorizontalAlignment="Left" Margin="0,5,5,0" Grid.Row="12" Grid.Column="1" Width="150" Height="20"/>
