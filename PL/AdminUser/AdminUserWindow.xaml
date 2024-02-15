@@ -81,13 +81,16 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <!-- Button to Reset the System-->
             <Button Grid.Column="0" Content="Reset System" Click="btnResetSystem_Click" HorizontalAlignment="Center" VerticalAlignment="Center" Height="50" Width="125"/>
             <!-- Button to Initialize Database-->
             <Button Grid.Column="1" Content="Initialize Database" Click="btnInitializeDB_Click" HorizontalAlignment="Center" VerticalAlignment="Center" Height="50" Width="124"/>
+            <!-- Button to Set Project Start and End dates-->
+            <Button Grid.Column="2" Content="Set Project Dates" Click="btnSetProjectDates_Click" HorizontalAlignment="Center" VerticalAlignment="Center" Height="50" Width="150"/>
             <!-- Button to Change System Clock-->
-            <Button Grid.Column="2" Content="Change System Clock" Click="btnChangeSystemClock_Click" HorizontalAlignment="Center" VerticalAlignment="Center" Height="50" Width="150"/>
+            <Button Grid.Column="3" Content="Change System Clock" Click="btnChangeSystemClock_Click" HorizontalAlignment="Center" VerticalAlignment="Center" Height="50" Width="150"/>
         </Grid>
     </Grid>
 </Window>

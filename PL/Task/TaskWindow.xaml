@@ -67,7 +67,7 @@
         <TextBox Text="{Binding Description, Mode=TwoWay, NotifyOnValidationError=true,  ValidatesOnExceptions=true}" HorizontalAlignment="Left" Margin="0,5,5,0" Grid.Row="2" Grid.Column="1" Width="150" Height="20"/>
 
         <Label Content="Status:" Grid.Row="3" Grid.Column="0" HorizontalAlignment="Left" Margin="0,5,5,0"/>
-        <ComboBox SelectedValue="{Binding Status, Mode=TwoWay, NotifyOnValidationError=true,  ValidatesOnExceptions=true}" IsEnabled="False" ItemsSource="{Binding Source={StaticResource EngineerExperienceCollectionKey}}" HorizontalAlignment="Left" Margin="0,5,5,0" Grid.Row="3" Grid.Column="1" Width="150"/>
+        <ComboBox SelectedValue="{Binding Status, Mode=TwoWay, NotifyOnValidationError=true,  ValidatesOnExceptions=true}" IsEnabled="False" ItemsSource="{Binding Source={StaticResource StatusCollectionKey}}" HorizontalAlignment="Left" Margin="0,5,5,0" Grid.Row="3" Grid.Column="1" Width="150"/>
 
         <Label Content="Dependencies:" Grid.Row="4" Grid.Column="0" HorizontalAlignment="Left" Margin="0,5,5,0"/>
         <Button Content ="View Dependencies" Click="btnDependencies_Click" HorizontalAlignment="Left" Margin="0,5,5,0" Grid.Row="4" Grid.Column="1" Width="150" Height="20"/>

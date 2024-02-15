@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:PL.Milestone"
         mc:Ignorable="d"
         DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}"
-        Title="MilestoneListWindow" Height="640" Width="800">
+        Title="MilestoneListWindow" Height="640" Width="800" Activated="activated">
     <Window.Resources>
         <Style TargetType="Button">
             <Setter Property="Background" Value="#074081"/>

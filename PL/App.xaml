@@ -6,6 +6,7 @@
     <Application.Resources>
         <local:EngineerExperienceCollection x:Key="EngineerExperienceCollectionKey" />
         <local:StatusCollection x:Key="StatusCollectionKey" />
+        <local:DateTypeCollection x:Key="DateTypeCollectionKey" />
         <local:ConvertIdToContent x:Key="ConvertIdToContentKey" />
         <local:ConvertIdToMode x:Key="ConvertIdToModeKey" />
         <local:ConvertProjectDateToBool x:Key="ConvertProjectDateToBoolKey" />
