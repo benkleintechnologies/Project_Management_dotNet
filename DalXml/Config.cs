@@ -66,5 +66,6 @@ internal class Config
         EndDate = null;
         NextTaskId = 1;
         NextDependencyId = 1000;
+        SystemClock = DateTime.Now;
     }
 }

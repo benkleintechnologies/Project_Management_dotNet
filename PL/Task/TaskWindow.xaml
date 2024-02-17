@@ -73,7 +73,7 @@
         <Button Content ="View Dependencies" Click="btnDependencies_Click" HorizontalAlignment="Left" Margin="0,5,5,0" Grid.Row="4" Grid.Column="1" Width="150" Height="20"/>
 
         <Label Content="Milestone:" Grid.Row="5" Grid.Column="0" HorizontalAlignment="Left" Margin="0,5,5,0"/>
-        <TextBox Text="{Binding Milestone, Mode=TwoWay, NotifyOnValidationError=true,  ValidatesOnExceptions=true}" IsEnabled="False" HorizontalAlignment="Left" Margin="0,5,5,0" Grid.Row="5" Grid.Column="1" Width="150" Height="20"/>
+        <TextBox Text="{Binding Milestone, Mode=OneWay, NotifyOnValidationError=true,  ValidatesOnExceptions=true}" IsEnabled="False" HorizontalAlignment="Left" Margin="0,5,5,0" Grid.Row="5" Grid.Column="1" Width="150" Height="40"/>
 
         <Label Content="Date Created:" Grid.Row="6" Grid.Column="0" HorizontalAlignment="Left" Margin="0,5,5,0"/>
         <DatePicker SelectedDate="{Binding CreatedAtDate, Mode=TwoWay, NotifyOnValidationError=true,  ValidatesOnExceptions=true}" IsEnabled="False" HorizontalAlignment="Left" Margin="0,5,5,0" Grid.Row="6" Grid.Column="1" Width="150"/>
@@ -103,15 +103,11 @@
         <TextBox Text="{Binding Notes, Mode=TwoWay, NotifyOnValidationError=true,  ValidatesOnExceptions=true}" HorizontalAlignment="Left" Margin="0,5,5,0" Grid.Row="14" Grid.Column="1" Width="150" Height="20"/>
 
         <Label Content="Assigned Engineer:" Grid.Row="15" Grid.Column="0" HorizontalAlignment="Left" Margin="0,5,5,0"/>
-        <TextBox Text="{Binding Engineer, Mode=TwoWay, NotifyOnValidationError=true,  ValidatesOnExceptions=true}" IsEnabled="False" HorizontalAlignment="Left" Margin="0,5,5,0" Grid.Row="15" Grid.Column="1" Width="150" Height="40"/>
+        <TextBox Text="{Binding Engineer, Mode=OneWay, NotifyOnValidationError=true,  ValidatesOnExceptions=true}" IsEnabled="False" HorizontalAlignment="Left" Margin="0,5,5,0" Grid.Row="15" Grid.Column="1" Width="150" Height="40"/>
 
         <Label Content="Complexity:" Grid.Row="16" Grid.Column="0" HorizontalAlignment="Left" Margin="0,5,5,0"/>
         <ComboBox SelectedValue="{Binding Complexity, Mode=TwoWay, NotifyOnValidationError=true,  ValidatesOnExceptions=true}" ItemsSource="{Binding Source={StaticResource EngineerExperienceCollectionKey}}" IsEnabled="{Binding ID, Mode=OneTime, Converter={StaticResource ConvertIdToModeKey}}" HorizontalAlignment="Left" Margin="0,5,5,0"  Grid.Row="16" Grid.Column="1" Width="150"/>
 
         <Button Content="{Binding ID, Mode=OneTime, Converter={StaticResource ConvertIdToContentKey}}" Click="btnAddUpdate_Click" Padding="5" HorizontalAlignment="Center" Margin="0,5,0,0" Grid.ColumnSpan="2" Grid.Row="17" Height="40" Width="100"/>
-
-
-
-
     </Grid>
 </Window>

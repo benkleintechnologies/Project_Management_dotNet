@@ -37,6 +37,7 @@ public class ConfigImplementation : IConfig
         DataSource.Dependencies.Clear();
         DataSource.Config.startDate = null;
         DataSource.Config.endDate = null;
+        DataSource.Config.systemClock = DateTime.Now;
         DataSource.Config.resetDependencyId();
         DataSource.Config.resetTaskId();
     }

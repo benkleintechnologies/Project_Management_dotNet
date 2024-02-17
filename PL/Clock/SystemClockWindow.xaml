@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:PL.Clock"
         mc:Ignorable="d"
         DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}"
-        Title="SystemClockWindow" Height="450" Width="800">
+        Title="SystemClockWindow" Height="400" Width="500">
     <Window.Resources>
         <Style TargetType="Button">
             <Setter Property="Background" Value="#074081"/>
@@ -53,11 +53,9 @@
 
         <Label Content="Choose time to move forward or backward" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,0,0,10" HorizontalAlignment="Center"/>
 
-        <Button Content="Move Backward" Click="btnBackward_Click" Grid.Row="3" Grid.Column="0" HorizontalAlignment="Center"/>
+        <Button Content="Backward" Click="btnBackward_Click" Grid.Row="3" Grid.Column="0" HorizontalAlignment="Center" Width="100"/>
         <TextBox Text="{Binding ChosenTimeAmount, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" HorizontalAlignment="Center" Margin="0,5,0,0" Grid.Row="3" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
-        <ComboBox ItemsSource="{Binding Source={StaticResource DateTypeCollectionKey}}" SelectedItem="{Binding ChosenTimeSpanUnit}" Grid.Column="1" HorizontalAlignment="Center" Margin="0,30,0,0" Grid.Row="3" VerticalAlignment="Top" Width="120"/>
-        <Button Content="Move Forward" Click="btnForward_Click" Grid.Row="3" Grid.Column="2" HorizontalAlignment="Center"/>
-
-
+        <ComboBox ItemsSource="{Binding Source={StaticResource DateTypeCollectionKey}}" SelectedItem="{Binding ChosenTimeSpanUnit}" Grid.Column="1" HorizontalAlignment="Center" Margin="0,30,0,5" Grid.Row="3" VerticalAlignment="Top" Width="120"/>
+        <Button Content="Forward" Click="btnForward_Click" Grid.Row="3" Grid.Column="2" HorizontalAlignment="Center" Width="100"/>
     </Grid>
 </Window>
