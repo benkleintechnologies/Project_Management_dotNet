@@ -18,6 +18,16 @@ public class XMLConfigImplementation : IConfig
         return Config.StartDate;
     }
 
+    public void SetSystemClock(DateTime systemClock)
+    {
+        Config.SystemClock = systemClock;
+    }
+
+    public DateTime GetSystemClock()
+    {
+        return Config.SystemClock ?? DateTime.Now;
+    }
+
     public void Reset()
     {
         Config.Reset();
@@ -56,5 +66,4 @@ public class XMLConfigImplementation : IConfig
             throw new DateCannotBeChangedException("Start date can only be changed if the rest of the system has been reset or uninitialized");
         }
     }
-
 }

@@ -291,7 +291,7 @@ internal class MilestoneImplementation : IMilestone
         }
         else if (t.ActualStartDate.HasValue)
         {
-            if (t.Deadline.HasValue && DateTime.Now > t.Deadline)
+            if (t.Deadline.HasValue && _dal.Config.GetSystemClock() > t.Deadline)
             {
                 return BO.Status.InJeopardy;
             }

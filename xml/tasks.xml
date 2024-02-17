@@ -520,10 +520,13 @@
   </Task>
   <Task>
     <ID>3</ID>
-    <Nickname>task3</Nickname>
+    <Nickname>newtask3</Nickname>
     <IsMilestone>false</IsMilestone>
     <DegreeOfDifficulty>Beginner</DegreeOfDifficulty>
-    <AssignedEngineerId>123</AssignedEngineerId>
+    <AssignedEngineerId>394680121</AssignedEngineerId>
+    <Description>gfbnesrfgberb</Description>
+    <Deliverables />
+    <Notes />
     <DateCreated>2024-02-07T15:44:45.5740049+02:00</DateCreated>
     <ProjectedStartDate>2024-01-02T00:00:00</ProjectedStartDate>
     <ActualStartDate xsi:nil="true" />

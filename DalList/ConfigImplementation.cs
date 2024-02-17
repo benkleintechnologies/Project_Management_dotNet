@@ -18,6 +18,15 @@ public class ConfigImplementation : IConfig
         return DataSource.Config.startDate;
     }
 
+    public DateTime GetSystemClock()
+    {
+        return DataSource.Config.systemClock;
+    }
+    public void SetSystemClock(DateTime systemClock)
+    {
+        DataSource.Config.systemClock = systemClock;
+    }
+
     /// <summary>
     /// Reset all items in the database
     /// </summary>
@@ -28,6 +37,7 @@ public class ConfigImplementation : IConfig
         DataSource.Dependencies.Clear();
         DataSource.Config.startDate = null;
         DataSource.Config.endDate = null;
+        DataSource.Config.systemClock = DateTime.Now;
         DataSource.Config.resetDependencyId();
         DataSource.Config.resetTaskId();
     }
@@ -49,5 +59,4 @@ public class ConfigImplementation : IConfig
     {
         DataSource.Config.startDate = startDate;
     }
-    
 }

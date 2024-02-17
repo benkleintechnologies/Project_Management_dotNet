@@ -33,10 +33,18 @@
     <Active>true</Active>
   </Engineer>
   <Engineer>
+    <ID>123456789</ID>
+    <Name>Binyamin</Name>
+    <Email>ben@klein.com</Email>
+    <Cost>12000</Cost>
+    <Level>Expert</Level>
+    <Active>true</Active>
+  </Engineer>
+  <Engineer>
     <ID>394680121</ID>
     <Name>Dovid Greenbaum</Name>
     <Email>dovid.greenbaum@example.com</Email>
-    <Cost>180097</Cost>
+    <Cost>10897</Cost>
     <Level>Advanced</Level>
     <Active>true</Active>
   </Engineer>

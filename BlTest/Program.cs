@@ -182,7 +182,7 @@ internal class Program
                     Console.WriteLine();
                     break;
                 case "b": //Add Engineer
-                    if (s_bl.Config.inProduction())
+                    if (s_bl.Config.InProduction())
                     {
                         Console.WriteLine("Enter the id, name, email, experience level, cost, and assigned task ID (on separate lines):");
                     }
@@ -210,7 +210,7 @@ internal class Program
                     Console.WriteLine();
                     break;
                 case "e": //Update Engineer
-                    if (s_bl.Config.inProduction())
+                    if (s_bl.Config.InProduction())
                     {
                         Console.WriteLine("Enter the updated information of the engineer, including - id, name, email, experience level, cost, and assigned task ID (on separate lines):");
                     }
@@ -255,6 +255,11 @@ internal class Program
             //Exception because invalid input was given
             Console.WriteLine(ex.Message + "\n");
         }
+        catch (BlTaskCannotBeAssignedException ex)
+        {
+            //Exception because this task cannot be assigned to an engineer
+            Console.WriteLine(ex.Message + "\n");
+        }
     }
 
     /// <summary>
@@ -273,7 +278,7 @@ internal class Program
                     Console.WriteLine();
                     break;
                 case "b": //Add Task
-                    if (!s_bl.Config.inProduction())
+                    if (!s_bl.Config.InProduction())
                     {
                         Console.WriteLine("Enter the id, name, description, date created, projected start date, required effort time, deadline, deliverables, notes, and complexity (on separate lines):\n");
                         newTask = ParseTask(adding: true); //Need to also ask for dependencies
@@ -298,7 +303,7 @@ internal class Program
                     Console.WriteLine();
                     break;
                 case "e": //Update Task
-                    if (s_bl.Config.inProduction())
+                    if (s_bl.Config.InProduction())
                     {
                         Console.WriteLine("Enter the updated information of the task, including - id, name, description, actual start date, actual end date, deliverables, notes, assigned engineer ID (on separate lines):");
                     }
@@ -310,7 +315,7 @@ internal class Program
                     s_bl.Task.UpdateTask(newTask);
                     break;
                 case "f": //Update Task Projected Start Date
-                    if (s_bl.Config.inProduction())
+                    if (s_bl.Config.InProduction())
                         throw new BO.BlUnableToPerformActionInProductionException("Cannot update a task's projected start date in production mode");
                     Console.WriteLine("Enter the id of the task you would like to update:");
                     int.TryParse(Console.ReadLine(), out id);
@@ -319,7 +324,7 @@ internal class Program
                     s_bl.Task.UpdateTaskStartDate(id, startDateValue);
                     break;
                 case "g": //Assign engineer to Task
-                    if (!s_bl.Config.inProduction())
+                    if (!s_bl.Config.InProduction())
                         throw new BO.BlUnableToPerformActionInPlanningException("Cannot assign an engineer to a task in planning mode");
                     Console.WriteLine("Enter the id of the task you would like to assign an engineer to:");
                     int.TryParse(Console.ReadLine(), out id);
@@ -377,6 +382,11 @@ internal class Program
         catch (BlUnableToPerformActionInPlanningException ex)
         {
             //Exception because this action cannot be performed once the system is in planning mode
+            Console.WriteLine(ex.Message + "\n");
+        }
+        catch (BlTaskCannotBeAssignedException ex)
+        {
+            //Exception because this task cannot be assigned to an engineer
             Console.WriteLine(ex.Message + "\n");
         }
     }
@@ -478,7 +488,7 @@ internal class Program
         //Get Assigned Task from ID
         TaskInEngineer? taskInEngineer = null;
         
-        if (s_bl.Config.inProduction())
+        if (s_bl.Config.InProduction())
         {
             bool hasTask = int.TryParse(Console.ReadLine(), out int taskID);
             if (hasTask)
@@ -504,8 +514,8 @@ internal class Program
         //In Production - id, name, description, actual start date, actual end date, deliverables, notes, assigned engineer ID
         //In Planning - id, name, description, projected start date, required effort time, deadline, deliverables, notes, complexity [and dependencies]
         //When Adding - id, name, description, date created, projected start date, required effort time, deadline, deliverables, notes, and complexity [and dependencies]
-        bool inProduction = s_bl.Config.inProduction();
-        bool inPlanning = !s_bl.Config.inProduction();
+        bool inProduction = s_bl.Config.InProduction();
+        bool inPlanning = !s_bl.Config.InProduction();
 
         int.TryParse(Console.ReadLine(), out int id);
         string? name = Console.ReadLine();

@@ -38,12 +38,17 @@ internal class EngineerImplementation : IEngineer
 
                     if (toAssignTask is not null)
                     {
+                        IEnumerable<Dependency> dependenciesList = _dal.Dependency.ReadAll(d => d.DependentTask == toAssignTask.ID);
                         //Check that the engineer has the same or higher experience level than the task
                         if ((DO.EngineerExperience)engineer.Experience < toAssignTask.DegreeOfDifficulty)
                         {
-                            throw new BO.BlInvalidInputException($"The Engineer with ID {engineer.ID} could not be assigned to the Task with ID {toAssignTask.ID} because their experience level is too low.");
+                            throw new BO.BlTaskCannotBeAssignedException($"The Engineer with ID {engineer.ID} could not be assigned to the Task with ID {toAssignTask.ID} because their experience level is too low.");
                         }
-
+                        //Check if the dependencies of the task have all been completed already
+                        else if (dependenciesList is not null && dependenciesList.Any(d => _dal.Task.Read(d.DependsOnTask).ActualEndDate is null))
+                        {
+                            throw new BO.BlTaskCannotBeAssignedException($"The Task with ID {toAssignTask.ID} could not be assigned to the Engineer with ID {engineer.ID} because it has dependencies that have not been completed yet.");
+                        }
                         _dal.Task.Update(toAssignTask with { AssignedEngineerId = engineer.ID });
                     }
                 }
@@ -160,13 +165,28 @@ internal class EngineerImplementation : IEngineer
 
                     if (toAssignTask is not null)
                     {
+                        IEnumerable<Dependency> dependenciesList = _dal.Dependency.ReadAll(d => d.DependentTask == toAssignTask.ID);
                         //Check that the engineer has the same or higher experience level than the task
                         if ((DO.EngineerExperience)engineer.Experience < toAssignTask.DegreeOfDifficulty)
                         {
-                            throw new BO.BlInvalidInputException($"The Engineer with ID {engineer.ID} could not be assigned to the Task with ID {toAssignTask.ID} because their experience level is too low.");
+                            throw new BO.BlTaskCannotBeAssignedException($"The Engineer with ID {engineer.ID} could not be assigned to the Task with ID {toAssignTask.ID} because their experience level is too low.");
+                        }
+                        //Check if the dependencies of the task have all been completed already
+                        else if (dependenciesList is not null && dependenciesList.Any(d => _dal.Task.Read(d.DependsOnTask).ActualEndDate is null && _dal.Task.Read(d.DependsOnTask).Nickname != "Start"))
+                        {
+                            throw new BO.BlTaskCannotBeAssignedException($"The Task with ID {toAssignTask.ID} could not be assigned to the Engineer with ID {engineer.ID} because it has dependencies that have not been completed yet.");
                         }
 
                         _dal.Task.Update(toAssignTask with { AssignedEngineerId = engineer.ID });
+                    }
+                }
+                else
+                {
+                    //If the engineer is not assigned to a task, remove the assignedEngineerId from the task
+                    DO.Task taskAssigned = _dal.Task.Read(t => t.AssignedEngineerId == engineer.ID);
+                    if (taskAssigned is not null)
+                    {
+                        _dal.Task.Update(taskAssigned with { AssignedEngineerId = null });
                     }
                 }
             }

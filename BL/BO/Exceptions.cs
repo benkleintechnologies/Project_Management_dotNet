@@ -44,3 +44,8 @@ public class BlUnableToPerformActionInPlanningException : Exception
 {
     public BlUnableToPerformActionInPlanningException(string? message) : base(message) { }
 }
+
+public class BlTaskCannotBeAssignedException : Exception
+{
+    public BlTaskCannotBeAssignedException(string? message) : base(message) { }
+}
