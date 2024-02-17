@@ -117,8 +117,12 @@ internal class TaskImplementation : ITask
                     //Check that new assigned engineer has proper level (equal or greater than complexity)
                     if (_dal.Engineer.Read(task.Engineer.ID).Level < (DO.EngineerExperience)task.Complexity)
                     {
-                        throw new BO.BlInvalidInputException("The assigned engineer's experience level is not sufficient for the task's complexity");
+                        throw new BO.BlTaskCannotBeAssignedException("The assigned engineer's experience level is not sufficient for the task's complexity");
                     }
+                    else if (task.Dependencies is not null && !task.Dependencies.All(d => d.Status == BO.Status.Done)) //check that all dependencies of this task were already completed before this task is assigned
+                    {
+                        throw new BO.BlTaskCannotBeAssignedException("Cannot assign an engineer to a task that has dependencies that are not completed yet");
+                    }   
                 }
             }
             else // Planning stage

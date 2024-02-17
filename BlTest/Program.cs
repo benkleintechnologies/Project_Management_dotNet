@@ -255,6 +255,11 @@ internal class Program
             //Exception because invalid input was given
             Console.WriteLine(ex.Message + "\n");
         }
+        catch (BlTaskCannotBeAssignedException ex)
+        {
+            //Exception because this task cannot be assigned to an engineer
+            Console.WriteLine(ex.Message + "\n");
+        }
     }
 
     /// <summary>
@@ -377,6 +382,11 @@ internal class Program
         catch (BlUnableToPerformActionInPlanningException ex)
         {
             //Exception because this action cannot be performed once the system is in planning mode
+            Console.WriteLine(ex.Message + "\n");
+        }
+        catch (BlTaskCannotBeAssignedException ex)
+        {
+            //Exception because this task cannot be assigned to an engineer
             Console.WriteLine(ex.Message + "\n");
         }
     }
