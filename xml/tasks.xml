@@ -15,20 +15,6 @@
     <Active>true</Active>
   </Task>
   <Task>
-    <ID>3</ID>
-    <Nickname>task3</Nickname>
-    <IsMilestone>false</IsMilestone>
-    <DegreeOfDifficulty>Beginner</DegreeOfDifficulty>
-    <AssignedEngineerId xsi:nil="true" />
-    <DateCreated>2024-02-07T15:44:45.5740049+02:00</DateCreated>
-    <ProjectedStartDate>2024-01-02T00:00:00</ProjectedStartDate>
-    <ActualStartDate xsi:nil="true" />
-    <Duration>P112D</Duration>
-    <Deadline>2025-01-08T00:00:00</Deadline>
-    <ActualEndDate xsi:nil="true" />
-    <Active>true</Active>
-  </Task>
-  <Task>
     <ID>19</ID>
     <Nickname>task19</Nickname>
     <IsMilestone>false</IsMilestone>
@@ -529,6 +515,20 @@
     <ActualStartDate xsi:nil="true" />
     <Duration xsi:nil="true" />
     <Deadline>2025-03-12T00:00:00</Deadline>
+    <ActualEndDate xsi:nil="true" />
+    <Active>true</Active>
+  </Task>
+  <Task>
+    <ID>3</ID>
+    <Nickname>task3</Nickname>
+    <IsMilestone>false</IsMilestone>
+    <DegreeOfDifficulty>Beginner</DegreeOfDifficulty>
+    <AssignedEngineerId>123</AssignedEngineerId>
+    <DateCreated>2024-02-07T15:44:45.5740049+02:00</DateCreated>
+    <ProjectedStartDate>2024-01-02T00:00:00</ProjectedStartDate>
+    <ActualStartDate xsi:nil="true" />
+    <Duration>P112D</Duration>
+    <Deadline>2025-01-08T00:00:00</Deadline>
     <ActualEndDate xsi:nil="true" />
     <Active>true</Active>
   </Task>
