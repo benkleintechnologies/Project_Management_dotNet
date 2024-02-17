@@ -9,7 +9,9 @@ public interface IConfig
     void SetProjectEndDate(DateTime endDate);
     DateTime? GetProjectStartDate();
     DateTime? GetProjectEndDate();
-    public bool inProduction();
+    void SetSystemClock(DateTime systemClock); // Set the system clock
+    DateTime GetSystemClock(); // Get the system clock
+    public bool InProduction();
     void Reset();
 
 }

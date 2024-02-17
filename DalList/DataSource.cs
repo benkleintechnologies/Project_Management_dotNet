@@ -11,7 +11,7 @@ internal static class DataSource
 	internal static class Config {
 		internal static DateTime? startDate { get; set; } = null;
 		internal static DateTime? endDate { get; set; } = null;
-
+        internal static DateTime systemClock { get; set; } = DateTime.Now;
 		internal const int startTaskId = 1;
 		private static int nextTaskId = startTaskId;
 		internal static int NextTaskId { get => nextTaskId++;  }

@@ -18,6 +18,15 @@ public class ConfigImplementation : IConfig
         return DataSource.Config.startDate;
     }
 
+    public DateTime GetSystemClock()
+    {
+        return DataSource.Config.systemClock;
+    }
+    public void SetSystemClock(DateTime systemClock)
+    {
+        DataSource.Config.systemClock = systemClock;
+    }
+
     /// <summary>
     /// Reset all items in the database
     /// </summary>
@@ -49,5 +58,4 @@ public class ConfigImplementation : IConfig
     {
         DataSource.Config.startDate = startDate;
     }
-    
 }

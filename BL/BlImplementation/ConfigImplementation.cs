@@ -30,7 +30,7 @@ internal class ConfigImplementation : IConfig
         }
     }
 
-    public bool inProduction()
+    public bool InProduction()
     {
         if (_dal.Config.GetStartDate().HasValue) // if value is set then in production already
         {
@@ -55,5 +55,15 @@ internal class ConfigImplementation : IConfig
     public DateTime? GetProjectEndDate()
     {
         return _dal.Config.GetEndDate();
+    }
+
+    public void SetSystemClock(DateTime systemClock)
+    {
+        _dal.Config.SetSystemClock(systemClock);
+    }
+
+    public DateTime GetSystemClock()
+    {
+        return _dal.Config.GetSystemClock();
     }
 }

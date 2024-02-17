@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PL.Clock"
         mc:Ignorable="d"
+        DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}"
         Title="SystemClockWindow" Height="450" Width="800">
     <Window.Resources>
         <Style TargetType="Button">
@@ -48,14 +49,14 @@
         </Grid.RowDefinitions>
 
         <Label Content="System Clock" FontSize="16" FontWeight="Bold" Margin="0,50,0,10" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" HorizontalAlignment="Center" />
-        <Label Content="\{Current time of system (binding)}" FontSize="16" FontWeight="Black" Margin="0,0,0,40" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" HorizontalAlignment="Center" />
+        <Label Content="{Binding SystemClock, Mode=OneWay, NotifyOnValidationError=true,  ValidatesOnExceptions=true}" FontSize="16" FontWeight="Black" Margin="0,0,0,40" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" HorizontalAlignment="Center" />
 
         <Label Content="Choose time to move forward or backward" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,0,0,10" HorizontalAlignment="Center"/>
 
-        <Button Content="Move Backward" Grid.Row="3" Grid.Column="0" HorizontalAlignment="Center"/>
-        <TextBox Grid.Column="1" HorizontalAlignment="Center" Margin="0,5,0,0" Grid.Row="3" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
-        <ComboBox ItemsSource="{Binding Source={StaticResource DateTypeCollectionKey}}" Grid.Column="1" HorizontalAlignment="Center" Margin="0,30,0,0" Grid.Row="3" VerticalAlignment="Top" Width="120"/>
-        <Button Content="Move Forward" Grid.Row="3" Grid.Column="2" HorizontalAlignment="Center"/>
+        <Button Content="Move Backward" Click="btnBackward_Click" Grid.Row="3" Grid.Column="0" HorizontalAlignment="Center"/>
+        <TextBox Text="{Binding ChosenTimeAmount, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" HorizontalAlignment="Center" Margin="0,5,0,0" Grid.Row="3" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+        <ComboBox ItemsSource="{Binding Source={StaticResource DateTypeCollectionKey}}" SelectedItem="{Binding ChosenTimeSpanUnit}" Grid.Column="1" HorizontalAlignment="Center" Margin="0,30,0,0" Grid.Row="3" VerticalAlignment="Top" Width="120"/>
+        <Button Content="Move Forward" Click="btnForward_Click" Grid.Row="3" Grid.Column="2" HorizontalAlignment="Center"/>
 
 
     </Grid>

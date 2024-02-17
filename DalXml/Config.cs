@@ -25,6 +25,18 @@ internal class Config
         }
     }
 
+    internal static DateTime? SystemClock
+    {
+        get => XMLTools.LoadListFromXMLElement(s_data_config_xml)
+                    .ToDateTimeNullable("SystemClock");
+        set
+        {
+            XElement root = XMLTools.LoadListFromXMLElement(s_data_config_xml);
+            root.Element("SystemClock")?.SetValue(value.HasValue ? value.Value.ToString("MM/dd/yyyy HH:mm:ss") : "");
+            XMLTools.SaveListToXMLElement(root, s_data_config_xml);
+        }
+    }
+
     internal static DateTime? StartDate
     {
         get => XMLTools.LoadListFromXMLElement(s_data_config_xml)
