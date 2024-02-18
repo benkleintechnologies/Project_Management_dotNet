@@ -64,6 +64,30 @@ public static class Tools
                     result.AppendLine("null");
                 }
             }
+            else if (property.PropertyType != typeof(string) &&
+                     property.PropertyType != typeof(DateTime) &&
+                     property.PropertyType != typeof(DateTime?) &&
+                     property.PropertyType != typeof(TimeSpan) &&
+                     property.PropertyType != typeof(TimeSpan?) &&
+                     property.PropertyType.GetProperties().Length > 1)
+            {
+                //If the property is a complex type, print its properties on one line
+                result.Append("{ ");
+                foreach (PropertyInfo itemProperty in property.PropertyType.GetProperties())
+                {
+                    //Print each property of the item, all on one line
+                    if (itemProperty is not null)
+                    {
+                        object? propertyValue = property.GetValue(obj);
+                        if (propertyValue != null)
+                        {
+                            result.Append($"{itemProperty.Name}: {itemProperty.GetValue(propertyValue)}, ");
+                        }
+                    }
+                }
+                result.Remove(result.Length - 2, 2);// Remove the trailing comma and space
+                result.AppendLine(" }");
+            }
             else
             {
                 // Handle non-collection properties
