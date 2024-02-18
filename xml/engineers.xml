@@ -52,8 +52,8 @@
     <ID>123</ID>
     <Name>Eli</Name>
     <Email>eli.isaacs@yahoo.com</Email>
-    <Cost>1000000</Cost>
-    <Level>Beginner</Level>
+    <Cost>12344212</Cost>
+    <Level>Expert</Level>
     <Active>true</Active>
   </Engineer>
 </ArrayOfEngineer>

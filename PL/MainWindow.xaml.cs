@@ -48,7 +48,8 @@ public partial class MainWindow : Window
             try
             {
                 // Check if there is an engineer with this ID and if it does then go to the Engineer View
-                int validID = s_bl.Engineer.GetEngineer(engineerID).ID;
+                BO.Engineer? desiredEngineer = s_bl.Engineer.GetEngineer(engineerID);
+                int validID = desiredEngineer.ID;
                 new EngineerUserWindow(validID).ShowDialog();
             }
             catch (BO.BlDoesNotExistException ex)

@@ -73,14 +73,18 @@ namespace PL.EngineerUser
                 }
             }
         }
+
+        private BO.Task? _taskToUse;
+
         public EngineerUserWindow(int id)
         {
             InitializeComponent();
             BO.TaskInEngineer? taskInEngineer = s_bl.Engineer.GetEngineer(id).Task;
             if (taskInEngineer != null)
             {
-                CurrentTask = taskInEngineer.ToString();
-                MarkTaskComplete = true; // task exists to could mark completed
+                _taskToUse = s_bl.Task.GetTask(taskInEngineer!.ID);
+                CurrentTask = _taskToUse.ToString();
+                MarkTaskComplete = true; // task exists so could mark completed
                 ViewRelevantTasks = false;
 
             }
@@ -100,12 +104,14 @@ namespace PL.EngineerUser
 
         private void btnMarkTaskCompleted_Click(object sender, RoutedEventArgs e)
         {
-
+            _taskToUse!.ActualEndDate = s_bl.Config.GetSystemClock();
+            s_bl.Task.UpdateTask(_taskToUse);
+            MessageBox.Show("Marked task complete");
         }
 
         private void btnViewRelevantTasks_Click(object sender, RoutedEventArgs e)
         {
-
+            
         }
     }
 }
