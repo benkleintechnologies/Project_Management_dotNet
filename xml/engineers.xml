@@ -48,4 +48,12 @@
     <Level>Advanced</Level>
     <Active>true</Active>
   </Engineer>
+  <Engineer>
+    <ID>123</ID>
+    <Name>Eli</Name>
+    <Email>eli.isaacs@yahoo.com</Email>
+    <Cost>1000000</Cost>
+    <Level>Beginner</Level>
+    <Active>true</Active>
+  </Engineer>
 </ArrayOfEngineer>
