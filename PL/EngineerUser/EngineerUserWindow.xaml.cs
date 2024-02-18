@@ -79,22 +79,26 @@ namespace PL.EngineerUser
         public EngineerUserWindow(int id)
         {
             InitializeComponent();
+            LoadTask(id);
+
+        }
+
+        private void LoadTask(int id)
+        {
             BO.TaskInEngineer? taskInEngineer = s_bl.Engineer.GetEngineer(id).Task;
             if (taskInEngineer != null)
             {
                 _taskToUse = s_bl.Task.GetTask(taskInEngineer!.ID);
                 CurrentTask = _taskToUse.ToString();
-                MarkTaskComplete = true; // task exists so could mark completed
+                MarkTaskComplete = true;
                 ViewRelevantTasks = false;
-
             }
             else
             {
                 CurrentTask = "No task assigned to this engineer";
                 MarkTaskComplete = false;
-                ViewRelevantTasks = true; // no task so look for relevant tasks
+                ViewRelevantTasks = true;
             }
-
         }
 
         protected void OnPropertyChanged(string propertyName)
@@ -107,6 +111,7 @@ namespace PL.EngineerUser
             _taskToUse!.ActualEndDate = s_bl.Config.GetSystemClock();
             s_bl.Task.UpdateTask(_taskToUse);
             MessageBox.Show("Marked task complete");
+            LoadTask(_taskToUse.Engineer.ID); // Reload the task after marking it complete
         }
 
         private void btnViewRelevantTasks_Click(object sender, RoutedEventArgs e)

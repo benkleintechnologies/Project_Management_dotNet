@@ -28,19 +28,25 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        <Style TargetType="Button" x:Key="DisabledButtonStyle">
+            <Setter Property="Background" Value="#CCCCCC"/>
+            <!-- Set a gray background -->
+            <Setter Property="Foreground" Value="#888888"/>
+            <!-- Set a lighter text color -->
+        </Style>
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="1*"/>
             <RowDefinition Height="3*"/>
-            <RowDefinition Height="2*"/>
-            <RowDefinition Height="2*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
         <Label Content="ENGINEER VIEW" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24"/>
         <Label Grid.Row="1" Content="Your Current Task:" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20"/>
-        <ScrollViewer Grid.Row="2">
-            <TextBlock Text="{Binding CurrentTask}" Grid.Row="2" HorizontalAlignment="Center" FontSize="18"/>
+        <ScrollViewer Grid.Row="2" Background="LightGray">
+            <TextBlock Text="{Binding CurrentTask, Mode=OneWay, NotifyOnValidationError=true,  ValidatesOnExceptions=true}" Grid.Row="2" HorizontalAlignment="Center" FontSize="18"/>
         </ScrollViewer>
         <Button Grid.Row="3" Content="Mark Task Complete" HorizontalAlignment="Center" FontSize="18" Height="40" Width="180" Background="Blue" Click="btnMarkTaskCompleted_Click" IsEnabled="{Binding MarkTaskComplete}" Margin="0,13,0,13"/>
         <Button Grid.Row="4" Content="Choose Task" HorizontalAlignment="Center" FontSize="18" Height="40" Width="180" Background="BlueViolet" Click="btnViewRelevantTasks_Click" IsEnabled="{Binding ViewRelevantTasks}" Margin="0,12,0,13"/>

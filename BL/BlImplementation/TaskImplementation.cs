@@ -119,10 +119,23 @@ internal class TaskImplementation : ITask
                     {
                         throw new BO.BlTaskCannotBeAssignedException("The assigned engineer's experience level is not sufficient for the task's complexity");
                     }
-                    else if (task.Dependencies is not null && !task.Dependencies.All(d => d.Status == BO.Status.Done)) //check that all dependencies of this task were already completed before this task is assigned
+
+                    //check that all dependencies of this task's milestone were already completed before this task is assigned
+                    try
                     {
-                        throw new BO.BlTaskCannotBeAssignedException("Cannot assign an engineer to a task that has dependencies that are not completed yet");
-                    }   
+                        if (task.Dependencies is not null &&
+                                                _dal.Task.ReadAll(t =>
+                                                _dal.Dependency.ReadAll(d => d.DependentTask == task.Milestone.ID)
+                                                .Select(d => d.DependsOnTask).ToList().Contains(t.ID))
+                                                .Any(t => t.ActualEndDate.HasValue == false))
+                        {
+                            throw new BO.BlTaskCannotBeAssignedException("Cannot assign an engineer to a task that has dependencies that are not completed yet");
+                        }
+                    }catch(DO.DalDoesNotExistException)
+                    {
+                        //There are no dependencies for this task. Not an error
+                    }
+                      
                 }
             }
             else // Planning stage
