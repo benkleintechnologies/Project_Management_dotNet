@@ -119,10 +119,11 @@ namespace PL.EngineerUser
         private void btnViewRelevantTasks_Click(object sender, RoutedEventArgs e)
         {
             BO.Engineer? engineer = s_bl.Engineer.GetEngineer(_engineerID);
-            new Task.TaskListWindow(item => 
+            new Task.TaskListWindow((item => 
                 item.Complexity <= engineer.Experience &&
                 item.Status == BO.Status.Scheduled &&
-                s_bl.Milestone.GetMilestone(item.Milestone.ID).Dependencies.All(dep => dep.Status == BO.Status.Done)
+                s_bl.Milestone.GetMilestone(item.Milestone.ID).Dependencies.All(dep => dep.Status == BO.Status.Done)),
+                _engineerID
             ).ShowDialog();
         }
 
@@ -130,6 +131,12 @@ namespace PL.EngineerUser
         {
             if (_taskToUse != null && _taskToUse.Engineer != null)
                 new EngineerWindow(_taskToUse.Engineer.ID).ShowDialog();
+        }
+
+        private void activated(object sender, EventArgs e)
+        {
+            LoadTask(_engineerID);
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(CurrentTask));
         }
     }
 }

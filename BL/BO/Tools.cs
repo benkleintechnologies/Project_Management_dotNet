@@ -86,7 +86,16 @@ public static class Tools
                     }
                 }
                 result.Remove(result.Length - 2, 2);// Remove the trailing comma and space
-                result.AppendLine(" }");
+                //print the closing bracket if the object is not null
+                if (property.GetValue(obj) != null)
+                {
+                    result.AppendLine(" }");
+                }
+                else
+                {
+                    result.AppendLine("null");
+                }
+            
             }
             else
             {

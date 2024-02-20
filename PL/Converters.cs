@@ -42,3 +42,16 @@ class ConvertProjectDateToBool : IValueConverter
         throw new NotImplementedException();
     }
 }
+
+class ConvertBoolToContentKey : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        return (bool)value ? "Add" : "Select This Task";
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        throw new NotImplementedException();
+    }
+}
