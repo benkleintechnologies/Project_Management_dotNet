@@ -75,12 +75,13 @@ namespace PL.EngineerUser
         }
 
         private BO.Task? _taskToUse;
+        private int _engineerID = 0;
 
         public EngineerUserWindow(int id)
         {
+            _engineerID = id;
             InitializeComponent();
             LoadTask(id);
-
         }
 
         private void LoadTask(int id)
@@ -109,14 +110,26 @@ namespace PL.EngineerUser
         private void btnMarkTaskCompleted_Click(object sender, RoutedEventArgs e)
         {
             _taskToUse!.ActualEndDate = s_bl.Config.GetSystemClock();
+            _taskToUse!.Engineer = null;
             s_bl.Task.UpdateTask(_taskToUse);
             MessageBox.Show("Marked task complete");
-            LoadTask(_taskToUse.Engineer.ID); // Reload the task after marking it complete
+            LoadTask(_engineerID); // Reload the task after marking it complete
         }
 
         private void btnViewRelevantTasks_Click(object sender, RoutedEventArgs e)
         {
-            
+            BO.Engineer? engineer = s_bl.Engineer.GetEngineer(_engineerID);
+            new Task.TaskListWindow(item => 
+                item.Complexity <= engineer.Experience &&
+                item.Status == BO.Status.Scheduled &&
+                s_bl.Milestone.GetMilestone(item.Milestone.ID).Dependencies.All(dep => dep.Status == BO.Status.Done)
+            ).ShowDialog();
+        }
+
+        private void openEngineerView(object sender, MouseButtonEventArgs e)
+        {
+            if (_taskToUse != null && _taskToUse.Engineer != null)
+                new EngineerWindow(_taskToUse.Engineer.ID).ShowDialog();
         }
     }
 }

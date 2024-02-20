@@ -27,13 +27,17 @@
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
+            <Style.Triggers>
+                <!-- Trigger to apply the disabled button style -->
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Background" Value="#CCCCCC"/>
+                    <!-- Gray out background -->
+                    <Setter Property="Foreground" Value="#888888"/>
+                    <!-- Gray out text -->
+                </Trigger>
+            </Style.Triggers>
         </Style>
-        <Style TargetType="Button" x:Key="DisabledButtonStyle">
-            <Setter Property="Background" Value="#CCCCCC"/>
-            <!-- Set a gray background -->
-            <Setter Property="Foreground" Value="#888888"/>
-            <!-- Set a lighter text color -->
-        </Style>
+        
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -45,7 +49,7 @@
         </Grid.RowDefinitions>
         <Label Content="ENGINEER VIEW" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24"/>
         <Label Grid.Row="1" Content="Your Current Task:" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20"/>
-        <ScrollViewer Grid.Row="2" Background="LightGray">
+        <ScrollViewer Grid.Row="2" Background="LightGray" MouseDoubleClick="openEngineerView">
             <TextBlock Text="{Binding CurrentTask, Mode=OneWay, NotifyOnValidationError=true,  ValidatesOnExceptions=true}" Grid.Row="2" HorizontalAlignment="Center" FontSize="18"/>
         </ScrollViewer>
         <Button Grid.Row="3" Content="Mark Task Complete" HorizontalAlignment="Center" FontSize="18" Height="40" Width="180" Background="Blue" Click="btnMarkTaskCompleted_Click" IsEnabled="{Binding MarkTaskComplete}" Margin="0,13,0,13"/>

@@ -22,16 +22,20 @@ public partial class TaskListWindow : Window
 {
     //The BL instance
     static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
-    
-    public TaskListWindow()
+    //The filter for the list of tasks
+    private Func<BO.Task, bool>? _filter = null;
+
+    public TaskListWindow(Func<BO.Task, bool>? filter = null)
     {
+        _filter = filter;
+        TaskList = s_bl?.Task.GetListOfTasks(_filter)!;
         InitializeComponent();
     }
     
     //The event handler for the window activation
     private void activated(object sender, EventArgs e)
     {
-        TaskList = s_bl?.Task.GetListOfTasks()!;
+        TaskList = s_bl?.Task.GetListOfTasks(_filter)!;
     }
 
     //Getters and setters for the list of tasks
@@ -41,9 +45,9 @@ public partial class TaskListWindow : Window
         set { SetValue(TaskListProperty, value); }
     }
 
-    //Dependency Property to connect the list of engineers to the window
+    //Dependency Property to connect the list of tasks to the window
     public static readonly DependencyProperty TaskListProperty =
-        DependencyProperty.Register("TaskInList", typeof(IEnumerable<BO.TaskInList>), typeof(TaskListWindow), new PropertyMetadata(null));
+        DependencyProperty.Register("TaskList", typeof(IEnumerable<BO.TaskInList>), typeof(TaskListWindow), new PropertyMetadata(null));
 
     //The selected task experience level
     public BO.EngineerExperience ExperienceLevel { get; set; } = BO.EngineerExperience.All;
