@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PL"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}"
+        Title="MainWindow" Height="450" Width="800" Activated="activated">
     <Window.Resources>
         <Style TargetType="Button">
             <!-- Setting background color -->
@@ -44,7 +45,15 @@
             <RowDefinition Height="1*"/>
             <RowDefinition Height="2*"/>
         </Grid.RowDefinitions>
-        <Label Content="Welcome to the Task Management System" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="0" FontSize="24"/>
+        <Grid HorizontalAlignment="Stretch" Height="auto" Grid.Row="0" VerticalAlignment="Stretch" Width="auto">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Label Grid.Column="1" Content="Welcome to the Task Management System" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="0" FontSize="24"/>
+            <Label Grid.Column="2" Content="{Binding SystemClock, Mode=OneWay, NotifyOnValidationError=true,  ValidatesOnExceptions=true}" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="0" FontSize="16"/>
+        </Grid>
         <Label Content="User Access" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1" FontSize="18" FontWeight="Bold"/>
         <!--Internal Grid of User Access Buttons-->
         <Grid HorizontalAlignment="Stretch" Height="auto" Grid.Row="2" VerticalAlignment="Stretch" Width="auto">
@@ -58,22 +67,7 @@
             <Button Grid.Column="1" Content="Engineer" Click="btnEngineerUser_Click" Background="Blue" HorizontalAlignment="Center" VerticalAlignment="Center" Height="50" Width="125"/>
         </Grid>
         <Label Content="System Functions" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="3" FontSize="18" FontWeight="Bold"/>
-        <!--Internal Grid of System Functions Buttons-->
-        <Grid HorizontalAlignment="Stretch" Height="auto" Grid.Row="4" VerticalAlignment="Stretch" Width="auto">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <!-- Button to Reset the System-->
-            <Button Grid.Column="0" Content="Reset System" Click="btnResetSystem_Click" HorizontalAlignment="Center" VerticalAlignment="Center" Height="50" Width="125"/>
-            <!-- Button to Initialize Database-->
-            <Button Grid.Column="1" Content="Initialize Database" Click="btnInitializeDB_Click" HorizontalAlignment="Center" VerticalAlignment="Center" Height="50" Width="124"/>
-            <!-- Button to Set Project Start and End dates-->
-            <Button Grid.Column="2" Content="Set Project Dates" Click="btnSetProjectDates_Click" HorizontalAlignment="Center" VerticalAlignment="Center" Height="50" Width="150"/>
-            <!-- Button to Change System Clock-->
-            <Button Grid.Column="3" Content="Change System Clock" Click="btnChangeSystemClock_Click" HorizontalAlignment="Center" VerticalAlignment="Center" Height="50" Width="150"/>
-        </Grid>
+        <!-- Button to Change System Clock-->
+        <Button Grid.Row="4" Content="Change System Clock" Click="btnChangeSystemClock_Click" HorizontalAlignment="Center" VerticalAlignment="Center" Height="50" Width="150"/>
     </Grid>
 </Window>

@@ -1,5 +1,7 @@
 ﻿using PL.Engineer;
 using PL.EngineerUser;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -16,13 +18,32 @@ namespace PL;
 /// <summary>
 /// Interaction logic for MainWindow.xaml
 /// </summary>
-public partial class MainWindow : Window
+public partial class MainWindow : Window, INotifyPropertyChanged
 {
     //The BL instance
     static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
+    //System clock value
+    private DateTime _systemClock;
+
     public MainWindow()
     {
         InitializeComponent();
+    }
+
+    public DateTime SystemClock
+    {
+        get { return _systemClock; }
+        set
+        {
+            _systemClock = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public event PropertyChangedEventHandler PropertyChanged;
+    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
     private void btnAdminUser_Click(object sender, RoutedEventArgs e)
@@ -87,5 +108,10 @@ public partial class MainWindow : Window
     private void btnSetProjectDates_Click(object sender, RoutedEventArgs e)
     {
         new Clock.ProjectDatesWindow().ShowDialog();
+    }
+
+    private void activated(object sender, EventArgs e)
+    {
+        SystemClock = s_bl.Config.GetSystemClock();
     }
 }
