@@ -1,9 +1,9 @@
 ﻿namespace BlImplementation;
 using System;
 using System.Collections.Generic;
-using BlApi;
+using DO;
 
-internal class TaskImplementation : ITask
+internal class TaskImplementation : BlApi.ITask
 {
     private DalApi.IDal _dal = DalApi.Factory.Get;
 
@@ -143,10 +143,28 @@ internal class TaskImplementation : ITask
                 newTask = new(task.ID, task.Name, dlTask.IsMilestone, (DO.EngineerExperience)task.Complexity, dlTask.AssignedEngineerId, task.Description, task.Deliverables, task.Notes, dlTask.DateCreated, task.ProjectedStartDate, dlTask.ActualStartDate, task.RequiredEffortTime, task.Deadline, dlTask.ActualEndDate);
 
                 // Update the dependencies for the task (remove any old and add any new)
-                IEnumerable<DO.Dependency> oldDependencies = _dal.Dependency.ReadAll(d => d.DependentTask == task.ID);
-                oldDependencies.ToList().ForEach(d => _dal.Dependency.Delete(d.ID));
+                IEnumerable<DO.Dependency> oldDependencies;
+                try
+                {
+                    oldDependencies = _dal.Dependency.ReadAll(d => d.DependentTask == task.ID);
+                    oldDependencies.ToList().ForEach(d => _dal.Dependency.Delete(d.ID));
+                }
+                catch(DO.DalDoesNotExistException)
+                {
+                    //There are no dependencies for this task. Not an error
+                }
+                
                 IEnumerable<DO.Dependency> newDependencies = from t in task.Dependencies
                                                              select new DO.Dependency(0, task.ID, t.ID);
+                //Check for circular dependencies
+                foreach (DO.Dependency dependency in newDependencies)
+                {
+                    if (createsCircularDependency(dependency.DependentTask, dependency.DependsOnTask))
+                    {
+                        throw new BO.BlCircularDependencyException("The dependencies you are trying to create are circular");
+                    }
+                }
+
                 newDependencies.ToList().ForEach(d => _dal.Dependency.Create(d));
             }
 
@@ -321,5 +339,62 @@ internal class TaskImplementation : ITask
 
         // Combine direct and indirect dependent tasks
         return _dal.Task.ReadAll(t => directDependencyIds.Contains(t.ID)).Concat(indirectDependentTasks);
+    }
+
+    /// <summary>
+    /// Figure out if the dependentTask and DependsOnTask will create a circular dependency 
+    /// </summary>
+    /// <param name="dependentTask"></param>
+    /// <param name="dependsOnTask"></param>
+    /// <returns>If the dependency is circular</returns>
+    private bool createsCircularDependency(int dependentTask, int dependsOnTask)
+    {
+        // Check if dependsOnTask is directly or indirectly dependent on dependentTask
+        if (dependentTask == dependsOnTask)
+        {
+            return true;
+        }
+        return isIndirectlyDependent(dependentTask, dependsOnTask, new List<int>());
+    }
+
+    /// <summary>
+    /// Recursively check if there is a direct or indirect circular dependency
+    /// </summary>
+    /// <param name="targetTask"></param>
+    /// <param name="currentTask"></param>
+    /// <param name="visitedTasks"></param>
+    /// <returns>True if circular dependency found</returns>
+    private bool isIndirectlyDependent(int targetTask, int currentTask, List<int> visitedTasks)
+    {
+        if (visitedTasks.Contains(currentTask))
+        {
+            // We've encountered a task we've already visited in this recursion branch, indicating a circular dependency
+            return true;
+        }
+
+        visitedTasks.Add(currentTask);
+
+        Dependency[] dependencies;
+        try
+        {
+            dependencies = _dal.Dependency.ReadAll(d => d.DependentTask == currentTask).ToArray();
+        }
+        catch (DO.DalDoesNotExistException)
+        {
+            //No dependencies exist yet
+            return false;
+        }
+
+
+        foreach (Dependency dependency in dependencies)
+        {
+            if (dependency.DependsOnTask == targetTask || isIndirectlyDependent(targetTask, dependency.DependsOnTask, visitedTasks))
+            {
+                return true;
+            }
+        }
+
+        visitedTasks.Remove(currentTask); // Backtrack when moving to the next task
+        return false;
     }
 }

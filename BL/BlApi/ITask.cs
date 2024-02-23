@@ -37,6 +37,7 @@ public interface ITask
     /// <param name="task">the entity Task</param>
     /// <exception cref="BO.BlDoesNotExistException">when a Task id is not found in the DAL<exception>
     /// <exception cref="BO.BlInvalidInputException">when invalid input for Task<exception>
+    /// <exception cref="BO.BlCircularDependencyException">when a circular dependency is detected<exception>
     public void UpdateTask(BO.Task task);
 
     /// <summary>

@@ -46,20 +46,23 @@
             <RowDefinition Height="2*"/>
         </Grid.RowDefinitions>
         <Label Grid.Row="0" Content="ADMIN VIEW" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24"/>
-        <Label Grid.Row="1" Content="View Lists of Entities" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="18"/>
+        <Label Grid.Row="1" Content="View Entities" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="18"/>
         <!-- Internal grid of buttons to deal with each entity-->
         <Grid HorizontalAlignment="Stretch" Height="auto" Grid.Row="2" VerticalAlignment="Stretch" Width="auto">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
+            <!-- Button to manage Engineer assignment-->
+            <Button Grid.Column="0" Content="Manage Engineer Assignment" Click="btnEngineerUser_Click" Background="blue" HorizontalAlignment="Center" VerticalAlignment="Center" Height="50" Width="190"/>
             <!-- Button to Handle Engineers-->
-            <Button Grid.Column="0" Content="Handle Engineers" Click="btnEngineers_Click" Background="blue" HorizontalAlignment="Center" VerticalAlignment="Center" Height="50" Width="125"/>
+            <Button Grid.Column="1" Content="Handle Engineers" Click="btnEngineers_Click" Background="blue" HorizontalAlignment="Center" VerticalAlignment="Center" Height="50" Width="125"/>
             <!-- Button to Handle Tasks-->
-            <Button Grid.Column="1" Content="Handle Tasks" Click="btnTasks_Click" Background="blue" HorizontalAlignment="Center" VerticalAlignment="Center" Height="50" Width="124"/>
+            <Button Grid.Column="2" Content="Handle Tasks" Click="btnTasks_Click" Background="blue" HorizontalAlignment="Center" VerticalAlignment="Center" Height="50" Width="124"/>
             <!-- Button to Handle Milestones-->
-            <Button Grid.Column="2" Content="Handle Milestones" Click="btnMilestones_Click" Background="blue" HorizontalAlignment="Center" VerticalAlignment="Center" Height="50" Width="150"/>
+            <Button Grid.Column="3" Content="Handle Milestones" Click="btnMilestones_Click" Background="blue" HorizontalAlignment="Center" VerticalAlignment="Center" Height="50" Width="150"/>
         </Grid>
         <Label Grid.Row="3" Content="System Functions" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="18"/>
         <!-- Internal grids of buttons to deal system functions-->

@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}"
         FontSize="14"
-        Title="TaskListWindow" Height="640" Width="800">
+        Title="{Binding WindowTitle}" Height="640" Width="800">
     <Window.Resources>
         <Style TargetType="Button">
             <Setter Property="Background" Value="#074081"/>
@@ -75,7 +75,11 @@
                 </Style>
             </ListView.ItemContainerStyle>
         </ListView>
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Visibility="{Binding DependencyButtonVisibility}">
+            <Button Content="Remove Dependency" Click="btnRemoveDependency_Click" Height="50" Width="150"/>
+            <Button Content="Add Dependency" Click="btnAddDependency_Click" Height="50" Width="150"/>
+        </StackPanel>
         <!-- Button to Add a new Task to the List-->
-        <Button Content="{Binding FilterActive, Mode=OneTime, Converter={StaticResource ConvertBoolToContentKey}}" Click="btnAddOrSelect_Click" Grid.Row="2" HorizontalAlignment="Center" Height="50" Width="100"/>
+        <Button Content="{Binding AddSelectButtonText}" Click="btnAddOrSelect_Click" Visibility="{Binding AddSelectButtonVisibility}" Grid.Row="2" HorizontalAlignment="Center" Height="50" Width="200"/>
     </Grid>
 </Window>

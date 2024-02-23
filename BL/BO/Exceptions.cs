@@ -49,3 +49,8 @@ public class BlTaskCannotBeAssignedException : Exception
 {
     public BlTaskCannotBeAssignedException(string? message) : base(message) { }
 }
+
+public class BlCircularDependencyException : Exception
+{
+    public BlCircularDependencyException(string? message) : base(message) { }
+}

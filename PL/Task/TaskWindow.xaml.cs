@@ -56,25 +56,19 @@ public partial class TaskWindow : Window
     private void btnDependencies_Click(object sender, RoutedEventArgs e)
     {
         // Get all the dependencies of the task
-        BO.Task? task = null;
-        IEnumerable<BO.TaskInList>? dependencies = Enumerable.Empty<BO.TaskInList>();
-        try
+        IEnumerable<BO.TaskInList>? dependencies = CurrentTask.Dependencies;
+        if (dependencies != null)
         {
-            task = s_bl?.Task.GetTask(CurrentTask.ID);
+            // Open a new window to display the dependencies
+            TaskListWindow taskListWindow = new TaskListWindow((task) => dependencies.Any((dep) => dep.ID == task.ID), dependentTask: CurrentTask);
+            taskListWindow.Show();
         }
-        catch(BO.BlDoesNotExistException)
+        else
         {
-           //There Task does not exist yet, so it's a new task
+            //Open the window to add dependencies
+            TaskListWindow taskListWindow = new TaskListWindow((task) => false, dependentTask: CurrentTask);
+            taskListWindow.Show();
         }
-        
-        if (task is not null)
-        {
-            dependencies = task.Dependencies; 
-        }
-
-        //TODO: Open the window to view or add dependencies
-        //Or figure out some other way to add dependencies
-        //
     }
 
     private void btnAddUpdate_Click(object sender, RoutedEventArgs e)
