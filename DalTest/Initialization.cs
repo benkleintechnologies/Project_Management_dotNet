@@ -105,8 +105,8 @@ public static class Initialization
             //Making each task a random length
             TimeSpan toSubtract = TimeSpan.FromDays(s_rand.Next(1,28));
             DateTime dateCreated = DateTime.Now - toSubtract;
-            DateTime projectedStartDate = DateTime.Now.AddMonths(s_rand.Next(1, 5)).AddDays(s_rand.Next(0,28));
-            DateTime deadline = projectedStartDate.AddMonths(s_rand.Next(1, 5)).AddDays(s_rand.Next(0, 28));
+            DateTime projectedStartDate = DateTime.Now.AddMonths(s_rand.Next(0, 2)).AddDays(s_rand.Next(0,28));
+            DateTime deadline = projectedStartDate.AddMonths(s_rand.Next(0, 2)).AddDays(s_rand.Next(0, 28));
             TimeSpan duration = deadline.Subtract(projectedStartDate);
 
             //Make Task with or without assigned dates

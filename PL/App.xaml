@@ -11,5 +11,7 @@
         <local:ConvertIdToMode x:Key="ConvertIdToModeKey" />
         <local:ConvertProjectDateToBool x:Key="ConvertProjectDateToBoolKey" />
         <local:ConvertBoolToContentKey x:Key="ConvertBoolToContentKey" />
+        <local:ValueColorConverter x:Key="ColorConverterKey"/>
+        <local:ForegroundConvertor x:Key="ForegroundConvertorKey" />
     </Application.Resources>
 </Application>

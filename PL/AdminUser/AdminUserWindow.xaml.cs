@@ -66,8 +66,10 @@ public partial class AdminUserWindow : Window
 
     private void btnCreateGantt_Click(object sender, RoutedEventArgs e)
     {
-        //new GanttChartWindow().ShowDialog();
-        //TODO: Uncomment once implemented
+        if (s_bl.Config.InProduction())
+            new Gantt.GanttChartWindow().ShowDialog();
+        else
+            MessageBox.Show("The project start date or end date is not set. Please set the project start date and end date in the configuration window.");
     }
 
     private void btnResetSystem_Click(object sender, RoutedEventArgs e)
