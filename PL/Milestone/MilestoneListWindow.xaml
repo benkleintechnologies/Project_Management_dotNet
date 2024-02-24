@@ -56,9 +56,9 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <!--Label to tell user to filter milestones-->
-            <Label Content="Filter Milestones:" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            <!--Options for filter by ???????-->
-            <ComboBox Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalContentAlignment="Center"/>
+            <Label Content="Select Status of Milestones:" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <!--Options for filter by Status -->
+            <ComboBox SelectedValue="{Binding SelectedStatus, Mode=TwoWay}" SelectionChanged="cbStatusSelector_SelectionChanged" ItemsSource="{Binding Source={StaticResource StatusCollectionKey}}" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalContentAlignment="Center"/>
         </Grid>
         <!-- List of Milestones filtered by filter-->
         <ListView Grid.Row="1" ItemsSource="{Binding MilestoneList}" PreviewMouseDoubleClick="ListView_DoubleClick">

@@ -70,14 +70,11 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <!-- Button to Create Project Schedule-->
             <Button Grid.Column="0" Content="Create Project Shedule" Click="btnCreateSchedule_Click" HorizontalAlignment="Center" VerticalAlignment="Center" Height="50" Width="175"/>
             <!-- Button to Create Gantt Chart-->
             <Button Grid.Column="1" Content="Create Gantt Chart" Click="btnCreateGantt_Click" HorizontalAlignment="Center" VerticalAlignment="Center" Height="50" Width="150"/>
-            <!-- Button to Add User-->
-            <Button Grid.Column="2" Content="Add User" Click="btnAddUser_Click" HorizontalAlignment="Center" VerticalAlignment="Center" Height="50" Width="125"/>
         </Grid>
         <Grid HorizontalAlignment="Stretch" Height="auto" Grid.Row="5" VerticalAlignment="Stretch" Width="auto">
             <Grid.ColumnDefinitions>

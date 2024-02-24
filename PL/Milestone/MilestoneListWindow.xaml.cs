@@ -30,7 +30,21 @@ public partial class MilestoneListWindow : Window
     //The event handler for the window activation
     private void activated(object sender, EventArgs e)
     {
-        MilestoneList = s_bl?.Milestone.GetListOfMilestones()!;
+        //Get the list of milestones from the BL
+        try
+        {
+            MilestoneList = s_bl?.Milestone.GetListOfMilestones()!;
+        }
+        catch (BO.BlDoesNotExistException)
+        {
+            MessageBox.Show("Milestones have not been created yet.");
+            this.Close();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            this.Close();
+        }
     }
 
     //Getters and setters for the list of milestones
@@ -44,6 +58,9 @@ public partial class MilestoneListWindow : Window
     public static readonly DependencyProperty MilestoneListProperty =
         DependencyProperty.Register("MilestoneList", typeof(IEnumerable<BO.MilestoneInList>), typeof(MilestoneListWindow), new PropertyMetadata(null));
 
+    //The selected Milestone Status
+    public BO.Status SelectedStatus { get; set; } = BO.Status.All;
+
     private void ListView_DoubleClick(object sender, MouseButtonEventArgs e)
     {
         // Extract the selected item from the ListView
@@ -53,5 +70,12 @@ public partial class MilestoneListWindow : Window
         {
             new MilestoneWindow(milestone.ID).ShowDialog();
         }
+    }
+
+    //The event handler for the selection of the status (to filter the list of milestones)
+    private void cbStatusSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        MilestoneList = ((SelectedStatus == BO.Status.All) ?
+                                s_bl?.Milestone.GetListOfMilestones()! : s_bl?.Milestone.GetListOfMilestones(m => m.Status == SelectedStatus)!);
     }
 }

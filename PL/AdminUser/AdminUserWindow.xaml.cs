@@ -70,12 +70,6 @@ public partial class AdminUserWindow : Window
         //TODO: Uncomment once implemented
     }
 
-    private void btnAddUser_Click(object sender, RoutedEventArgs e)
-    {
-        //new AddUserWindow().ShowDialog();
-        //TODO: Uncomment once implemented
-    }
-
     private void btnResetSystem_Click(object sender, RoutedEventArgs e)
     {
         if (MessageBox.Show("Are you sure you want to reset the system?", "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
