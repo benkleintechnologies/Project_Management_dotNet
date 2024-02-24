@@ -10,102 +10,42 @@
     <ID>1001</ID>
     <DependentTask>1</DependentTask>
     <DependsOnTask>2</DependsOnTask>
-    <Active>false</Active>
+    <Active>true</Active>
   </Dependency>
   <Dependency>
     <ID>1002</ID>
     <DependentTask>1</DependentTask>
-    <DependsOnTask>5</DependsOnTask>
-    <Active>false</Active>
+    <DependsOnTask>3</DependsOnTask>
+    <Active>true</Active>
   </Dependency>
   <Dependency>
     <ID>1003</ID>
-    <DependentTask>1</DependentTask>
-    <DependsOnTask>2</DependsOnTask>
+    <DependentTask>2</DependentTask>
+    <DependsOnTask>4</DependsOnTask>
     <Active>true</Active>
   </Dependency>
   <Dependency>
     <ID>1004</ID>
-    <DependentTask>3</DependentTask>
-    <DependsOnTask>4</DependsOnTask>
+    <DependentTask>4</DependentTask>
+    <DependsOnTask>15</DependsOnTask>
     <Active>false</Active>
   </Dependency>
   <Dependency>
     <ID>1005</ID>
-    <DependentTask>3</DependentTask>
-    <DependsOnTask>4</DependsOnTask>
-    <Active>true</Active>
+    <DependentTask>4</DependentTask>
+    <DependsOnTask>15</DependsOnTask>
+    <Active>false</Active>
   </Dependency>
   <Dependency>
     <ID>1006</ID>
-    <DependentTask>3</DependentTask>
-    <DependsOnTask>8</DependsOnTask>
-    <Active>true</Active>
+    <DependentTask>4</DependentTask>
+    <DependsOnTask>14</DependsOnTask>
+    <Active>false</Active>
   </Dependency>
   <Dependency>
     <ID>1007</ID>
     <DependentTask>4</DependentTask>
-    <DependsOnTask>19</DependsOnTask>
-    <Active>true</Active>
-  </Dependency>
-  <Dependency>
-    <ID>1008</ID>
-    <DependentTask>2</DependentTask>
-    <DependsOnTask>11</DependsOnTask>
-    <Active>false</Active>
-  </Dependency>
-  <Dependency>
-    <ID>1009</ID>
-    <DependentTask>2</DependentTask>
-    <DependsOnTask>11</DependsOnTask>
-    <Active>false</Active>
-  </Dependency>
-  <Dependency>
-    <ID>1010</ID>
-    <DependentTask>2</DependentTask>
-    <DependsOnTask>7</DependsOnTask>
-    <Active>false</Active>
-  </Dependency>
-  <Dependency>
-    <ID>1011</ID>
-    <DependentTask>2</DependentTask>
-    <DependsOnTask>6</DependsOnTask>
-    <Active>false</Active>
-  </Dependency>
-  <Dependency>
-    <ID>1012</ID>
-    <DependentTask>2</DependentTask>
-    <DependsOnTask>5</DependsOnTask>
-    <Active>false</Active>
-  </Dependency>
-  <Dependency>
-    <ID>1013</ID>
-    <DependentTask>2</DependentTask>
-    <DependsOnTask>5</DependsOnTask>
-    <Active>false</Active>
-  </Dependency>
-  <Dependency>
-    <ID>1014</ID>
-    <DependentTask>2</DependentTask>
-    <DependsOnTask>8</DependsOnTask>
-    <Active>false</Active>
-  </Dependency>
-  <Dependency>
-    <ID>1015</ID>
-    <DependentTask>5</DependentTask>
-    <DependsOnTask>7</DependsOnTask>
-    <Active>false</Active>
-  </Dependency>
-  <Dependency>
-    <ID>1016</ID>
-    <DependentTask>5</DependentTask>
-    <DependsOnTask>7</DependsOnTask>
-    <Active>true</Active>
-  </Dependency>
-  <Dependency>
-    <ID>1017</ID>
-    <DependentTask>5</DependentTask>
-    <DependsOnTask>8</DependsOnTask>
+    <DependsOnTask>15</DependsOnTask>
     <Active>true</Active>
   </Dependency>
 </ArrayOfDependency>

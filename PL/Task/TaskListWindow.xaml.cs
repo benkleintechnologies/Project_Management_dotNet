@@ -284,6 +284,8 @@ public partial class TaskListWindow : Window, INotifyPropertyChanged
                     }
                     catch (BO.BlCircularDependencyException ex)
                     {
+                        //Remove the dependency because it would cause a circular dependency
+                        _dependentTask.Dependencies = _dependentTask.Dependencies!.Where(d => d.ID != _selectedTask.ID);
                         MessageBox.Show(ex.Message);
                     }
                     catch (Exception ex)
