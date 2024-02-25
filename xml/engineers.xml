@@ -1,51 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ArrayOfEngineer xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Engineer>
-    <ID>345614293</ID>
+    <ID>290072846</ID>
     <Name>Moishe Goldstein</Name>
     <Email>moishe.goldstein@example.com</Email>
-    <Cost>157324</Cost>
-    <Level>Advanced</Level>
-    <Active>true</Active>
-  </Engineer>
-  <Engineer>
-    <ID>384320562</ID>
-    <Name>Shloimy Rosenberg</Name>
-    <Email>shloimy.rosenberg@example.com</Email>
-    <Cost>170639</Cost>
-    <Level>AdvancedBeginner</Level>
-    <Active>true</Active>
-  </Engineer>
-  <Engineer>
-    <ID>202606858</ID>
-    <Name>Yitzy Schwartz</Name>
-    <Email>yitzy.schwartz@example.com</Email>
-    <Cost>159181</Cost>
-    <Level>Expert</Level>
-    <Active>true</Active>
-  </Engineer>
-  <Engineer>
-    <ID>271164963</ID>
-    <Name>Shmuly Cohen</Name>
-    <Email>shmuly.cohen@example.com</Email>
-    <Cost>149415</Cost>
+    <Cost>140178</Cost>
     <Level>Intermediate</Level>
     <Active>true</Active>
   </Engineer>
   <Engineer>
-    <ID>345615396</ID>
-    <Name>Dovid Greenbaum</Name>
-    <Email>dovid.greenbaum@example.com</Email>
-    <Cost>82222</Cost>
+    <ID>369961127</ID>
+    <Name>Shloimy Rosenberg</Name>
+    <Email>shloimy.rosenberg@example.com</Email>
+    <Cost>100053</Cost>
+    <Level>Expert</Level>
+    <Active>true</Active>
+  </Engineer>
+  <Engineer>
+    <ID>393721825</ID>
+    <Name>Yitzy Schwartz</Name>
+    <Email>yitzy.schwartz@example.com</Email>
+    <Cost>165780</Cost>
+    <Level>Expert</Level>
+    <Active>true</Active>
+  </Engineer>
+  <Engineer>
+    <ID>204618583</ID>
+    <Name>Shmuly Cohen</Name>
+    <Email>shmuly.cohen@example.com</Email>
+    <Cost>138628</Cost>
     <Level>Advanced</Level>
     <Active>true</Active>
   </Engineer>
   <Engineer>
-    <ID>123</ID>
-    <Name>ben</Name>
-    <Email>ben@klein.com</Email>
-    <Cost>12345</Cost>
-    <Level>Expert</Level>
+    <ID>305790785</ID>
+    <Name>Dovid Greenbaum</Name>
+    <Email>dovid.greenbaum@example.com</Email>
+    <Cost>165137</Cost>
+    <Level>Intermediate</Level>
     <Active>true</Active>
   </Engineer>
 </ArrayOfEngineer>

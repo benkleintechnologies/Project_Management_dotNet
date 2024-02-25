@@ -313,7 +313,14 @@ internal class TaskImplementation : BlApi.ITask
         }
         else if (t.ProjectedStartDate.HasValue)
         {
-            return BO.Status.Scheduled;
+            if (t.Deadline.HasValue && _dal.Config.GetSystemClock() > t.Deadline)
+            {
+                return BO.Status.InJeopardy;
+            }
+            else
+            {
+                return BO.Status.Scheduled;
+            }
         }
         else
         {
