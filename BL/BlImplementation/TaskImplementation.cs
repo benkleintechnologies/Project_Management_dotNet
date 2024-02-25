@@ -300,27 +300,17 @@ internal class TaskImplementation : BlApi.ITask
         {
             return BO.Status.Done;
         }
+        else if (t.Deadline.HasValue && _dal.Config.GetSystemClock() > t.Deadline)
+        {
+            return BO.Status.InJeopardy;
+        }
         else if (t.ActualStartDate.HasValue)
         {
-            if (t.Deadline.HasValue && _dal.Config.GetSystemClock() > t.Deadline)
-            {
-                return BO.Status.InJeopardy;
-            }
-            else
-            {
-                return BO.Status.OnTrack;
-            }
+            return BO.Status.OnTrack;
         }
         else if (t.ProjectedStartDate.HasValue)
         {
-            if (t.Deadline.HasValue && _dal.Config.GetSystemClock() > t.Deadline)
-            {
-                return BO.Status.InJeopardy;
-            }
-            else
-            {
-                return BO.Status.Scheduled;
-            }
+            return BO.Status.Scheduled;
         }
         else
         {

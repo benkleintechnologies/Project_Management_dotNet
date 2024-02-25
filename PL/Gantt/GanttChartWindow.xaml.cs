@@ -67,10 +67,14 @@ public partial class GanttChartWindow : Window
             //Add a column for each milestone
             if (milestoneEndDates.Any(m => m.Date == startDate.AddDays(i).Date))
             {
-                BO.Milestone? toAdd = milestones.FirstOrDefault(m => m.ActualEndDate?.Date == startDate.AddDays(i).Date || m.ProjectedEndDate?.Date == startDate.AddDays(i).Date);
-                if (toAdd is not null)
+                BO.Milestone? toAdd1 = milestones.FirstOrDefault(m => m.ActualEndDate?.Date == startDate.AddDays(i).Date && !DataTable.Columns.Contains(m.Name!));
+                BO.Milestone? toAdd2 = milestones.FirstOrDefault(m => m.ProjectedEndDate?.Date == startDate.AddDays(i).Date && !DataTable.Columns.Contains(m.Name!));
+                if (toAdd1 is not null)
                 {
-                    DataTable.Columns.Add(toAdd.Name);                    
+                    DataTable.Columns.Add(toAdd1.Name);                    
+                }else if (toAdd2 is not null)
+                {
+                    DataTable.Columns.Add(toAdd2.Name);
                 }
             }
             else //Add a column for each day
