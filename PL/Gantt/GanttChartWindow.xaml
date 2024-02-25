@@ -7,16 +7,13 @@
         mc:Ignorable="d"
         Title="GanttChartWindow" Height="650" Width="800" Loaded="Window_Loaded" WindowState="Maximized">
     <Grid>
-        <DataGrid ColumnWidth="*" MinColumnWidth="50" CanUserAddRows="False" IsReadOnly="True" Name="FooBar1" Height="600" VerticalAlignment="Top" Margin="0,40,0,0">
+        <DataGrid ColumnWidth="*" MinColumnWidth="50" CanUserAddRows="False" IsReadOnly="True" ItemsSource="{Binding DataTable.DefaultView}" Loaded="DataGrid_Loaded" Height="600" VerticalAlignment="Top" Margin="0,40,0,0">
             <DataGrid.CellStyle>
                 <Style TargetType="DataGridCell">
                     <Setter Property="Background" Value="{Binding RelativeSource={RelativeSource Self}, Path=Content.Text, Converter={StaticResource ColorConverterKey}}"/>
                     <Setter Property="Foreground" Value="{Binding RelativeSource={RelativeSource Self}, Path=Content.Text, Converter={StaticResource ForegroundConvertorKey}}"/>
                 </Style>
             </DataGrid.CellStyle>
-            <DataGrid.ItemsSource>
-                <Binding Path="DataTable.DefaultView" RelativeSource="{RelativeSource AncestorType={x:Type local:GanttChartWindow}}"/>
-            </DataGrid.ItemsSource>
         </DataGrid>
     </Grid>
 </Window>
