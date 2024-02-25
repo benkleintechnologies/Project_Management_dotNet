@@ -167,6 +167,7 @@ internal class MilestoneImplementation : IMilestone
             breadthFirstTraversalBackwards(taskQueue, processedTasks);
 
             //Check that we've succeeded so far - deadline of Start milestone should be at or later than start date
+            milestones = _dal.Task.ReadAll(t => t.IsMilestone);
             if (milestones.Single(m => m.Nickname == "Start").Deadline < projectStartDate)
             {
                 throw new BO.BlUnableToCreateScheduleException("The calculation of deadlines starting from the end goes past the start date of the project");
@@ -179,6 +180,7 @@ internal class MilestoneImplementation : IMilestone
             breadthFirstTraversalForward(taskQueue, processedTasks);
 
             //Check that we've succeeded - projected start of End milestone should be at or before end date
+            milestones = _dal.Task.ReadAll(t => t.IsMilestone);
             if (milestones.Single(m => m.Nickname == "End").ProjectedStartDate > projectEndDate)
             {
                 throw new BO.BlUnableToCreateScheduleException("The calculation of start dates starting from the beginning goes past the end date of the project");
@@ -263,8 +265,15 @@ internal class MilestoneImplementation : IMilestone
             IEnumerable<BO.TaskInList> dependenciesList = dependentTasks.Select(t => new BO.TaskInList(t.ID, t.Nickname, t.Description, getStatusForTask(t)));
             //Calculate completion percentage
             double completedPercentage = dependenciesList.Where(t => t.Status == BO.Status.Done).Count() / dependenciesList.Count();
+            //Calculate Actual end date if all dependencies are done
+            DateTime? actualEndDate = null;
+            if (completedPercentage == 100)
+            {
+                //Go through all dependencies and find the one with the latest end date
+                actualEndDate = dependentTasks.Max(t => t.ActualEndDate);
+            }
             //Create Milestone object (and calculate Business layer fields)
-            return new BO.Milestone(milestoneTask.ID, milestoneTask.Nickname, milestoneTask.Description, milestoneTask.DateCreated, getStatusForTask(milestoneTask), milestoneTask.ProjectedStartDate, milestoneTask.Deadline, milestoneTask.ActualEndDate, completedPercentage, milestoneTask.Notes, dependenciesList);
+            return new BO.Milestone(milestoneTask.ID, milestoneTask.Nickname, milestoneTask.Description, milestoneTask.DateCreated, getStatusForTask(milestoneTask), milestoneTask.ProjectedStartDate, milestoneTask.Deadline, actualEndDate, completedPercentage, milestoneTask.Notes, dependenciesList);
         }
         catch (DO.DalDoesNotExistException exc)
         {
@@ -537,6 +546,7 @@ internal class MilestoneImplementation : IMilestone
         IEnumerable<DO.Task> dependentTasks = Enumerable.Empty<DO.Task>();
         IEnumerable<BO.TaskInList> dependenciesList = Enumerable.Empty<BO.TaskInList>();
         double completedPercentage = 100;
+        DateTime? actualEndDate = null;
         try
         {
             dependentTasks = _dal.Dependency.ReadAll(d => d.DependentTask == milestoneTask.ID).Select(d => _dal.Task.Read(d.DependsOnTask));
@@ -544,6 +554,12 @@ internal class MilestoneImplementation : IMilestone
             dependenciesList = dependentTasks.Select(t => new BO.TaskInList(t.ID, t.Nickname, t.Description, getStatusForTask(t)));
             //Calculate completion percentage
             completedPercentage = dependenciesList.Where(t => t.Status == BO.Status.Done).Count() / dependenciesList.Count() * 100;
+            //Calculate Actual end date if all dependencies are done
+            if (completedPercentage == 100)
+            {
+                //Go through all dependencies and find the one with the latest end date
+                actualEndDate = dependentTasks.Max(t => t.ActualEndDate);
+            }
         }
         catch (DO.DalDoesNotExistException)
         {
@@ -551,7 +567,7 @@ internal class MilestoneImplementation : IMilestone
         }
 
         //Create Milestone object (and calculate Business layer fields)
-        return new BO.Milestone(milestoneTask.ID, milestoneTask.Nickname, milestoneTask.Description, milestoneTask.DateCreated, getStatusForTask(milestoneTask), milestoneTask.ProjectedStartDate, milestoneTask.Deadline, milestoneTask.ActualEndDate, completedPercentage, milestoneTask.Notes, dependenciesList);
+        return new BO.Milestone(milestoneTask.ID, milestoneTask.Nickname, milestoneTask.Description, milestoneTask.DateCreated, getStatusForTask(milestoneTask), milestoneTask.ProjectedStartDate, milestoneTask.Deadline, actualEndDate, completedPercentage, milestoneTask.Notes, dependenciesList);
     }
 
 }

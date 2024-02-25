@@ -66,8 +66,11 @@ public partial class AdminUserWindow : Window
 
     private void btnCreateGantt_Click(object sender, RoutedEventArgs e)
     {
-        if (s_bl.Config.InProduction())
+        //Check that all tasks have start and end dates
+        if (s_bl.Config.InProduction() && s_bl.Task.AllTaskDatesSet())
             new Gantt.GanttChartWindow().ShowDialog();
+        else if (s_bl.Config.InProduction())
+            MessageBox.Show("The Project schedule was not successfully created, so the Gantt Chart can't be displayed.");
         else
             MessageBox.Show("The project start date or end date is not set. Please set the project start date and end date in the configuration window.");
     }

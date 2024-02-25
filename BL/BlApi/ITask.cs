@@ -59,6 +59,12 @@ public interface ITask
     public void UpdateTaskStartDate(int id, DateTime startDate);
 
     /// <summary>
+    /// Find out if project schedule was successfully created
+    /// </summary>
+    /// <returns>true if all tasks have start and end dates</returns>
+    public bool AllTaskDatesSet();
+
+    /// <summary>
     /// Reset Tasks - i.e. Reset Tasks in Database
     /// </summary>
     public void Reset();

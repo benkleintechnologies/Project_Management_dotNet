@@ -67,11 +67,16 @@ public partial class GanttChartWindow : Window
             //Add a column for each milestone
             if (milestoneEndDates.Any(m => m.Date == startDate.AddDays(i).Date))
             {
-                DataTable.Columns.Add(milestones.First(m => m.ActualEndDate == startDate.AddDays(i) || m.ProjectedEndDate == startDate.AddDays(i)).Name);
+                BO.Milestone? toAdd = milestones.FirstOrDefault(m => m.ActualEndDate?.Date == startDate.AddDays(i).Date || m.ProjectedEndDate?.Date == startDate.AddDays(i).Date);
+                if (toAdd is not null)
+                {
+                    DataTable.Columns.Add(toAdd.Name);                    
+                }
             }
-            //TODO: Change the width of the column just added to 20
-
-            DataTable.Columns.Add(startDate.AddDays(i).ToString("MMM dd yy"));
+            else //Add a column for each day
+            {
+                DataTable.Columns.Add(startDate.AddDays(i).ToString("MMM dd yy"));
+            }
         }
 
         //Add a row for each task
@@ -105,7 +110,10 @@ public partial class GanttChartWindow : Window
                 }
                 else if (milestones.Any(m => m.Name == DataTable.Columns[j].ToString())) //if the column is a milestone
                 {
-                    dr[j] = milestones.First(m => m.Name == DataTable.Columns[j].ToString()).Status.ToString();
+                    //This lione puts the status of the milestone
+                    //dr[j] = milestones.First(m => m.Name == DataTable.Columns[j].ToString()).Status.ToString();
+                    //This line will just draw a black line for the milestone
+                    dr[j] = BO.Status.Unscheduled;
                 }
                 else if (Convert.ToDateTime(DataTable.Columns[j].ToString(), new CultureInfo("en-US")) >= taskStartDate && Convert.ToDateTime(DataTable.Columns[j].ToString(), new CultureInfo("en-US")) <= taskEndDate) //if the date is between the start and end date of the task
                 {

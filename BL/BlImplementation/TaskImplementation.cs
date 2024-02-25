@@ -404,4 +404,20 @@ internal class TaskImplementation : BlApi.ITask
         visitedTasks.Remove(currentTask); // Backtrack when moving to the next task
         return false;
     }
+
+    public bool AllTaskDatesSet()
+    {
+        //Get all tasks
+        IEnumerable<DO.Task> tasks;
+        try
+        {
+            tasks = _dal.Task.ReadAll();
+        }
+        catch (DO.DalDoesNotExistException)
+        {
+            return false;
+        }
+        //Check if all tasks have start and end dates
+        return tasks.All(t => t.ProjectedStartDate.HasValue);
+    }
 }
