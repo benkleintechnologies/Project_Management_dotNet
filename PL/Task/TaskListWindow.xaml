@@ -33,6 +33,15 @@
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
+            <Style.Triggers>
+                <!-- Trigger to apply the disabled button style -->
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Background" Value="#CCCCCC"/>
+                    <!-- Gray out background -->
+                    <Setter Property="Foreground" Value="#888888"/>
+                    <!-- Gray out text -->
+                </Trigger>
+            </Style.Triggers>
         </Style>
 
         <Style TargetType="ListView">
@@ -80,6 +89,6 @@
             <Button Content="Add Dependency" Click="btnAddDependency_Click" Height="50" Width="150"/>
         </StackPanel>
         <!-- Button to Add a new Task to the List-->
-        <Button Content="{Binding AddSelectButtonText}" Click="btnAddOrSelect_Click" Visibility="{Binding AddSelectButtonVisibility}" Grid.Row="2" HorizontalAlignment="Center" Height="50" Width="200"/>
+        <Button Content="{Binding AddSelectButtonText}" Click="btnAddOrSelect_Click" Visibility="{Binding AddSelectButtonVisibility}" IsEnabled="{Binding IsInPlanning}" Grid.Row="2" HorizontalAlignment="Center" Height="50" Width="200"/>
     </Grid>
 </Window>

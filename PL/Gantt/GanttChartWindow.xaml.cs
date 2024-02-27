@@ -38,6 +38,9 @@ public partial class GanttChartWindow : Window
 
     private void Window_Loaded(object sender, RoutedEventArgs e)
     {
+        //Update the project schedule
+        s_bl.Milestone.UpdateProjectSchedule();
+
         List<BO.TaskInList> tasks = s_bl.Task.GetListOfTasks().ToList();
         List<BO.Milestone> milestones = s_bl.Milestone.GetListOfMilestones().Select(m => s_bl.Milestone.GetMilestone(m.ID)).ToList();
         List<DateTime> milestoneEndDates = milestones.Select(m => m.ActualEndDate ?? m.ProjectedEndDate ?? DateTime.MinValue).ToList();

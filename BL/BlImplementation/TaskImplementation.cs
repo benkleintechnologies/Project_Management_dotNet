@@ -50,7 +50,7 @@ internal class TaskImplementation : BlApi.ITask
             {
                 //Delete from the Data Layer because no other task depends on it
                 _dal.Task.Delete(id);
-            }  
+            }
         }
         catch (DO.DalDoesNotExistException exc)
         {
@@ -98,7 +98,7 @@ internal class TaskImplementation : BlApi.ITask
         try
         {
             DO.Task dlTask = _dal.Task.Read(task.ID);
-            
+
             // Check if task exists in the DL and that name is nonempty
             if (dlTask is null || task.Name == "")
             {
@@ -131,11 +131,11 @@ internal class TaskImplementation : BlApi.ITask
                         {
                             throw new BO.BlTaskCannotBeAssignedException("Cannot assign an engineer to a task that has dependencies that are not completed yet");
                         }
-                    }catch(DO.DalDoesNotExistException)
+                    } catch (DO.DalDoesNotExistException)
                     {
                         //There are no dependencies for this task. Not an error
                     }
-                      
+
                 }
             }
             else // Planning stage
@@ -149,11 +149,11 @@ internal class TaskImplementation : BlApi.ITask
                     oldDependencies = _dal.Dependency.ReadAll(d => d.DependentTask == task.ID);
                     oldDependencies.ToList().ForEach(d => _dal.Dependency.Delete(d.ID));
                 }
-                catch(DO.DalDoesNotExistException)
+                catch (DO.DalDoesNotExistException)
                 {
                     //There are no dependencies for this task. Not an error
                 }
-                
+
                 IEnumerable<DO.Dependency> newDependencies = from t in task.Dependencies
                                                              select new DO.Dependency(0, task.ID, t.ID);
                 //Check for circular dependencies
@@ -234,7 +234,7 @@ internal class TaskImplementation : BlApi.ITask
         {
             dependencies = _dal.Dependency.ReadAll(d => d.DependentTask == task.ID);
         }
-        catch(DO.DalDoesNotExistException)
+        catch (DO.DalDoesNotExistException)
         {
             //There are no dependencies for this task. Not an error
         }
@@ -300,7 +300,7 @@ internal class TaskImplementation : BlApi.ITask
         {
             return BO.Status.Done;
         }
-        else if (t.Deadline.HasValue && _dal.Config.GetSystemClock() > t.Deadline)
+        else if (t.Deadline.HasValue && (_dal.Config.GetSystemClock() > t.Deadline || t.ProjectedStartDate+t.Duration > t.Deadline))
         {
             return BO.Status.InJeopardy;
         }

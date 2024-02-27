@@ -175,6 +175,12 @@ public partial class TaskListWindow : Window, INotifyPropertyChanged
         }
     }
 
+    public bool IsInPlanning
+    {
+        get { return !s_bl.Config.InProduction(); }
+        set { }
+    }
+
     //Visibility of the Add/Select buttons
     public Visibility AddSelectButtonVisibility => IsDependencyMode && !AddingDependencyMode ? Visibility.Collapsed : Visibility.Visible;
     //Visibility of the Dependency buttons

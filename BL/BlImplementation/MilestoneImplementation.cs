@@ -208,7 +208,9 @@ internal class MilestoneImplementation : IMilestone
             }
             // Get the Task from the Data Layer
             DO.Task milestoneTask = _dal.Task.Read(t => t.ID == id && t.IsMilestone);
-            return toBlMilestone(milestoneTask);
+            BO.Milestone milestone = toBlMilestone(milestoneTask);
+            milestone.Status = milestone.CompletionPercentage == 1 ? Status.Done : milestone.Status;
+            return milestone;
         }
         catch (DO.DalDoesNotExistException exc)
         {
@@ -226,7 +228,7 @@ internal class MilestoneImplementation : IMilestone
                                               where filter == null || filter(blMilestone)
                                               select blMilestone;
 
-            IEnumerable<BO.MilestoneInList> convertedType = result.Select(m => new BO.MilestoneInList(m.ID, m.Name, m.Description, m.CreatedAtDate, m.Status, m.CompletionPercentage));
+            IEnumerable<BO.MilestoneInList> convertedType = result.Select(m => new BO.MilestoneInList(m.ID, m.Name, m.Description, m.CreatedAtDate, m.CompletionPercentage == 1 ? Status.Done : m.Status, m.CompletionPercentage));
 
             return convertedType;
         }
@@ -272,8 +274,10 @@ internal class MilestoneImplementation : IMilestone
                 //Go through all dependencies and find the one with the latest end date
                 actualEndDate = dependentTasks.Max(t => t.ActualEndDate);
             }
+            //Calculate Status
+            BO.Status status = completedPercentage == 1 ? BO.Status.Done : getStatusForTask(milestoneTask);
             //Create Milestone object (and calculate Business layer fields)
-            return new BO.Milestone(milestoneTask.ID, milestoneTask.Nickname, milestoneTask.Description, milestoneTask.DateCreated, getStatusForTask(milestoneTask), milestoneTask.ProjectedStartDate, milestoneTask.Deadline, actualEndDate, completedPercentage, milestoneTask.Notes, dependenciesList);
+            return new BO.Milestone(milestoneTask.ID, milestoneTask.Nickname, milestoneTask.Description, milestoneTask.DateCreated, status, milestoneTask.ProjectedStartDate, milestoneTask.Deadline, actualEndDate, completedPercentage, milestoneTask.Notes, dependenciesList);
         }
         catch (DO.DalDoesNotExistException exc)
         {
@@ -285,6 +289,24 @@ internal class MilestoneImplementation : IMilestone
     {
         _nextMilestoneId = StartMilestoneId;
         _dal.Dependency.Reset();
+    }
+
+    public void UpdateProjectSchedule()
+    {
+        IEnumerable<DO.Task> tasks = _dal.Task.ReadAll();
+        IEnumerable<DO.Task> milestones = _dal.Task.ReadAll(t => t.IsMilestone);
+        IEnumerable<DO.Dependency> dependencies = _dal.Dependency.ReadAll();
+
+        if (!tasks.Any() || !milestones.Any() || !dependencies.Any())
+            throw new BO.BlNullPropertyException("Cannot update project schedule because there are no milestones, tasks, or dependencies.");
+
+        Queue<DO.Task> taskQueue = new Queue<DO.Task>();
+        HashSet<int> processedTasks = new HashSet<int>();
+        //Process (i.e. forward breadth first search) to set start dates
+        taskQueue.Enqueue(milestones.Single(m => m.Nickname == "Start"));
+        // Perform breadth-first traversal forward
+        processedTasks = new HashSet<int>();
+        breadthFirstTraversalForward(taskQueue, processedTasks);
     }
 
     /// <summary>
@@ -486,7 +508,15 @@ internal class MilestoneImplementation : IMilestone
             // Calculate PSD based on dependsOn task's projected start date or deadline
             if (dependsOnTask is not null)
             {
-                if (dependsOnTask.ProjectedStartDate.HasValue && dependsOnTask.Duration.HasValue) // Task
+                if (dependsOnTask.ActualEndDate.HasValue)
+                {
+                    psd = dependsOnTask.ActualEndDate;
+                }
+                else if (dependsOnTask.ActualStartDate.HasValue && dependsOnTask.Duration.HasValue)
+                {
+                    psd = dependsOnTask.ActualStartDate + dependsOnTask.Duration;
+                }
+                else if (dependsOnTask.ProjectedStartDate.HasValue && dependsOnTask.Duration.HasValue) // Task
                 {
                     psd = dependsOnTask.ProjectedStartDate + dependsOnTask.Duration;
                 }
@@ -515,7 +545,7 @@ internal class MilestoneImplementation : IMilestone
             dependentTasks = _dal.Dependency
                 .ReadAll(d => d.DependsOnTask == currentTask.ID)
                 .Select(d => _dal.Task.Read(d.DependentTask))
-                .Where(t => !t.ProjectedStartDate.HasValue && !processedTasks.Contains(t.ID));
+                .Where(t => !processedTasks.Contains(t.ID));
         }
         catch (DO.DalDoesNotExistException)
         {
