@@ -1,18 +1,5 @@
-﻿using BO;
-using PL.EngineerUser;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using PL.EngineerUser;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace PL.AdminUser;
 
@@ -68,6 +55,10 @@ public partial class AdminUserWindow : Window
             MessageBox.Show(ex.Message);
         }
         catch (BO.BlCannotBeDeletedException ex)
+        {
+            MessageBox.Show(ex.Message);
+        }
+        catch (BO.BlNullPropertyException ex)
         {
             MessageBox.Show(ex.Message);
         }
@@ -137,6 +128,10 @@ public partial class AdminUserWindow : Window
                 new EngineerUserWindow(validID).ShowDialog();
             }
             catch (BO.BlDoesNotExistException ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }

@@ -54,23 +54,24 @@ namespace PL.Milestone;
 
     private void btnUpdate_Click(object sender, RoutedEventArgs e)
     {
-        //Update the milestone in the BL layer
-        s_bl?.Milestone.UpdateMilestone(CurrentMilestone.ID, CurrentMilestone.Name, CurrentMilestone.Description, CurrentMilestone.Notes);
-        //Check if the milestone was updated
         try
         {
-            if (s_bl?.Milestone.GetMilestone(CurrentMilestone.ID) != CurrentMilestone)
-            {
-                MessageBox.Show("The milestone was not updated");
-            }
-            else
-            {
-                MessageBox.Show("The milestone was updated");
-            }
+            //Update the milestone in the BL layer
+            s_bl?.Milestone.UpdateMilestone(CurrentMilestone.ID, CurrentMilestone.Name, CurrentMilestone.Description, CurrentMilestone.Notes);
+            MessageBox.Show("The milestone was updated.");
+            Close();
         }
         catch (BO.BlDoesNotExistException)
         {
-            MessageBox.Show("The Milestone was not updated in the database.");
+            MessageBox.Show("The Milestone was not updated in the database because it could not be found.");
+        }
+        catch (BO.BlInvalidInputException)
+        {
+            MessageBox.Show("The Milestone was not updated in the database because one of the fields was invalid.");
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(ex.Message);
         }
     }
 }

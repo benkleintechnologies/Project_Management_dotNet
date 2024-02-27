@@ -1,17 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace PL.Engineer;
 
@@ -33,6 +21,10 @@ public partial class EngineerWindow : Window
                 CurrentEngineer = s_bl?.Engineer.GetEngineer(id)!;
             }
             catch (BO.BlDoesNotExistException ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
@@ -75,7 +67,7 @@ public partial class EngineerWindow : Window
                         MessageBox.Show("The Engineer was added to the database.");
                         this.Close();
                     }
-                    catch (BO.BlDoesNotExistException ex)
+                    catch (BO.BlDoesNotExistException)
                     {
                         MessageBox.Show("The Engineer was not added to the database.");
                     }
@@ -99,7 +91,7 @@ public partial class EngineerWindow : Window
                         }
                         this.Close();
                     }
-                    catch (BO.BlDoesNotExistException ex)
+                    catch (BO.BlDoesNotExistException)
                     {
                         MessageBox.Show("The Engineer was not updated in the database.");
                     }
@@ -116,6 +108,10 @@ public partial class EngineerWindow : Window
             catch (BO.BlInvalidInputException)
             {
                 MessageBox.Show("One of the fields you entered was not valid.");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
             }
         }
         else

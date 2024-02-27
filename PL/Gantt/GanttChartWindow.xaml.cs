@@ -1,21 +1,7 @@
-﻿using BO;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Data;
+﻿using System.Data;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace PL.Gantt;
 
@@ -41,9 +27,34 @@ public partial class GanttChartWindow : Window
         //Update the project schedule
         s_bl.Milestone.UpdateProjectSchedule();
 
-        List<BO.TaskInList> tasks = s_bl.Task.GetListOfTasks().ToList();
-        List<BO.Milestone> milestones = s_bl.Milestone.GetListOfMilestones().Select(m => s_bl.Milestone.GetMilestone(m.ID)).ToList();
-        List<DateTime> milestoneEndDates = milestones.Select(m => m.ActualEndDate ?? m.ProjectedEndDate ?? DateTime.MinValue).ToList();
+        List<BO.TaskInList> tasks;
+        List<BO.Milestone> milestones;
+        List<DateTime> milestoneEndDates;
+
+        try
+        {
+            tasks = s_bl.Task.GetListOfTasks().ToList();
+            milestones = s_bl.Milestone.GetListOfMilestones().Select(m => s_bl.Milestone.GetMilestone(m.ID)).ToList();
+            milestoneEndDates = milestones.Select(m => m.ActualEndDate ?? m.ProjectedEndDate ?? DateTime.MinValue).ToList();
+        }
+        catch (BO.BlDoesNotExistException ex)
+        {
+            MessageBox.Show(ex.Message);
+            this.Close();
+            return;
+        }
+        catch (BO.BlInvalidInputException ex)
+        {
+            MessageBox.Show(ex.Message);
+            this.Close();
+            return;
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(ex.Message);
+            this.Close();
+            return;
+        }
 
         DataTable = new DataTable();
 
