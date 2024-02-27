@@ -32,7 +32,19 @@ public partial class EngineerListWindow : Window
     //The event handler for the window activation
     private void activated(object sender, EventArgs e)
     {
-        EngineerList = s_bl?.Engineer.GetListOfEngineers()!;
+        try
+        {
+            EngineerList = s_bl?.Engineer.GetListOfEngineers()!;
+        }
+        catch (BO.BlDoesNotExistException)
+        {
+            EngineerList = Enumerable.Empty<BO.Engineer>();
+        }
+        catch(Exception ex)
+        {
+            MessageBox.Show(ex.Message);
+        }
+        
     }
 
     //Getters and setters for the list of engineers
@@ -52,8 +64,19 @@ public partial class EngineerListWindow : Window
     //The event handler for the selection of the experience level (to filter the list of engineers)
     private void cbExperienceSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        EngineerList = (ExperienceLevel == BO.EngineerExperience.All) ?
-            s_bl?.Engineer.GetListOfEngineers()! : s_bl?.Engineer.GetListOfEngineers(item => item.Experience == ExperienceLevel)!;
+        try
+        {
+            EngineerList = (ExperienceLevel == BO.EngineerExperience.All) ?
+                s_bl?.Engineer.GetListOfEngineers()! : s_bl?.Engineer.GetListOfEngineers(item => item.Experience == ExperienceLevel)!;
+        }
+        catch (BO.BlDoesNotExistException)
+        {
+            EngineerList = Enumerable.Empty<BO.Engineer>();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(ex.Message);
+        }
     }
 
     //The event handler for the add button

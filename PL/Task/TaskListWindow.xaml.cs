@@ -82,9 +82,21 @@ public partial class TaskListWindow : Window, INotifyPropertyChanged
             }
         }
 
-        
-            
-        TaskList = s_bl?.Task.GetListOfTasks(_filter)!;
+
+
+        try
+        {
+            TaskList = s_bl?.Task.GetListOfTasks(_filter)!;
+        }
+        catch (BO.BlDoesNotExistException) // when no tasks exist
+        {
+            TaskList = Enumerable.Empty<BO.TaskInList>();
+        }
+        catch(Exception ex)
+        {
+            MessageBox.Show(ex.Message);
+        }
+
         InitializeComponent();
     }
 
@@ -192,9 +204,20 @@ public partial class TaskListWindow : Window, INotifyPropertyChanged
     //The event handler for the selection of the experience level (to filter the list of tasks)
     private void cbDifficultySelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        if (_filter == null)
-            TaskList = ((ExperienceLevel == BO.EngineerExperience.All) ?
-                                s_bl?.Task.GetListOfTasks()! : s_bl?.Task.GetListOfTasks(item => item.Complexity == ExperienceLevel)!);
+        try
+        {
+            if (_filter == null)
+                TaskList = ((ExperienceLevel == BO.EngineerExperience.All) ?
+                                    s_bl?.Task.GetListOfTasks()! : s_bl?.Task.GetListOfTasks(item => item.Complexity == ExperienceLevel)!);
+        }
+        catch (BO.BlDoesNotExistException)
+        {
+            TaskList = Enumerable.Empty<BO.TaskInList>();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(ex.Message);
+        }
     }
 
     //Change the window title based on the mode
