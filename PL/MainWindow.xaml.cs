@@ -40,6 +40,17 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         }
     }
 
+    private bool _isInProduction;
+    public bool IsInProduction
+    {
+        get { return _isInProduction; }
+        set
+        {
+            _isInProduction = value;
+            OnPropertyChanged();
+        }
+    }
+
     public event PropertyChangedEventHandler PropertyChanged;
     protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
     {
@@ -53,6 +64,12 @@ public partial class MainWindow : Window, INotifyPropertyChanged
 
     private void btnEngineerUser_Click(object sender, RoutedEventArgs e)
     {
+        if (!IsInProduction)
+        {
+            MessageBox.Show("The system is not in production. Please set the system clock and project dates before proceeding.");
+            return;
+        }
+            
         // Display a message box prompting the user to enter an engineer ID
         string userInput = Microsoft.VisualBasic.Interaction.InputBox("Enter the ID of the engineer you wish to find:", "Engineer ID", "");
 
@@ -113,5 +130,6 @@ public partial class MainWindow : Window, INotifyPropertyChanged
     private void activated(object sender, EventArgs e)
     {
         SystemClock = s_bl.Config.GetSystemClock();
+        IsInProduction = s_bl.Config.InProduction();
     }
 }

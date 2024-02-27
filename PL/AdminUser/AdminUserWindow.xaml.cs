@@ -1,4 +1,5 @@
-﻿using PL.EngineerUser;
+﻿using BO;
+using PL.EngineerUser;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,7 +41,19 @@ public partial class AdminUserWindow : Window
 
     private void btnMilestones_Click(object sender, RoutedEventArgs e)
     {
-        new Milestone.MilestoneListWindow().ShowDialog();
+        try
+        {
+            s_bl.Milestone.GetListOfMilestones();
+            new Milestone.MilestoneListWindow().ShowDialog();
+        }
+        catch (BO.BlDoesNotExistException)
+        {
+            MessageBox.Show("Milestones have not been created yet.");
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
     }
 
     private void btnCreateSchedule_Click(object sender, RoutedEventArgs e)
