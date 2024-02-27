@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <config>
-  <NextDependencyId>1095</NextDependencyId>
-  <NextTaskId>40</NextTaskId>
-  <StartDate>12/01/2023</StartDate>
-  <EndDate>04/23/2025</EndDate>
-  <SystemClock>06/11/2024 17:45:10</SystemClock>
+  <NextDependencyId>1000</NextDependencyId>
+  <NextTaskId>1</NextTaskId>
+  <StartDate></StartDate>
+  <EndDate></EndDate>
+  <SystemClock>02/27/2024 17:06:49</SystemClock>
 </config>

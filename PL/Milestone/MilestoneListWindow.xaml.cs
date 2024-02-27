@@ -75,7 +75,19 @@ public partial class MilestoneListWindow : Window
     //The event handler for the selection of the status (to filter the list of milestones)
     private void cbStatusSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        MilestoneList = ((SelectedStatus == BO.Status.All) ?
-                                s_bl?.Milestone.GetListOfMilestones()! : s_bl?.Milestone.GetListOfMilestones(m => m.Status == SelectedStatus)!);
+        try
+        {
+            MilestoneList = ((SelectedStatus == BO.Status.All) ?
+                                    s_bl?.Milestone.GetListOfMilestones()! : s_bl?.Milestone.GetListOfMilestones(m => m.Status == SelectedStatus)!);
+        }
+        catch (BO.BlDoesNotExistException)
+        {
+            MessageBox.Show("Milestones have not been created yet.");
+            this.Close();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(ex.Message);
+        }
     }
 }

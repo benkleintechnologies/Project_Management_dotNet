@@ -45,6 +45,9 @@ internal class ConfigImplementation : IConfig
     public void Reset()
     {
         _dal.Config.Reset();
+        _dal.Engineer.Reset();
+        _dal.Dependency.Reset();
+        _dal.Task.Reset();
     }
 
     public DateTime? GetProjectStartDate()
