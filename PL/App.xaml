@@ -13,5 +13,6 @@
         <local:ConvertBoolToContentKey x:Key="ConvertBoolToContentKey" />
         <local:ValueColorConverter x:Key="ColorConverterKey"/>
         <local:ForegroundConvertor x:Key="ForegroundConvertorKey" />
+        <local:ConvertTaskToBool x:Key="ConvertTaskToBoolKey" />
     </Application.Resources>
 </Application>

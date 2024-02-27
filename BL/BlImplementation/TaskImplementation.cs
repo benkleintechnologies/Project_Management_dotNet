@@ -16,19 +16,21 @@ internal class TaskImplementation : BlApi.ITask
                 throw new BO.BlUnableToPerformActionInProductionException("Cannot add task while in production");
             }
             //Check for invalid data
-            if (task.ID <= 0 || task.Name == "")
+            if (task.ID < 0 || task.Name == "")
             {
                 throw new BO.BlInvalidInputException($"One of the fields of the Task with id {task.ID} was invalid");
             }
 
             //Try to add the Task to the data layer
-            DO.Task newTask = new(task.ID, task.Name, false, (DO.EngineerExperience)task.Complexity, null, task.Description, task.Deliverables, task.Notes, task.CreatedAtDate, task.ProjectedStartDate, task.ActualStartDate, task.RequiredEffortTime, task.Deadline, task.ActualEndDate);
+            DO.Task newTask = new(task.ID, task.Name, false, (DO.EngineerExperience)task.Complexity, null, task.Description, task.Deliverables, task.Notes, _dal.Config.GetSystemClock(), task.ProjectedStartDate, task.ActualStartDate, task.RequiredEffortTime, task.Deadline, task.ActualEndDate);
 
             int newTaskId = _dal.Task.Create(newTask);
 
             // Make the new task dependent on all previous tasks
-            IEnumerable<DO.Dependency> dependencies = from t in task.Dependencies
-                                                      select new DO.Dependency(0, newTaskId, t.ID);
+            IEnumerable<DO.Dependency> dependencies = task.Dependencies != null
+                ? from t in task.Dependencies select new DO.Dependency(0, newTaskId, t.ID)
+                : new List<DO.Dependency>();
+
             dependencies.ToList().ForEach(d => _dal.Dependency.Create(d));
         }
         catch (DO.DalAlreadyExistsException exc)
@@ -108,7 +110,7 @@ internal class TaskImplementation : BlApi.ITask
             DO.Task? newTask = null;
 
             // Check which phase of the project we are in
-            if (_dal.Config.GetStartDate().HasValue && _dal.Task.ReadAll(t => t.ProjectedStartDate.HasValue).Count() == _dal.Task.ReadAll().Count()) // Production phase
+            if (_dal.Config.GetStartDate().HasValue && dlTask.ProjectedStartDate.HasValue) // Production phase
             {
                 newTask = new(task.ID, task.Name, dlTask.IsMilestone, (DO.EngineerExperience)task.Complexity, task.Engineer?.ID, task.Description, task.Deliverables, task.Notes, dlTask.DateCreated, dlTask.ProjectedStartDate, task.ActualStartDate, dlTask.Duration, dlTask.Deadline, task.ActualEndDate);
 
@@ -154,8 +156,10 @@ internal class TaskImplementation : BlApi.ITask
                     //There are no dependencies for this task. Not an error
                 }
 
-                IEnumerable<DO.Dependency> newDependencies = from t in task.Dependencies
-                                                             select new DO.Dependency(0, task.ID, t.ID);
+                IEnumerable<DO.Dependency> newDependencies = task.Dependencies != null
+                    ? from t in task.Dependencies select new DO.Dependency(0, task.ID, t.ID)
+                    : Enumerable.Empty<DO.Dependency>();
+
                 //Check for circular dependencies
                 foreach (DO.Dependency dependency in newDependencies)
                 {
@@ -379,6 +383,7 @@ internal class TaskImplementation : BlApi.ITask
         catch (DO.DalDoesNotExistException)
         {
             //No dependencies exist yet
+            visitedTasks.Remove(currentTask); // Backtrack when moving to the next task
             return false;
         }
 

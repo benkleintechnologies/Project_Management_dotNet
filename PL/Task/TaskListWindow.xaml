@@ -89,6 +89,6 @@
             <Button Content="Add Dependency" Click="btnAddDependency_Click" Height="50" Width="150"/>
         </StackPanel>
         <!-- Button to Add a new Task to the List-->
-        <Button Content="{Binding AddSelectButtonText}" Click="btnAddOrSelect_Click" Visibility="{Binding AddSelectButtonVisibility}" IsEnabled="{Binding IsInPlanning}" Grid.Row="2" HorizontalAlignment="Center" Height="50" Width="200"/>
+        <Button Content="{Binding AddSelectButtonText}" Click="btnAddOrSelect_Click" Visibility="{Binding AddSelectButtonVisibility}" IsEnabled="{Binding AddSelectButtonActive}" Grid.Row="2" HorizontalAlignment="Center" Height="50" Width="200"/>
     </Grid>
 </Window>

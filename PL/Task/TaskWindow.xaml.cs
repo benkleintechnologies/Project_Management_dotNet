@@ -82,57 +82,56 @@ public partial class TaskWindow : Window
             {
                 if (buttonText == "Add")
                 {
+                    //Add Status and created at date
+                    CurrentTask.Status = BO.Status.Unscheduled;
                     // Call the method for adding the item
-                    s_bl?.Task.AddTask(CurrentTask);
-                    // Check that it was added and then close the window
                     try
                     {
-                        s_bl?.Task.GetTask(CurrentTask.ID);
+                        s_bl?.Task.AddTask(CurrentTask);
                         MessageBox.Show("The Task was added to the database.");
                         this.Close();
                     }
-                    catch (BO.BlDoesNotExistException)
+                    catch (BO.BlAlreadyExistsException)
                     {
-                        MessageBox.Show("The Task was not added to the database.");
+                        MessageBox.Show("The Task could not be added because there is already another Task with this ID.");    
+                    }
+                    catch (BO.BlInvalidInputException)
+                    {
+                        MessageBox.Show("The Task was not updated in the database because one of the fields was not valid.");
+                    }
+                    catch (BO.BlUnableToPerformActionInProductionException)
+                    {
+                        MessageBox.Show("The Task was not updated in the database because the action is not allowed in production.");
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message);
                     }
                 }
                 else if (buttonText == "Update")
                 {
                     // Call the method for updating the item
-                    s_bl?.Task.UpdateTask(CurrentTask);
-                    // Check that it was updated and then close the window
                     try
                     {
-                        //Check that the task was updated
-                        BO.Task task = s_bl?.Task.GetTask(CurrentTask.ID)!;
-                        if (task.Name != CurrentTask.Name ||
-                            task.Description != CurrentTask.Description ||
-                            task.Status != CurrentTask.Status ||
-                            !Enumerable.SequenceEqual(task.Dependencies ?? Enumerable.Empty<BO.TaskInList>(), CurrentTask.Dependencies ?? Enumerable.Empty<BO.TaskInList>()) ||
-                            task.Milestone != CurrentTask.Milestone ||
-                            task.CreatedAtDate != CurrentTask.CreatedAtDate ||
-                            task.ProjectedStartDate != CurrentTask.ProjectedStartDate ||
-                            task.ActualStartDate != CurrentTask.ActualStartDate ||
-                            task.ProjectedEndDate != CurrentTask.ProjectedEndDate ||
-                            task.Deadline != CurrentTask.Deadline ||
-                            task.ActualEndDate != CurrentTask.ActualEndDate ||
-                            task.RequiredEffortTime != CurrentTask.RequiredEffortTime ||
-                            task.Deliverables != CurrentTask.Deliverables ||
-                            task.Notes != CurrentTask.Notes ||
-                            task.Engineer != CurrentTask.Engineer ||
-                            task.Complexity != CurrentTask.Complexity)
-                        {
-                            MessageBox.Show("The Task was not updated in the database.");
-                        }
-                        else
-                        {
-                            MessageBox.Show("The Task was updated in the database.");
-                        }
+                        s_bl?.Task.UpdateTask(CurrentTask);
+                        MessageBox.Show("The Task was updated in the database.");
                         this.Close();
                     }
-                    catch (BO.BlDoesNotExistException ex)
+                    catch (BO.BlDoesNotExistException)
                     {
-                        MessageBox.Show("The Task was not updated in the database.");
+                        MessageBox.Show("The Task was not updated in the database because it could not be found.");
+                    }
+                    catch (BO.BlInvalidInputException)
+                    {
+                        MessageBox.Show("The Task was not updated in the database because one of the fields was not valid.");
+                    }
+                    catch (BO.BlCircularDependencyException)
+                    {
+                        MessageBox.Show("The Task was not updated in the database because it would create a circular dependency.");
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message);
                     }
                 }
             }

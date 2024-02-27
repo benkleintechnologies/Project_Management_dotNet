@@ -101,3 +101,17 @@ public class ValueColorConverter : IValueConverter
         throw new NotImplementedException();
     }
 }
+
+public class ConvertTaskToBool : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        var task = value as BO.Task;
+        return task.ID != 0 && task.ProjectedStartDate is null ? true : false;
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        throw new NotImplementedException();
+    }
+}

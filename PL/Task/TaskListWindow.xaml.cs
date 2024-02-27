@@ -82,8 +82,6 @@ public partial class TaskListWindow : Window, INotifyPropertyChanged
             }
         }
 
-
-
         try
         {
             TaskList = s_bl?.Task.GetListOfTasks(_filter)!;
@@ -187,10 +185,10 @@ public partial class TaskListWindow : Window, INotifyPropertyChanged
         }
     }
 
-    public bool IsInPlanning
+    public bool AddSelectButtonActive
     {
-        get { return !s_bl.Config.InProduction(); }
-        set { }
+        //The add/select button is enable for adding in planning mode and selecting in production mode
+        get { return !s_bl.Config.InProduction() || _engineer is not null; }
     }
 
     //Visibility of the Add/Select buttons
@@ -251,6 +249,8 @@ public partial class TaskListWindow : Window, INotifyPropertyChanged
         if (task != null)
         {
             new TaskWindow(task.ID).ShowDialog();
+            //Update the list of tasks after updating task
+            TaskList = s_bl?.Task.GetListOfTasks(_filter)!;
         }
     }
 
@@ -259,6 +259,8 @@ public partial class TaskListWindow : Window, INotifyPropertyChanged
         if (FilterActive)
         {
             new TaskWindow().ShowDialog();
+            //Update the list of tasks after adding a new task
+            TaskList = s_bl?.Task.GetListOfTasks(_filter)!;
         }
         else
         {
