@@ -106,7 +106,7 @@ public static class Initialization
             TimeSpan toSubtract = TimeSpan.FromDays(s_rand.Next(1,28));
             DateTime dateCreated = DateTime.Now - toSubtract;
             DateTime projectedStartDate = DateTime.Now.AddDays(s_rand.Next(0,28));
-            DateTime deadline = projectedStartDate.AddDays(s_rand.Next(0, 28));
+            DateTime deadline = projectedStartDate.AddDays(s_rand.Next(1, 28));
             TimeSpan duration = deadline.Subtract(projectedStartDate);
 
             //Make Task with or without assigned dates

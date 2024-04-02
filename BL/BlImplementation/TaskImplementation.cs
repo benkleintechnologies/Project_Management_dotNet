@@ -16,7 +16,7 @@ internal class TaskImplementation : BlApi.ITask
                 throw new BO.BlUnableToPerformActionInProductionException("Cannot add task while in production");
             }
             //Check for invalid data
-            if (task.ID < 0 || task.Name == "")
+            if (task.ID < 0 || task.Name == "" || task.RequiredEffortTime is null)
             {
                 throw new BO.BlInvalidInputException($"One of the fields of the Task with id {task.ID} was invalid");
             }
