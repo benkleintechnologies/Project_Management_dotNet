@@ -8,6 +8,8 @@
 6.	Update chain of tasks dependent on the update of task start date by the admin and following the update of task end time and start of task by the engineer (2 points)
 7.	Deletion flag (1 point)
 8.	Used lazy singleton (1 point)
-9.	Custom styling (1 point)
+9.	Custom styling (1 point)		
+10. Check for Circular Dependencies
+11. Color Gannt chart by status
 
-## Total: 16 Points
+## Total: 15+ Points
